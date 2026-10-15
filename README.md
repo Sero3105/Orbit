@@ -16,7 +16,9 @@ A native macOS maintenance app that shows you what your Mac is really doing — 
 
 [**⬇︎ Download the latest .dmg**](https://github.com/Sero3105/OrbitA/releases/latest) · [Features](#features) · [Safety](#safety-first) · [Build](#build-from-source)
 
-<img src="docs/media/tour.gif" width="860" alt="Orbit tour: dashboard, energy, processes, applications, maintenance">
+<img src="docs/media/tour.gif" width="860" alt="Orbit tour: dashboard, energy, processes, cleanup, applications, maintenance">
+
+<sub>Screenshots use Orbit's built-in demo mode (<code>--demo</code>) with fictional data — no real user, apps or files.</sub>
 
 </div>
 
@@ -52,13 +54,15 @@ Most "Mac cleaner" apps show scary numbers and delete things for you. Orbit does
 <td><b>Processes</b> — live, sortable process table. Terminate your own processes after confirmation (SIGTERM).</td>
 </tr>
 <tr>
+<td><img src="docs/media/cleanup.png" alt="Cleanup"></td>
 <td><img src="docs/media/maintenance.png" alt="Maintenance"></td>
-<td>
-<b>Maintenance</b> — fix specific glitches by symptom: rebuild Quick Look previews, flush DNS, refresh app icons. Each task shows exactly what it runs and its real result.<br><br>
-<b>Cleanup</b> — read-only scan of app caches, old logs, old installers in Downloads, Xcode DerivedData and developer/AI-tool caches. Safe items pre-selected, everything else is opt-in.<br><br>
-<b>Disk Analyzer</b> — measure folders, drill down, reveal in Finder. Partial scans are flagged, never presented as complete.<br><br>
-<b>History & menu bar</b> — a local log of every change Orbit made, and a menu-bar summary of CPU, memory, disk and power.
-</td>
+</tr>
+<tr>
+<td><b>Cleanup</b> — read-only scan of app caches, old logs, old installers in Downloads, Xcode DerivedData and developer/AI-tool caches. Safe items pre-selected, everything else is opt-in.</td>
+<td><b>Maintenance</b> — fix specific glitches by symptom: rebuild Quick Look previews, flush DNS, refresh app icons. Each task shows exactly what it runs and its real result.</td>
+</tr>
+<tr>
+<td colspan="2"><b>Disk Analyzer</b> — measure folders, drill down, reveal in Finder. Partial scans are flagged, never presented as complete. &nbsp;·&nbsp; <b>History & menu bar</b> — a local log of every change Orbit made, and a menu-bar summary of CPU, memory, disk and power.</td>
 </tr>
 </table>
 
@@ -67,7 +71,7 @@ Most "Mac cleaner" apps show scary numbers and delete things for you. Orbit does
 Apple Silicon Macs — laptops **and** desktops like the Mac mini — publish power telemetry from the SMC through IOKit. Orbit reads it every 2 seconds (public API, no root):
 
 | Value | Meaning |
-|---|---|
+| --- | --- |
 | **Mac consumption** | Power the Mac itself is using |
 | **From the wall** | Consumption + power-adapter loss — what your electricity meter counts |
 | **Cost projections** | Current wall power × your €/kWh, over a second, hour, day, week, month |
@@ -87,7 +91,7 @@ Requires **macOS 14 Sonoma or later**.
 ## Safety first
 
 | Guarantee | How |
-|---|---|
+| --- | --- |
 | Scans are read-only | Scanners only list and measure; enforced by the check suite |
 | Deletion is recoverable | Everything goes to the Trash via `FileManager.trashItem`, never `rm` |
 | Nothing deleted without you | Every removal needs an explicit confirmation |

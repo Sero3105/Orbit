@@ -7,7 +7,7 @@ final class CleanupVM: ObservableObject {
     @Published var cancelled = false; var cancelFlag = false
     @Published var groups: [CleanupGroup] = []
     func cancel() { cancelFlag = true }
-    func scan() { if busy { return }; busy=true; cancelled=false; cancelFlag=false
+    func scan() { if busy || isDemo { return }; busy=true; cancelled=false; cancelFlag=false
         DispatchQueue.global().async { let s=CleanupScanner().scan(shouldCancel: { [weak self] in self?.cancelFlag ?? true })
             DispatchQueue.main.async { self.items=s; self.groups=Dictionary(grouping:s, by: \.category).sorted{ $0.key < $1.key }.map{ g in CleanupGroup(id: g.key, title: fmtBytes(g.value.reduce(0){$0+$1.size}), items: g.value.sorted{ $0.size > $1.size }) }; self.busy=false; self.cancelled=self.cancelFlag; self.selected=Set(s.filter{$0.safety == .safe}.map(\.id)) } } }
 }
@@ -59,7 +59,7 @@ struct CleanupView: View {
         }.padding(22).background(T.bg).navigationTitle(model.t("Cleanup"))
         .alert(String(format: tr("Move %d items (%@) to Trash?"), vm.selected.count, fmtBytes(total)), isPresented: $vm.confirm) {
             Button(tr("Cancel"), role:.cancel) {}
-            Button(tr("Move to Trash"), role:.destructive) { let sel=vm.items.filter{vm.selected.contains($0.id)}; vm.results=TrashExecutor.run(sel, allowedRoots:model.allowedRoots, execute:true, history:model.history); model.reloadHistory(); vm.scan() }
+            Button(tr("Move to Trash"), role:.destructive) { if isDemo { return }; let sel=vm.items.filter{vm.selected.contains($0.id)}; vm.results=TrashExecutor.run(sel, allowedRoots:model.allowedRoots, execute:true, history:model.history); model.reloadHistory(); vm.scan() }
         } message: { Text(tr("Items move to Trash and can be restored. Paths are revalidated immediately before the operation; changed or unsafe items are skipped and reported.")) }
     }
 }
@@ -70,7 +70,7 @@ final class DiskVM: ObservableObject {
     var sortTitle: String { ["Size ↓ largest","Size ↑ smallest","Name A–Z","Name Z–A"][sortMode] }
     @Published var busy=false; var cancelFlag=false
     func cancel(){ cancelFlag=true }
-    func load(){ if busy { return }; busy=true; cancelFlag=false; let p=path; DispatchQueue.global().async{ let r=DiskScanner.scan(p, shouldCancel:{ [weak self] in self?.cancelFlag ?? true }); DispatchQueue.main.async{ self.entries=r.entries; self.complete=r.complete; self.busy=false } } }
+    func load(){ if busy || isDemo { return }; busy=true; cancelFlag=false; let p=path; DispatchQueue.global().async{ let r=DiskScanner.scan(p, shouldCancel:{ [weak self] in self?.cancelFlag ?? true }); DispatchQueue.main.async{ self.entries=r.entries; self.complete=r.complete; self.busy=false } } }
 }
 struct DiskView: View {
     @EnvironmentObject var model: Model
@@ -125,11 +125,11 @@ final class AppsVM: ObservableObject { @Published var apps:[AppInfo]=[]; @Publis
     @Published var sel: AppInfo? = nil; @Published var leftovers:[String]=[]; @Published var confirm=false; @Published var msg=""
     @Published var plan: Uninstaller.Plan? = nil; @Published var block = ""
     /// Ownership checks read signatures and other apps, so they run off the main thread.
-    func select(_ a: AppInfo?) { plan=nil; leftovers=[]; block=""; guard let a else { return }
+    func select(_ a: AppInfo?) { plan=nil; leftovers=[]; block=""; guard let a, !isDemo else { return }
         DispatchQueue.global().async { let r = Result { try Uninstaller.plan(appPath: a.path) }
             DispatchQueue.main.async { guard self.sel == a else { return }
                 switch r { case .success(let p): self.plan=p; self.leftovers=p.leftovers; case .failure(let e): self.block = "\(e)" } } } }
-    func load(){ DispatchQueue.global().async{ let a=AppDiscovery.apps(); DispatchQueue.main.async{ self.apps=a } } }
+    func load(){ if isDemo { return }; DispatchQueue.global().async{ let a=AppDiscovery.apps(); DispatchQueue.main.async{ self.apps=a } } }
     func sizeOf(_ path:String) -> Int64 { var d: ObjCBool=false; if FileManager.default.fileExists(atPath:path,isDirectory:&d), d.boolValue { return SafetyValidator.dirSize(URL(fileURLWithPath:path)).0 }; return ((try? FileManager.default.attributesOfItem(atPath:path))?[.size] as? NSNumber)?.int64Value ?? 0 }
     func detail(_ a: AppInfo) -> [(String,String)] {
         let b = Bundle(path: a.path); let info = b?.infoDictionary ?? [:]
@@ -162,7 +162,7 @@ struct AppsView: View {
                             SortHead(title: "Size", active: vm.sortMode == 1 || vm.sortMode == 2, asc: vm.sortMode == 2) { vm.sortMode = vm.sortMode == 1 ? 2 : 1 }.frame(width: 90)
                         }.padding(.horizontal, 6)
                         List(vm.sorted, selection:$vm.sel) { a in
-                            HStack(spacing: 9) { Image(nsImage: NSWorkspace.shared.icon(forFile: a.path)).resizable().frame(width: 26, height: 26)
+                            HStack(spacing: 9) { Image(nsImage: appIcon(a)).resizable().frame(width: 26, height: 26)
                                 VStack(alignment:.leading, spacing: 1){ Text(a.name).font(.system(size: 12.5)).foregroundStyle(T.ink); Text("\(a.bundleID) · v\(a.version)").font(.system(size: 10)).foregroundStyle(T.muted).lineLimit(1) }
                                 Spacer(); Text(fmtBytes(a.size)).font(.system(size: 11)).monospacedDigit().foregroundStyle(T.muted) }.tag(a)
                         }.scrollContentBackground(.hidden)
@@ -188,7 +188,7 @@ struct AppsView: View {
     @ViewBuilder var detail: some View {
         if let a=vm.sel {
             VStack(alignment:.leading, spacing: 12) {
-                HStack(spacing: 12) { Image(nsImage: NSWorkspace.shared.icon(forFile: a.path)).resizable().frame(width: 48, height: 48)
+                HStack(spacing: 12) { Image(nsImage: appIcon(a)).resizable().frame(width: 48, height: 48)
                     VStack(alignment:.leading, spacing: 2){ Text(a.name).font(.system(size: 20, weight: .semibold)).foregroundStyle(T.ink)
                         Text("\(tr("Version")) \(a.version) · \(fmtBytes(a.size)) \(tr("on disk"))").font(.system(size: 11)).foregroundStyle(T.muted) } }
                 LazyVGrid(columns: [GridItem(.flexible(), alignment: .leading), GridItem(.flexible(), alignment: .leading)], spacing: 10) {
@@ -211,7 +211,7 @@ struct AppsView: View {
                 Text(String(format: tr("%d applications · %@ total"), vm.apps.count, fmtBytes(vm.apps.reduce(0){$0+$1.size}))).font(.system(size: 15, weight: .semibold)).foregroundStyle(T.ink)
                 Text(tr("Largest applications — select one to see its details, related files and uninstall options.")).font(.system(size: 11)).foregroundStyle(T.muted)
                 ForEach(vm.apps.sorted{$0.size>$1.size}.prefix(6), id: \.id) { a in
-                    Button { vm.sel = a } label: { HStack(spacing: 9) { Image(nsImage: NSWorkspace.shared.icon(forFile: a.path)).resizable().frame(width: 24, height: 24)
+                    Button { vm.sel = a } label: { HStack(spacing: 9) { Image(nsImage: appIcon(a)).resizable().frame(width: 24, height: 24)
                         Text(a.name).font(.system(size: 12.5)).foregroundStyle(T.ink); Spacer(); Text(fmtBytes(a.size)).font(.system(size: 11.5, weight: .medium)).monospacedDigit().foregroundStyle(T.ink) }.contentShape(Rectangle()) }.buttonStyle(.plain)
                 }
                 Spacer()
@@ -221,9 +221,9 @@ struct AppsView: View {
 }
 
 final class MaintVM: ObservableObject { @Published var log:[String]=[]; @Published var cacheInfo = ""
-    func loadCacheInfo(){ DispatchQueue.global().async { let h=NSHomeDirectory(); let ql=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches/com.apple.QuickLook.thumbnailcache")).0; let icons=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches/com.apple.iconservices")).0; let all=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches")).0
+    func loadCacheInfo(){ if isDemo { return }; DispatchQueue.global().async { let h=NSHomeDirectory(); let ql=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches/com.apple.QuickLook.thumbnailcache")).0; let icons=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches/com.apple.iconservices")).0; let all=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches")).0
         DispatchQueue.main.async { self.cacheInfo = "\(tr("Right now: Quick Look cache")) \(fmtBytes(ql)) · \(tr("Icon cache")) \(fmtBytes(icons)) · \(tr("All user caches")) \(fmtBytes(all))" } } }
-    func run(_ label:String, _ exe:String, _ args:[String]) { DispatchQueue.global().async { let p=Process(); p.executableURL=URL(fileURLWithPath:exe); p.arguments=args; let pipe=Pipe(); p.standardOutput=pipe; p.standardError=pipe
+    func run(_ label:String, _ exe:String, _ args:[String]) { if isDemo { return }; DispatchQueue.global().async { let p=Process(); p.executableURL=URL(fileURLWithPath:exe); p.arguments=args; let pipe=Pipe(); p.standardOutput=pipe; p.standardError=pipe
         do { try p.run(); let data=pipe.fileHandleForReading.readDataToEndOfFile(); p.waitUntilExit(); let out=String(data:data,encoding:.utf8) ?? ""; DispatchQueue.main.async { self.log.insert("\(tr(label)): \(tr("exit code")) \(p.terminationStatus) \(out.prefix(120))", at:0) } } catch { DispatchQueue.main.async { self.log.insert("\(tr(label)): \(tr("failed")) \(error.localizedDescription)", at:0) } } } } }
 struct MaintenanceView: View { @EnvironmentObject var model: Model
     @ObservedObject var vm: MaintVM
@@ -252,7 +252,7 @@ struct MaintenanceView: View { @EnvironmentObject var model: Model
 
 final class ProcVM: ObservableObject { @Published var procs:[ProcInfo]=[]; @Published var query=""; @Published var killTarget: ProcInfo? = nil; @Published var sortKey="cpu"; @Published var sortAsc=false
     func sortBy(_ key:String){ if sortKey==key { sortAsc.toggle() } else { sortKey=key; sortAsc=(key=="name"||key=="pid"||key=="user") } }
-    func load(){ DispatchQueue.global().async{ let p=ProcessList.list(); DispatchQueue.main.async{ self.procs=p } } } }
+    func load(){ if isDemo { return }; DispatchQueue.global().async{ let p=ProcessList.list(); DispatchQueue.main.async{ self.procs=p } } } }
 struct ProcessesView: View { @EnvironmentObject var model: Model
     @ObservedObject var vm: ProcVM
     func head(_ title: String, _ key: String, _ align: Alignment) -> some View {
@@ -297,7 +297,7 @@ struct ProcessesView: View { @EnvironmentObject var model: Model
         }.listRowBackground(T.surface) }
             .scrollContentBackground(.hidden)
     }.padding(22).background(T.bg).navigationTitle(model.t("Processes")).onAppear(perform:vm.load)
-    .alert(tr("Terminate process?"), item:$vm.killTarget){ p in Button(tr("Cancel"), role:.cancel){}; Button(tr("Terminate"), role:.destructive){ _=ProcessList.terminate(pid:p.pid); vm.load() } } message:{ p in Text("\(p.name) (PID \(p.pid)) \(tr("will receive SIGTERM. Unsaved work in that process may be lost."))") } } }
+    .alert(tr("Terminate process?"), item:$vm.killTarget){ p in Button(tr("Cancel"), role:.cancel){}; Button(tr("Terminate"), role:.destructive){ if isDemo { return }; _=ProcessList.terminate(pid:p.pid); vm.load() } } message:{ p in Text("\(p.name) (PID \(p.pid)) \(tr("will receive SIGTERM. Unsaved work in that process may be lost."))") } } }
 
 struct HistoryView: View { @EnvironmentObject var model: Model
     var body: some View { VStack(alignment:.leading, spacing: 12) {

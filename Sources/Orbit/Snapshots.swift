@@ -4,7 +4,8 @@ import UniformTypeIdentifiers
 
 /// `Orbit --screenshots <dir>` renders each section offscreen to PNG plus an animated tour.gif
 /// (used for the README; needs no Screen Recording permission). Combine with defaults
-/// overrides, e.g. `-orbit.lang it -orbit.access.apps YES -orbit.kwhPrice 0.3`.
+/// overrides, e.g. `-orbit.lang it -orbit.access.apps YES -orbit.kwhPrice 0.3`. Add `--demo` for fictional data
+/// (README media: `Orbit --demo --screenshots docs/media -orbit.lang en -orbit.access.cleanup YES -orbit.access.apps YES -AppleLocale en_IE`).
 enum Snapshots {
     static func runIfRequested(model: Model) {
         let args = CommandLine.arguments
@@ -16,7 +17,7 @@ enum Snapshots {
         win.contentView = host; win.orderBack(nil)
         let plan: [(Section, String)] = [(.dashboard, "dashboard"), (.energy, "energy"), (.processes, "processes"), (.cleanup, "cleanup"), (.apps, "applications"), (.maintenance, "maintenance")]
         var frames: [CGImage] = []
-        model.cleanupVM.scan(); model.appsVM.load(); model.procVM.load()
+        if isDemo { Demo.load(into: model) } else { model.cleanupVM.scan(); model.appsVM.load(); model.procVM.load() }
         func shoot(_ k: Int) {
             guard k < plan.count else { writeGIF(frames, to: dir.appendingPathComponent("tour.gif")); exit(0) }
             model.section = plan[k].0
@@ -29,8 +30,8 @@ enum Snapshots {
                 shoot(k + 1)
             }
         }
-        // Let live samples accumulate so sparklines and the power ledger have data.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 20) { shoot(0) }
+        // Live mode: let samples accumulate so sparklines and the power ledger have data.
+        DispatchQueue.main.asyncAfter(deadline: .now() + (isDemo ? 1 : 20)) { shoot(0) }
     }
 
     static func writeGIF(_ frames: [CGImage], to url: URL) {

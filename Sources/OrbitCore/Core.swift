@@ -124,7 +124,8 @@ public enum AppDiscovery {
     }
 }
 
-public struct Metrics { public var model:String = ""; public var power:String = ""; public var cpu:Double; public var memUsed:Int64; public var memTotal:Int64; public var diskFree:Int64; public var diskTotal:Int64; public var uptime:TimeInterval; public var battery:Int?; public var processCount:Int }
+public struct Metrics { public var model:String = ""; public var power:String = ""; public var cpu:Double; public var memUsed:Int64; public var memTotal:Int64; public var diskFree:Int64; public var diskTotal:Int64; public var uptime:TimeInterval; public var battery:Int?; public var processCount:Int
+    public init(model:String, power:String, cpu:Double, memUsed:Int64, memTotal:Int64, diskFree:Int64, diskTotal:Int64, uptime:TimeInterval, battery:Int?, processCount:Int) { self.model=model; self.power=power; self.cpu=cpu; self.memUsed=memUsed; self.memTotal=memTotal; self.diskFree=diskFree; self.diskTotal=diskTotal; self.uptime=uptime; self.battery=battery; self.processCount=processCount } }
 public enum SystemMetrics {
     public static func processCount() -> Int {
         let n = proc_listpids(UInt32(PROC_ALL_PIDS), 0, nil, 0)
@@ -178,8 +179,10 @@ public struct HistoryEntry: Codable, Identifiable { public var id=UUID(); public
 public final class HistoryStore {
     public var file: URL; public private(set) var entries:[HistoryEntry]=[]
     public init() { let d=FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("Orbit",isDirectory:true); try? FileManager.default.createDirectory(at:d,withIntermediateDirectories:true); file=d.appendingPathComponent("history.json"); load() }
+    /// In-memory store (demo/screenshots): never reads or writes the history file.
+    public init(memory e:[HistoryEntry]) { file = URL(fileURLWithPath: "/dev/null"); entries = e }
     public func load(){ if let data=try? Data(contentsOf:file), let e=try? JSONDecoder().decode([HistoryEntry].self,from:data){ entries=e } }
-    public func add(_ e:HistoryEntry){ entries.insert(e,at:0); entries=Array(entries.prefix(500)); if let d=try? JSONEncoder().encode(entries){ try? d.write(to:file) } }
+    public func add(_ e:HistoryEntry){ entries.insert(e,at:0); entries=Array(entries.prefix(500)); guard file.path != "/dev/null" else { return }; if let d=try? JSONEncoder().encode(entries){ try? d.write(to:file) } }
 }
 
 /// Trash selected candidates after revalidation. Returns per-item results. Dry-run when execute=false.

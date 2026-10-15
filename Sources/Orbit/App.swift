@@ -37,7 +37,7 @@ final class Model: ObservableObject {
     @Published var power: PowerReading? = PowerTelemetry.read()
     @Published var wattSamples: [Double] = []
     @Published var energy = EnergyLedger.load()
-    @Published var kwhPrice: Double = UserDefaults.standard.double(forKey: "orbit.kwhPrice") { didSet { UserDefaults.standard.set(kwhPrice, forKey: "orbit.kwhPrice") } }
+    @Published var kwhPrice: Double = UserDefaults.standard.double(forKey: "orbit.kwhPrice") { didSet { if !isDemo { UserDefaults.standard.set(kwhPrice, forKey: "orbit.kwhPrice") } } }
     private var lastPowerTick = Date()
     private var ticks = 0
     /// Integrate wall power into the per-day ledger; gaps over 10s (sleep, app suspended) are not counted.
@@ -49,7 +49,8 @@ final class Model: ObservableObject {
         if dt <= 10 { energy.add(watts: p.wallW, seconds: dt, at: now) }
         ticks += 1; if ticks % 15 == 0 { energy.save() }
     }
-    init() { NotificationCenter.default.addObserver(forName: NSApplication.willTerminateNotification, object: nil, queue: .main) { [weak self] _ in self?.energy.save() }
+    init() { if isDemo { return }  // demo: fixed data only, no sampling, nothing saved
+        NotificationCenter.default.addObserver(forName: NSApplication.willTerminateNotification, object: nil, queue: .main) { [weak self] _ in self?.energy.save() }
         Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in DispatchQueue.global().async { let m = SystemMetrics.sample(); let p = PowerTelemetry.read(); DispatchQueue.main.async { guard let self else { return }; self.metrics = m; self.recordPower(p); self.cpuSamples.append(m.cpu); self.memSamples.append(m.memTotal > 0 ? Double(m.memUsed)/Double(m.memTotal)*100 : 0); if self.cpuSamples.count > 45 { self.cpuSamples.removeFirst() ; self.memSamples.removeFirst() } } } } }
     var allowedRoots: [String] { CleanupScanner().categories().map(\.root) + [NSHomeDirectory()+"/Applications", "/Applications"] }
     func accessGranted(_ key: String) -> Bool { UserDefaults.standard.bool(forKey: "orbit.access.\(key)") }
