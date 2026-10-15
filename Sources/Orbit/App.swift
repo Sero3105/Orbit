@@ -187,7 +187,7 @@ struct DashboardView: View {
     } } }
     var storagePanel: some View { Panel { VStack(alignment: .leading, spacing: 8) {
         Text(model.t("Storage")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-        Text("\(fmtBytes(m.diskFree)) free").font(.system(size: 24, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
+        Text(String(format: tr("%@ free"), fmtBytes(m.diskFree))).font(.system(size: 24, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
         MeterBar(value: m.diskTotal > 0 ? 1 - Double(m.diskFree)/Double(m.diskTotal) : 0, color: T.cyan)
         Text(String(format: tr("of %@ total"), fmtBytes(m.diskTotal))).font(.system(size: 11)).foregroundStyle(T.muted)
     } } }
@@ -211,7 +211,7 @@ struct DashboardView: View {
     var batteryPanel: some View { Panel { VStack(alignment: .leading, spacing: 6) {
         Text(model.t("Power & thermal")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
         HStack(spacing: 8) { Image(systemName: m.battery != nil ? "battery.75" : "powerplug").foregroundStyle(T.accent)
-            Text(m.battery.map { "\(tr("Battery")) \($0)%" } ?? "\(m.power) · \(tr("No battery (desktop Mac)"))").font(.system(size: 13.5, weight: .medium)).foregroundStyle(T.ink) }
+            Text(m.battery.map { "\(tr("Battery")) \($0)%" } ?? "\(tr(m.power)) · \(tr("No battery (desktop Mac)"))").font(.system(size: 13.5, weight: .medium)).foregroundStyle(T.ink) }
         Text(String(format: tr("This %@ draws from mains power, confirmed by the system power source."), m.model.isEmpty ? "Mac" : m.model)).font(.system(size: 10)).foregroundStyle(T.muted)
         Text(tr("Temperature · Fan · GPU: macOS exposes no public API for these on Apple Silicon, and Orbit installs no privileged helper — so they are not shown rather than estimated.")).font(.system(size: 10)).foregroundStyle(T.muted)
     } } }
@@ -221,8 +221,8 @@ struct DashboardView: View {
             EmptyState(icon: "clock.arrow.circlepath", title: model.t("No operations yet"), sub: "Cleanup and uninstall actions you confirm will be recorded here.")
         } else {
             ForEach(model.history.entries.prefix(5)) { e in
-                HStack { Text(e.action).font(.system(size: 12, weight: .medium)).foregroundStyle(T.ink)
-                    Text(e.result).font(.system(size: 11)).foregroundStyle(T.muted)
+                HStack { Text(tr(e.action)).font(.system(size: 12, weight: .medium)).foregroundStyle(T.ink)
+                    Text(trStatus(e.result)).font(.system(size: 11)).foregroundStyle(T.muted)
                     Spacer(); Text(e.date.formatted(date: .abbreviated, time: .shortened)).font(.system(size: 11)).foregroundStyle(T.muted) } }
         }
     } } }

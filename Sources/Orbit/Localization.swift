@@ -49,7 +49,7 @@ enum L10n {
         "Language / Lingua":"Lingua / Language",
         "Every confirmed Cleanup move-to-Trash and every application uninstall, with date, path and outcome (trashed, skipped or failed, and why). Scans and browsing are not recorded. Stored in ~/Library/Application Support/Orbit/history.json (last 500 entries).":"Ogni spostamento nel Cestino confermato dalla Pulizia e ogni disinstallazione, con data, percorso ed esito (cestinato, saltato o fallito, e perché). Scansioni e navigazione non vengono registrate. Salvato in ~/Library/Application Support/Orbit/history.json (ultime 500 voci).",
         "Executable":"Eseguibile",
-        "Failed":"Falliti",
+        "Failed":"Non riuscito",
         "History: ~/Library/Application Support/Orbit/history.json. No telemetry, no network, scans are local and read-only. Temperature/fan/GPU: unavailable without a privileged helper (not installed). App updates: not claimed — no reliable source integrated.":"Cronologia: ~/Library/Application Support/Orbit/history.json. Nessuna telemetria, nessuna rete, scansioni locali e in sola lettura. Temperatura/ventola/GPU: non disponibili senza un helper privilegiato (non installato). Aggiornamenti app: non dichiarati — nessuna fonte affidabile integrata.",
         "Icon cache":"Cache icone",
         "Icons":"Icone",
@@ -144,6 +144,57 @@ enum L10n {
         "Last 30 days":"Ultimi 30 giorni",
         "All time":"Totale",
         "Energy is counted only while Orbit is open (window or menu bar). Stored locally in ~/Library/Application Support/Orbit/energy.json.":"L'energia viene contata solo mentre Orbit è aperto (finestra o barra dei menu). Salvata localmente in ~/Library/Application Support/Orbit/energy.json.",
+        "%@ free":"%@ liberi",
+        "items":"elementi",
+        "%d applications · %@ total":"%d applicazioni · %@ in totale",
+        "Other":"Altro",
+        "exit code":"codice di uscita",
+        "QuickLook":"Quick Look",
+        "DNS":"DNS",
+        "App caches":"Cache delle app",
+        "App logs":"Log delle app",
+        "Old installers":"Vecchi installer",
+        "DerivedData":"DerivedData",
+        "AI tool caches":"Cache degli strumenti AI",
+        "safe":"sicuro",
+        "review":"da rivedere",
+        "protected":"protetto",
+        "trash":"cestino",
+        "uninstall":"disinstallazione",
+        "trashed":"cestinato",
+        "skipped":"saltato",
+        "failed":"non riuscito",
+        "Moved to Trash":"Spostato nel Cestino",
+        "Dry-run OK — would move to Trash":"Prova OK — verrebbe spostato nel Cestino",
+        "Skipped":"Saltato",
+        "protected classification":"classificato come protetto",
+        "missing":"non trovato",
+        "changed since scan (inode mismatch)":"modificato dopo la scansione (inode diverso)",
+        "symlink — skipped":"collegamento simbolico — saltato",
+        "protected system path":"percorso di sistema protetto",
+        "outside allowed roots":"fuori dalle cartelle consentite",
+        "too shallow":"percorso troppo in alto",
+        "Not moved":"Non spostati",
+        "Orbit will not uninstall this app":"Orbit non disinstallerà questa app",
+        "Checking which files belong to this app…":"Verifico quali file appartengono a questa app…",
+        "Another installed copy uses the same bundle ID, so its data is shared: only this app bundle will be moved to Trash.":"Un'altra copia installata usa lo stesso bundle ID, quindi i dati sono condivisi: verrà spostato nel Cestino solo il bundle di questa app.",
+        "invalid application path":"percorso dell'applicazione non valido",
+        "application is a symbolic link":"l'applicazione è un collegamento simbolico",
+        "application not found":"applicazione non trovata",
+        "protected system application":"applicazione di sistema protetta",
+        "not in an Applications folder":"non si trova in una cartella Applicazioni",
+        "no bundle identifier":"nessun bundle identifier",
+        "invalid bundle identifier":"bundle identifier non valido",
+        "Apple application":"applicazione Apple",
+        "application changed since preview":"applicazione modificata dopo l'anteprima",
+        "application could not be moved to Trash":"non è stato possibile spostare l'applicazione nel Cestino",
+        "no longer verified as this app's data":"non più verificato come dato di questa app",
+        "invalid path":"percorso non valido",
+        "symbolic link":"collegamento simbolico",
+        "outside allowed locations":"fuori dalle posizioni consentite",
+        "resolves elsewhere":"punta altrove",
+        "home not found":"cartella Inizio non trovata",
+        "AC Power":"Alimentazione di rete",
     ]
 }
 
@@ -153,4 +204,11 @@ func tr(_ en: String) -> String { Model.shared.t(en) }
 /// Localized text for an uninstall outcome.
 func trResult(_ o: Uninstaller.Outcome) -> String {
     switch o { case .trashed: return tr("trashed"); case .skipped(let w): return "\(tr("skipped")): \(tr(w))"; case .failed(let w): return "\(tr("failed")): \(w)" }
+}
+
+/// Localized text for a stored status such as "trashed", "Skipped: missing" or "failed: <system error>".
+func trStatus(_ s: String) -> String {
+    if L10n.it[s] != nil { return tr(s) }
+    guard let r = s.range(of: ": ") else { return tr(s) }
+    return "\(tr(String(s[..<r.lowerBound]))): \(tr(String(s[r.upperBound...])))"
 }

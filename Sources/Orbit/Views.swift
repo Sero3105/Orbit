@@ -9,7 +9,7 @@ final class CleanupVM: ObservableObject {
     func cancel() { cancelFlag = true }
     func scan() { if busy { return }; busy=true; cancelled=false; cancelFlag=false
         DispatchQueue.global().async { let s=CleanupScanner().scan(shouldCancel: { [weak self] in self?.cancelFlag ?? true })
-            DispatchQueue.main.async { self.items=s; self.groups=Dictionary(grouping:s, by: \.category).sorted{ $0.key < $1.key }.map{ g in CleanupGroup(id: g.key, title: g.key + " · " + fmtBytes(g.value.reduce(0){$0+$1.size}), items: g.value.sorted{ $0.size > $1.size }) }; self.busy=false; self.cancelled=self.cancelFlag; self.selected=Set(s.filter{$0.safety == .safe}.map(\.id)) } } }
+            DispatchQueue.main.async { self.items=s; self.groups=Dictionary(grouping:s, by: \.category).sorted{ $0.key < $1.key }.map{ g in CleanupGroup(id: g.key, title: fmtBytes(g.value.reduce(0){$0+$1.size}), items: g.value.sorted{ $0.size > $1.size }) }; self.busy=false; self.cancelled=self.cancelFlag; self.selected=Set(s.filter{$0.safety == .safe}.map(\.id)) } } }
 }
 struct CleanupGroup: Identifiable { var id: String; var title: String; var items: [Candidate] }
 struct CleanupRow: View {
@@ -18,7 +18,7 @@ struct CleanupRow: View {
         HStack(spacing: 10) {
             Toggle("", isOn: Binding(get: { vm.selected.contains(c.id) }, set: { on in if on { vm.selected.insert(c.id) } else { vm.selected.remove(c.id) } })).labelsHidden().disabled(c.safety == .protected_)
             VStack(alignment:.leading, spacing: 2){ Text((c.path as NSString).lastPathComponent).font(.system(size: 12.5, weight: .medium)).foregroundStyle(T.ink); Text(c.path).font(.system(size: 10.5)).foregroundStyle(T.muted).lineLimit(1) }
-            Spacer(); Text(c.category).font(.system(size: 10.5)).foregroundStyle(T.muted)
+            Spacer(); Text(tr(c.category)).font(.system(size: 10.5)).foregroundStyle(T.muted)
             StatusChip(text: c.safety.rawValue, color: c.safety == .safe ? T.accent : T.amber)
             Text(fmtBytes(c.size)).font(.system(size: 12, weight: .medium)).monospacedDigit().foregroundStyle(T.ink).frame(width: 76, alignment: .trailing)
         }
@@ -49,12 +49,12 @@ struct CleanupView: View {
             } else {
                 List {
                     ForEach(vm.groups) { g in
-                        Text(g.title).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
+                        Text("\(tr(g.id)) · \(g.title)").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
                         ForEach(g.items) { c in CleanupRow(vm: vm, c: c) }
                     }
                 }.scrollContentBackground(.hidden)
             }
-            if !vm.results.isEmpty { Panel(pad: 10) { VStack(alignment:.leading, spacing: 3) { ForEach(vm.results, id:\.0.id) { r in Text("\(r.1): \(r.0.path)").font(.system(size: 10.5)).foregroundStyle(T.muted) } } }.frame(maxHeight: 110) }
+            if !vm.results.isEmpty { Panel(pad: 10) { VStack(alignment:.leading, spacing: 3) { ForEach(vm.results, id:\.0.id) { r in Text("\(trStatus(r.1)): \(r.0.path)").font(.system(size: 10.5)).foregroundStyle(T.muted) } } }.frame(maxHeight: 110) }
             Spacer(minLength: 0)
         }.padding(22).background(T.bg).navigationTitle(model.t("Cleanup"))
         .alert(String(format: tr("Move %d items (%@) to Trash?"), vm.selected.count, fmtBytes(total)), isPresented: $vm.confirm) {
@@ -92,10 +92,10 @@ struct DiskView: View {
                 HStack(spacing: 7) { Image(systemName: "magnifyingglass").font(.system(size: 11)).foregroundStyle(T.muted)
                     TextField(model.t("Filter by name"), text:$vm.query).textFieldStyle(.plain) }
                     .padding(.horizontal, 10).padding(.vertical, 7).background(T.raised, in: RoundedRectangle(cornerRadius: 7)).frame(width: 200)
-                Text("\(shown.count) items").font(.system(size: 11)).foregroundStyle(T.muted) }
+                Text("\(shown.count) \(tr("items"))").font(.system(size: 11)).foregroundStyle(T.muted) }
             HStack { if !vm.complete { StatusChip(text: model.t("Partial scan — some directories unreadable; sizes are a lower bound"), color: T.amber) }; if vm.busy { ProgressView().controlSize(.small); Button(model.t("Cancel scan"), action: vm.cancel).buttonStyle(GhostButtonStyle()) } }
             if vm.entries.isEmpty { Panel { EmptyState(icon: "externaldrive", title: model.t("Scanning…"), sub: "Measuring directory sizes. Large folders can take a while.") } }
-            if !vm.entries.isEmpty { TreemapStrip(entries: Array(shown.prefix(11)).map{($0.name,$0.size,$0.isDir)} + [(name:"Other", size: shown.dropFirst(11).reduce(0){$0+$1.size}, isDir:true)]).frame(height: 86) }
+            if !vm.entries.isEmpty { TreemapStrip(entries: Array(shown.prefix(11)).map{($0.name,$0.size,$0.isDir)} + [(name:tr("Other"), size: shown.dropFirst(11).reduce(0){$0+$1.size}, isDir:true)]).frame(height: 86) }
             HStack(spacing: 9) {
                 SortHead(title: "Name", active: vm.sortMode >= 2, asc: vm.sortMode == 2, align: .center) { vm.sortMode = vm.sortMode == 2 ? 3 : 2 }
                 Text("").frame(width: 90)
@@ -208,7 +208,7 @@ struct AppsView: View {
             }
         } else {
             VStack(alignment: .leading, spacing: 10) {
-                Text("\(vm.apps.count) applications · \(fmtBytes(vm.apps.reduce(0){$0+$1.size})) total").font(.system(size: 15, weight: .semibold)).foregroundStyle(T.ink)
+                Text(String(format: tr("%d applications · %@ total"), vm.apps.count, fmtBytes(vm.apps.reduce(0){$0+$1.size}))).font(.system(size: 15, weight: .semibold)).foregroundStyle(T.ink)
                 Text(tr("Largest applications — select one to see its details, related files and uninstall options.")).font(.system(size: 11)).foregroundStyle(T.muted)
                 ForEach(vm.apps.sorted{$0.size>$1.size}.prefix(6), id: \.id) { a in
                     Button { vm.sel = a } label: { HStack(spacing: 9) { Image(nsImage: NSWorkspace.shared.icon(forFile: a.path)).resizable().frame(width: 24, height: 24)
@@ -224,7 +224,7 @@ final class MaintVM: ObservableObject { @Published var log:[String]=[]; @Publish
     func loadCacheInfo(){ DispatchQueue.global().async { let h=NSHomeDirectory(); let ql=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches/com.apple.QuickLook.thumbnailcache")).0; let icons=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches/com.apple.iconservices")).0; let all=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches")).0
         DispatchQueue.main.async { self.cacheInfo = "\(tr("Right now: Quick Look cache")) \(fmtBytes(ql)) · \(tr("Icon cache")) \(fmtBytes(icons)) · \(tr("All user caches")) \(fmtBytes(all))" } } }
     func run(_ label:String, _ exe:String, _ args:[String]) { DispatchQueue.global().async { let p=Process(); p.executableURL=URL(fileURLWithPath:exe); p.arguments=args; let pipe=Pipe(); p.standardOutput=pipe; p.standardError=pipe
-        do { try p.run(); let data=pipe.fileHandleForReading.readDataToEndOfFile(); p.waitUntilExit(); let out=String(data:data,encoding:.utf8) ?? ""; DispatchQueue.main.async { self.log.insert("\(label): exit \(p.terminationStatus) \(out.prefix(120))", at:0) } } catch { DispatchQueue.main.async { self.log.insert("\(label): failed \(error.localizedDescription)", at:0) } } } } }
+        do { try p.run(); let data=pipe.fileHandleForReading.readDataToEndOfFile(); p.waitUntilExit(); let out=String(data:data,encoding:.utf8) ?? ""; DispatchQueue.main.async { self.log.insert("\(tr(label)): \(tr("exit code")) \(p.terminationStatus) \(out.prefix(120))", at:0) } } catch { DispatchQueue.main.async { self.log.insert("\(tr(label)): \(tr("failed")) \(error.localizedDescription)", at:0) } } } } }
 struct MaintenanceView: View { @EnvironmentObject var model: Model
     @ObservedObject var vm: MaintVM
     var body: some View { VStack(alignment:.leading, spacing: 12) {
@@ -308,7 +308,7 @@ struct HistoryView: View { @EnvironmentObject var model: Model
             Text(tr("Every confirmed Cleanup move-to-Trash and every application uninstall, with date, path and outcome (trashed, skipped or failed, and why). Scans and browsing are not recorded. Stored in ~/Library/Application Support/Orbit/history.json (last 500 entries).")).font(.system(size: 11.5)).foregroundStyle(T.muted)
         } }
         if model.history.entries.isEmpty { Panel(pad: 12) { HStack(spacing: 10){ Image(systemName: "clock.arrow.circlepath").foregroundStyle(T.muted); Text(tr("No operations yet — run a Cleanup scan and confirm an action, and it will be listed here.")).font(.system(size: 12)).foregroundStyle(T.muted) } } }
-        else { List(model.history.entries){ e in VStack(alignment:.leading, spacing: 2){ HStack{ Text(e.action).font(.system(size: 12.5, weight: .medium)).foregroundStyle(T.ink); Text(e.result).font(.system(size: 11)).foregroundStyle(e.result.hasPrefix("trashed") ? T.accent : T.muted); Spacer(); Text(e.date.formatted(date: .abbreviated, time: .shortened)).font(.system(size: 11)).foregroundStyle(T.muted) }
+        else { List(model.history.entries){ e in VStack(alignment:.leading, spacing: 2){ HStack{ Text(tr(e.action)).font(.system(size: 12.5, weight: .medium)).foregroundStyle(T.ink); Text(trStatus(e.result)).font(.system(size: 11)).foregroundStyle(e.result.hasPrefix("trashed") ? T.accent : T.muted); Spacer(); Text(e.date.formatted(date: .abbreviated, time: .shortened)).font(.system(size: 11)).foregroundStyle(T.muted) }
             Text(e.path).font(.system(size: 10.5)).foregroundStyle(T.muted).lineLimit(1) }.listRowBackground(T.surface) }.scrollContentBackground(.hidden) }
     }.padding(22).background(T.bg).navigationTitle(model.t("History")) } }
 
