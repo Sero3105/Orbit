@@ -1,12 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-swift build -c release
+VERSION="${VERSION:-1.0.0}"
 swift run OrbitCheck
+if [ "${UNIVERSAL:-0}" = "1" ]; then   # needs full Xcode (CI); CLT-only builds the host arch
+  swift build -c release --arch arm64 --arch x86_64; BIN=.build/apple/Products/Release/Orbit
+else
+  swift build -c release; BIN=.build/release/Orbit
+fi
 APP=build/Orbit.app
 rm -rf "$APP"; mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp .build/release/Orbit "$APP/Contents/MacOS/Orbit"
-cat > "$APP/Contents/Info.plist" <<'PLIST'
+cp "$BIN" "$APP/Contents/MacOS/Orbit"
+cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
@@ -15,7 +20,7 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 <key>CFBundleName</key><string>Orbit</string>
 <key>CFBundleDisplayName</key><string>Orbit</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleShortVersionString</key><string>1.0.0</string>
+<key>CFBundleShortVersionString</key><string>$VERSION</string>
 <key>CFBundleVersion</key><string>1</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
 <key>NSHighResolutionCapable</key><true/>
