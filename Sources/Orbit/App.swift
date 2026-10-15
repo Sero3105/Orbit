@@ -41,10 +41,13 @@ final class Model: ObservableObject {
     private var lastPowerTick = Date()
     private var ticks = 0
     /// Integrate wall power into the per-day ledger; gaps over 10s (sleep, app suspended) are not counted.
+    @Published var powerStale = false
+    let powerSupported = PowerTelemetry.isSupported()
+    private var hold = PowerHold()
     func recordPower(_ p: PowerReading?) {
-        power = p
         let now = Date(), dt = now.timeIntervalSince(lastPowerTick); lastPowerTick = now
-        guard let p else { return }
+        hold.update(p, at: now); power = hold.shown; powerStale = hold.stale
+        guard let p else { return }  // sensor gap: nothing is integrated
         wattSamples.append(p.wallW > 0 ? p.wallW : p.systemW); if wattSamples.count > 45 { wattSamples.removeFirst() }
         if dt <= 10 { energy.add(watts: p.wallW, seconds: dt, at: now) }
         ticks += 1; if ticks % 15 == 0 { energy.save() }

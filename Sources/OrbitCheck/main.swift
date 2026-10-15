@@ -39,6 +39,14 @@ check(pr == PowerReading(systemW: 7.483, wallW: 8.002, onBattery: false), "power
 check(PowerTelemetry.reading(from: ["BatteryPower": 5000])?.onBattery == true && PowerTelemetry.reading(from: ["BatteryPower": 5000])?.wallW == 0, "power reading on battery")
 check(PowerTelemetry.reading(from: [:]) == nil, "no telemetry -> nil, never a guess")
 if let live = PowerTelemetry.read() { check(live.systemW > 0 && live.systemW < 1000, "live power sane (\(live.systemW) W)") }
+// Sensor gaps: last real reading held (marked stale) for the grace period, then nothing
+var hold = PowerHold(grace: 120); let t0 = Date(), rd = PowerReading(systemW: 7, wallW: 7.5, onBattery: false)
+hold.update(nil, at: t0); check(hold.shown == nil && !hold.stale, "power hold: nothing before the first reading")
+hold.update(rd, at: t0); check(hold.shown == rd && !hold.stale, "power hold: fresh reading shown")
+hold.update(nil, at: t0.addingTimeInterval(30)); check(hold.shown == rd && hold.stale, "power hold: short gap keeps last reading, marked stale")
+hold.update(nil, at: t0.addingTimeInterval(121)); check(hold.shown == nil && !hold.stale, "power hold: long gap shows nothing")
+hold.update(rd, at: t0.addingTimeInterval(130)); check(hold.shown == rd && !hold.stale, "power hold: recovers on next reading")
+if PowerTelemetry.read() != nil { check(PowerTelemetry.isSupported(), "telemetry supported when readable") }
 // Energy ledger + cost
 var led = EnergyLedger(); let now = Date()
 led.add(watts: 10, seconds: 3600, at: now); led.add(watts: 20, seconds: 1800, at: Calendar.current.date(byAdding: .day, value: -3, to: now)!)

@@ -195,6 +195,9 @@ enum L10n {
         "resolves elsewhere":"punta altrove",
         "home not found":"cartella Inizio non trovata",
         "AC Power":"Alimentazione di rete",
+        "Waiting for the power sensor":"In attesa del sensore di alimentazione",
+        "macOS is reporting no power reading right now — this happens briefly, for example when the power controller resets its telemetry. Orbit shows nothing rather than a guess and resumes automatically.":"macOS non sta fornendo letture di potenza in questo momento — succede per poco tempo, ad esempio quando il controller di alimentazione azzera la telemetria. Orbit non mostra nulla invece di tirare a indovinare e riprende da solo.",
+        "Sensor paused — showing the last reading. Nothing is counted until it resumes.":"Sensore in pausa — mostro l'ultima lettura. Nulla viene conteggiato finché non riprende.",
     ]
 }
 

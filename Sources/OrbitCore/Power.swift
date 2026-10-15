@@ -20,6 +20,15 @@ public enum PowerTelemetry {
         return reading(from: t)
     }
 
+    /// True when this Mac publishes power telemetry at all (it may still report zeros for a while, e.g. after the
+    /// power controller resets its counters).
+    public static func isSupported() -> Bool {
+        let svc = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("AppleSmartBattery"))
+        guard svc != 0 else { return false }
+        defer { IOObjectRelease(svc) }
+        return IORegistryEntryCreateCFProperty(svc, "PowerTelemetryData" as CFString, kCFAllocatorDefault, 0) != nil
+    }
+
     /// Pure mapping from the telemetry dictionary (milliwatts) — separated for tests.
     public static func reading(from t: [String: Any]) -> PowerReading? {
         func mW(_ k: String) -> Double { (t[k] as? NSNumber)?.doubleValue ?? 0 }
@@ -27,6 +36,21 @@ public enum PowerTelemetry {
         guard input > 0 || battery > 0 || load > 0 else { return nil }
         let wall = input > 0 ? input + mW("AdapterEfficiencyLoss") : 0
         return PowerReading(systemW: (load > 0 ? load : input + battery) / 1000, wallW: wall / 1000, onBattery: input == 0 && battery > 0)
+    }
+}
+
+/// What to show while the sensor briefly reports nothing: the last real reading, marked stale, for up to `grace`
+/// seconds — then nothing. Only fresh readings are ever integrated into the energy ledger.
+public struct PowerHold {
+    public private(set) var shown: PowerReading?
+    public private(set) var stale = false
+    public let grace: TimeInterval
+    var lastAt = Date.distantPast
+    public init(grace: TimeInterval = 120) { self.grace = grace }
+    public mutating func update(_ p: PowerReading?, at now: Date = Date()) {
+        if let p { shown = p; stale = false; lastAt = now; return }
+        if now.timeIntervalSince(lastAt) > grace { shown = nil }
+        stale = shown != nil
     }
 }
 

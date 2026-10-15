@@ -17,6 +17,8 @@ struct EnergyView: View {
                 HStack(alignment: .top, spacing: 16) { nowPanel(p); pricePanel }
                 projectionPanel
                 measuredPanel
+            } else if model.powerSupported {
+                Panel { EmptyState(icon: "hourglass", title: "Waiting for the power sensor", sub: "macOS is reporting no power reading right now — this happens briefly, for example when the power controller resets its telemetry. Orbit shows nothing rather than a guess and resumes automatically.") }
             } else {
                 Panel { EmptyState(icon: "bolt.slash", title: "Power telemetry unavailable", sub: "This Mac does not publish power telemetry, so Orbit shows nothing rather than a guess.") }
             }
@@ -35,6 +37,7 @@ struct EnergyView: View {
             stat("From the wall", p.onBattery ? tr("On battery") : String(format: "%.1f W", p.wallW))
         }
         Text(tr("“From the wall” adds the power adapter's own loss — it is what the electricity meter counts.")).font(.system(size: 10)).foregroundStyle(T.muted)
+        if model.powerStale { Text(tr("Sensor paused — showing the last reading. Nothing is counted until it resumes.")).font(.system(size: 10.5, weight: .medium)).foregroundStyle(T.amber) }
     } } }
 
     var pricePanel: some View { Panel { VStack(alignment: .leading, spacing: 8) {
