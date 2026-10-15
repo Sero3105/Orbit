@@ -46,4 +46,19 @@ led.add(watts: -5, seconds: 100, at: now)
 check(abs(led.total(days: 1, now: now) - 10) < 1e-9 && abs(led.total(days: 7, now: now) - 20) < 1e-9 && abs(led.allTime - 20) < 1e-9, "energy ledger buckets")
 let ef = URL(fileURLWithPath: tmp + "/energy.json"); led.save(to: ef); check(EnergyLedger.load(from: ef) == led, "energy ledger persists")
 check(abs(energyCost(wh: 2000, pricePerKWh: 0.25) - 0.5) < 1e-12, "energy cost")
+// Uninstall leftovers: every standard location, exact matches only
+let fh = tmp + "/home", id = "com.acme.Widget"
+for p in ["Library/Application Support/\(id)", "Library/Application Support/Widget", "Library/Caches/\(id)", "Library/Containers/\(id)", "Library/Containers/\(id).helper",
+          "Library/Group Containers/ABCDE12345.\(id)", "Library/HTTPStorages/\(id)", "Library/WebKit/\(id)", "Library/Logs/Widget",
+          "Library/Application Support/com.acme.WidgetPro", "Library/Containers/com.acme.Other", "Library/Application Support/Acme"] {
+    try! FileManager.default.createDirectory(atPath: fh + "/" + p, withIntermediateDirectories: true) }
+try! FileManager.default.createDirectory(atPath: fh + "/Library/Preferences/ByHost", withIntermediateDirectories: true)
+try! FileManager.default.createDirectory(atPath: fh + "/Library/LaunchAgents", withIntermediateDirectories: true)
+for p in ["Library/Preferences/\(id).plist", "Library/Preferences/ByHost/\(id).0000-1111.plist", "Library/LaunchAgents/\(id).updater.plist", "Library/Preferences/com.acme.WidgetPro.plist"] {
+    try! "x".write(toFile: fh + "/" + p, atomically: true, encoding: .utf8) }
+let lo = Set(AppDiscovery.leftovers(bundleID: id, appName: "Widget", home: fh).map { String($0.dropFirst(fh.count + 1)) })
+check(lo == ["Library/Application Support/\(id)", "Library/Application Support/Widget", "Library/Caches/\(id)", "Library/Containers/\(id)", "Library/Containers/\(id).helper",
+             "Library/Group Containers/ABCDE12345.\(id)", "Library/HTTPStorages/\(id)", "Library/WebKit/\(id)", "Library/Logs/Widget",
+             "Library/Preferences/\(id).plist", "Library/Preferences/ByHost/\(id).0000-1111.plist", "Library/LaunchAgents/\(id).updater.plist"], "leftovers: complete and exact (got \(lo.sorted()))")
+check(AppDiscovery.leftovers(bundleID: "—", home: fh).isEmpty, "leftovers: no bundle ID -> nothing")
 try? FileManager.default.removeItem(atPath: tmp); print("ALL PASS")

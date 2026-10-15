@@ -167,7 +167,7 @@ struct AppsView: View {
             }
         }.padding(22).background(T.bg).navigationTitle(model.t("Applications"))
         .onAppear { if model.accessGranted("apps") && vm.apps.isEmpty { vm.load() } }
-        .onChange(of: vm.sel) { a in vm.leftovers = a.map{ AppDiscovery.leftovers(bundleID:$0.bundleID) } ?? [] }
+        .onChange(of: vm.sel) { a in vm.leftovers = a.map{ AppDiscovery.leftovers(bundleID:$0.bundleID, appName:$0.name) } ?? [] }
         .alert("\(tr("Uninstall")) \(vm.sel?.name ?? "")?", isPresented:$vm.confirm) { Button(tr("Cancel"), role:.cancel){}; Button(tr("Move to Trash"), role:.destructive){
             guard let a=vm.sel else { return }; var done=0; var failed:[String]=[]
             for path in [a.path]+vm.leftovers { do { try FileManager.default.trashItem(at:URL(fileURLWithPath:path), resultingItemURL:nil); done+=1; model.history.add(.init(date:Date(),action:"uninstall",path:path,result:"trashed")) } catch { failed.append("\(path): \(error.localizedDescription)") } }
