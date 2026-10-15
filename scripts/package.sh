@@ -3,11 +3,13 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 VERSION="${VERSION:-1.0.0}"
 swift run OrbitCheck
-if [ "${UNIVERSAL:-0}" = "1" ]; then   # needs full Xcode (CI); CLT-only builds the host arch
-  swift build -c release --arch arm64 --arch x86_64; BIN=.build/apple/Products/Release/Orbit
-else
-  swift build -c release; BIN=.build/release/Orbit
-fi
+# UNIVERSAL=1 builds arm64 + x86_64. The output folder differs between toolchains, so ask SwiftPM for it.
+if [ "${UNIVERSAL:-0}" = "1" ]; then ARCH_FLAGS=(--arch arm64 --arch x86_64); WANT="arm64 x86_64"; else ARCH_FLAGS=(); WANT=""; fi
+swift build -c release "${ARCH_FLAGS[@]+"${ARCH_FLAGS[@]}"}"
+BIN="$(swift build -c release "${ARCH_FLAGS[@]+"${ARCH_FLAGS[@]}"}" --show-bin-path)/Orbit"
+[ -x "$BIN" ] || { echo "error: release binary not found at $BIN" >&2; exit 1; }
+for a in $WANT; do lipo "$BIN" -verify_arch "$a" || { echo "error: $BIN lacks $a (has: $(lipo -archs "$BIN"))" >&2; exit 1; }; done
+echo "Binary: $BIN ($(lipo -archs "$BIN"))"
 APP=build/Orbit.app
 rm -rf "$APP"; mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/Orbit"
