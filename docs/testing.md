@@ -15,3 +15,6 @@ swift test (temp-dir fixtures: scan read-only, symlink rejection, inode revalida
 - Cleanup scan: VERIFIED visually in real UI (111 candidates, 8.1 GB; AI caches codex-runtimes 3.46 GB, uv 2.59 GB, huggingface 1.46 GB; all "review", none pre-selected).
 - Cleanup select/confirm/Trash, Applications uninstall, Maintenance, Processes terminate, Settings, menu-bar panel: NOT driven end-to-end in this session. Synthetic CGEvent input across dual displays with another fullscreen app stealing frontmost proved unreliable (sidebar navigation worked; button activation intermittent; stray clicks risked hitting other apps, so blind input was stopped). Destructive flows were deliberately not executed on real user data; they are covered by OrbitCheck temp-fixture tests (dry-run, revalidation, symlink/protected rejection) and code review.
 - No crash reports for Orbit; observed terminations were clean (window close -> terminate), no .ips generated.
+
+## Performance round (2026-10-15)
+Baseline and after measurements in docs/performance-baseline.md and docs/performance-results.md (OrbitCheck bench mode, controlled 2,000-file fixture). Regression checks added: fast process count, dirSize cancellation. No destructive tests on real data; no commit/push performed in this round per instructions.

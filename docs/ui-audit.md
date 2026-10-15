@@ -1,0 +1,2 @@
+# UI Audit
+Previous redesign (design system, sidebar, dashboard) retained as base. This round targets: dense dashboard (added Top processes panel fed by shared process VM), grouped cleanup results by category with precomputed headers (type-checker-driven), loading/cancel states on scans, no blank screens, destructive actions remain red and separated, all buttons functional. Remaining known weak spots: sparkline is flat at low CPU (honest data), treemap labels only for wide slices (by design), Settings is minimal (only real settings shown).

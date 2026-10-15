@@ -1,0 +1,3 @@
+# Architecture Audit
+OrbitCore (pure, testable): SafetyValidator (inode/symlink/protected revalidation, dirSize, parallelSizes), CleanupScanner, DiskScanner, AppDiscovery, SystemMetrics (host_statistics, volume, IOKit battery, proc_listpids), ProcessList (on-demand /bin/ps), TrashExecutor, HistoryStore.
+Orbit app: Model (metrics timer 2s, samples ring buffer 45, hoisted view models, nav section), Theme (tokens/components), App (shell + Dashboard), Views (Cleanup/Disk/Apps/Maintenance/Processes/History/Settings). All destructive ops: scan -> classify -> confirm -> revalidate -> Trash -> history. No AGENTS.md/CLAUDE.md in repo (checked).
