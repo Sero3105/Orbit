@@ -52,7 +52,7 @@ struct EnergyView: View {
         Text(tr("If it keeps running at the current draw")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
         HStack(spacing: 10) {
             ForEach([("Per second", 1.0 / 3600), ("Per hour", 1), ("Per day", 24), ("Per week", 168), ("Per month (30 d)", 720)], id: \.0) { label, hours in
-                tile(label, wh: watts * hours, digits: hours < 1 ? 6 : 2)
+                tile(label, wh: watts * hours, digits: 2)
             }
         }
     } } }
@@ -60,7 +60,7 @@ struct EnergyView: View {
     var measuredPanel: some View { Panel { VStack(alignment: .leading, spacing: 10) {
         Text(tr("Actually spent — measured while Orbit was running")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
         HStack(spacing: 10) {
-            tile("Today", wh: model.energy.total(days: 1), digits: 3)
+            tile("Today", wh: model.energy.total(days: 1), digits: 2)
             tile("Last 7 days", wh: model.energy.total(days: 7), digits: 2)
             tile("Last 30 days", wh: model.energy.total(days: 30), digits: 2)
             tile("All time", wh: model.energy.allTime, digits: 2)
@@ -81,7 +81,9 @@ struct EnergyView: View {
         Text(value).font(.system(size: 15, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink) } }
 
     var currencySymbol: String { Locale.current.currencySymbol ?? "€" }
+    /// At least `digits` decimals, more for tiny amounts so they never read as 0,00 (two significant figures).
     func money(_ v: Double, digits: Int) -> String {
-        v.formatted(.currency(code: Locale.current.currency?.identifier ?? "EUR").precision(.fractionLength(digits)))
+        let d = v > 0 ? max(digits, min(8, Int(-floor(log10(v))) + 1)) : digits
+        return v.formatted(.currency(code: Locale.current.currency?.identifier ?? "EUR").precision(.fractionLength(d)))
     }
 }

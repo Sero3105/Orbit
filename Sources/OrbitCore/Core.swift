@@ -190,7 +190,7 @@ public enum ProcessList {
         let s = String(data:data, encoding:.utf8) ?? ""
         return s.split(separator:"\n").compactMap{ line in
             let f=line.split(separator:" ", maxSplits:4, omittingEmptySubsequences:true); guard f.count==5, let pid=Int32(f[0]) else { return nil }
-            return ProcInfo(pid:pid, cpu:Double(f[1]) ?? 0, memKB:Int64(f[2]) ?? 0, user:String(f[3]), name:(String(f[4]) as NSString).lastPathComponent)
+            return ProcInfo(pid:pid, cpu:Double(f[1]) ?? 0, memKB:Int64(f[2]) ?? 0, user:String(f[3]), name:(f[4].trimmingCharacters(in:.whitespaces) as NSString).lastPathComponent)
         }
     }
     @discardableResult public static func terminate(pid:Int32) -> Bool { kill(pid, SIGTERM) == 0 }
