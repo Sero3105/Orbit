@@ -7,7 +7,7 @@ enum T {
     static let raised = Color(red: 0.102, green: 0.129, blue: 0.169)
     static let ink = Color(red: 0.929, green: 0.949, blue: 0.961)
     static let muted = Color(red: 0.541, green: 0.592, blue: 0.647)
-    static let accent = Color(red: 0.659, green: 0.878, blue: 0.290)
+    static let accent = Color(red: 0.596, green: 0.761, blue: 0.408)
     static let cyan = Color(red: 0.337, green: 0.784, blue: 0.863)
     static let amber = Color(red: 0.910, green: 0.702, blue: 0.294)
     static let red = Color(red: 0.898, green: 0.376, blue: 0.361)
@@ -94,18 +94,52 @@ struct TreemapStrip: View {
             HStack(spacing: 2) {
                 ForEach(Array(entries.enumerated()), id: \.offset) { i, e in
                     let frac = total > 0 ? CGFloat(e.size) / CGFloat(total) : 0
+                    let shade = max(0.82 - Double(i) * 0.055, 0.30)
                     ZStack(alignment: .bottomLeading) {
-                        Rectangle().fill(i % 2 == 0 ? T.cyan.opacity(0.55) : T.accent.opacity(0.5))
+                        Rectangle().fill(T.cyan.opacity(shade))
                         if frac * g.size.width > 64 {
                             VStack(alignment: .leading, spacing: 1) {
-                                Text(e.name).font(.system(size: 10, weight: .medium)).foregroundStyle(.black.opacity(0.75)).lineLimit(1)
-                                Text(fmtBytes(e.size)).font(.system(size: 9)).foregroundStyle(.black.opacity(0.6))
-                            }.padding(5)
+                                Text(e.name).font(.system(size: 10, weight: .semibold)).foregroundStyle(.white.opacity(0.95)).lineLimit(1)
+                                Text(fmtBytes(e.size)).font(.system(size: 9)).foregroundStyle(.white.opacity(0.75))
+                            }.padding(6)
                         }
                     }.frame(width: max(frac * g.size.width - 2, 3))
                 }
             }
         }
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+struct PermissionGate: View {
+    var icon: String; var title: String; var bodyText: String
+    var onEnable: () -> Void; var onSkip: () -> Void
+    var body: some View { Panel { VStack(alignment: .leading, spacing: 10) {
+        HStack(spacing: 10) { Image(systemName: icon).font(.system(size: 18)).foregroundStyle(T.accent)
+            Text(title).font(.system(size: 15, weight: .semibold)).foregroundStyle(T.ink) }
+        Text(bodyText).font(.system(size: 12)).foregroundStyle(T.muted)
+        HStack(spacing: 10) {
+            Button("Enable access", action: onEnable).buttonStyle(AccentButtonStyle())
+            Button("Not now", action: onSkip).buttonStyle(GhostButtonStyle())
+        }
+        Text("Your choice is saved on this Mac and remembered between launches. You can change it later in Settings (⌘,). macOS may still show its own system prompt the first time a protected folder is read — that one is controlled by macOS, in System Settings → Privacy & Security.").font(.system(size: 10)).foregroundStyle(T.muted)
+    } } }
+}
+
+struct AccentTextButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.font(.system(size: 12, weight: .medium)).foregroundStyle(T.accent.opacity(configuration.isPressed ? 0.45 : 0.78))
+            .padding(.horizontal, 6).padding(.vertical, 4)
+    }
+}
+struct SortHead: View {
+    var title: String; var active: Bool; var asc: Bool; var align: Alignment = .center; var action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) { Text(title).font(.system(size: 10.5, weight: .semibold)).foregroundStyle(active ? T.ink : T.muted)
+                if active { Image(systemName: asc ? "arrow.up" : "arrow.down").font(.system(size: 8, weight: .bold)).foregroundStyle(T.accent) } }
+            .frame(maxWidth: .infinity, alignment: align).contentShape(Rectangle())
+        }.buttonStyle(.plain)
     }
 }
 
