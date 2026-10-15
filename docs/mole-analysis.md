@@ -1,0 +1,2 @@
+# Mole Analysis
+Evidence: mole.fit positioning + GitHub README (CLI: clean/uninstall/optimize/analyze/status/purge/installer, --dry-run everywhere, history) + installed Mole.app 1.13.0 Info.plist (native app separate from GPL CLI). Orbit mirrors observable IA (cleanup review-before-delete, disk drill-down, live status, maintenance) with independent code. Confidence: high for feature set, n/a for proprietary internals (not inspected beyond plist).
