@@ -122,29 +122,6 @@ public enum AppDiscovery {
             out.append(.init(name:(k as NSString).deletingPathExtension, path:p, bundleID:b?.bundleIdentifier ?? "—", version:(b?.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "—", size:sizes[i])) }
         return out.sorted{$0.name.lowercased()<$1.name.lowercased()}
     }
-    /// Every per-user residue of an app, matched by exact bundle ID (or `<id>.` prefix for the app's own helpers)
-    /// and, where apps conventionally use it, by exact app name. Never fuzzy, never shared vendor folders.
-    public static func leftovers(bundleID:String, appName:String = "", home:String=NSHomeDirectory()) -> [String] {
-        guard bundleID != "—", bundleID.contains(".") else { return [] }
-        let fm = FileManager.default, L = home + "/Library/"
-        var out = Set<String>()
-        func add(_ p: String) { if fm.fileExists(atPath: p) { out.insert(p) } }
-        // Exact bundle-ID paths
-        for d in ["Application Support", "Caches", "Logs", "Containers", "Application Scripts", "HTTPStorages", "WebKit"] { add(L + d + "/" + bundleID) }
-        add(L + "Preferences/\(bundleID).plist"); add(L + "Saved Application State/\(bundleID).savedState")
-        add(L + "Cookies/\(bundleID).binarycookies"); add(L + "HTTPStorages/\(bundleID).binarycookies")
-        add(L + "Caches/com.plausiblelabs.crashreporter.data/\(bundleID)")
-        // The app's own helpers / per-host prefs / launch agents: names starting with "<id>."
-        for d in ["Preferences", "Preferences/ByHost", "LaunchAgents", "Containers", "Application Scripts", "Caches", "HTTPStorages"] {
-            for k in (try? fm.contentsOfDirectory(atPath: L + d)) ?? [] where k.hasPrefix(bundleID + ".") { out.insert(L + d + "/" + k) }
-        }
-        // Group containers: "group.<id>" or "<TEAMID>.<id>"
-        for k in (try? fm.contentsOfDirectory(atPath: L + "Group Containers")) ?? [] where k == "group." + bundleID || k.hasSuffix("." + bundleID) { out.insert(L + "Group Containers/" + k) }
-        // Folders named exactly after the app (common for non-sandboxed apps)
-        let name = appName.trimmingCharacters(in: .whitespaces)
-        if name.count >= 3, !["Apple", "Google", "Microsoft", "Adobe"].contains(name) { for d in ["Application Support", "Caches", "Logs"] { add(L + d + "/" + name) } }
-        return out.sorted()
-    }
 }
 
 public struct Metrics { public var model:String = ""; public var power:String = ""; public var cpu:Double; public var memUsed:Int64; public var memTotal:Int64; public var diskFree:Int64; public var diskTotal:Int64; public var uptime:TimeInterval; public var battery:Int?; public var processCount:Int }

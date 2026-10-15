@@ -48,7 +48,7 @@ Most "Mac cleaner" apps show scary numbers and delete things for you. Orbit does
 <td><img src="docs/media/processes.png" alt="Processes"></td>
 </tr>
 <tr>
-<td><b>Applications</b> — every installed app with version, size and bundle ID. Uninstall removes the app <i>and all its leftovers</i>: preferences, caches, containers, group containers, saved state, cookies, web data, launch agents — matched by exact bundle ID.</td>
+<td><b>Applications</b> — every installed app with version, size and bundle ID. Uninstall removes the app <i>and every leftover Orbit can prove is its own</i>: preferences, caches, containers, signed group containers, saved state, cookies, web data, launch agents. Matching is by exact bundle ID or by the app's own nested helpers — never by name — and data shared with other apps (e.g. Office group containers) is left alone. Apple apps are never uninstalled.</td>
 <td><b>Processes</b> — live, sortable process table. Terminate your own processes after confirmation (SIGTERM).</td>
 </tr>
 <tr>
@@ -91,7 +91,7 @@ Requires **macOS 14 Sonoma or later**.
 | Scans are read-only | Scanners only list and measure; enforced by the check suite |
 | Deletion is recoverable | Everything goes to the Trash via `FileManager.trashItem`, never `rm` |
 | Nothing deleted without you | Every removal needs an explicit confirmation |
-| Paths are revalidated | Right before trashing: same inode, inside an allowed root, not a symlink, not a protected system path |
+| Paths are revalidated | Right before trashing: ownership re-checked, inside an allowed folder, no symlink in the path, not a protected system path. If an app bundle can't be trashed, its data is left untouched |
 | No privilege escalation | No `sudo`, no privileged helper, no SIP/TCC bypass |
 | No shell injection | Fixed executables with fixed arguments; nothing from the UI reaches a shell |
 | No network | Orbit makes no network requests at all |
@@ -123,7 +123,7 @@ To ship a notarized DMG (no Gatekeeper warning), run `release.sh` with `SIGN_ID=
 
 ### Tests
 
-`swift run OrbitCheck` runs the self-contained check suite (XCTest isn't available with Command Line Tools alone). It uses temporary fixtures only and covers: read-only scanning, symlink / protected-path / stale-inode rejection, dry-run execution, disk scanning, uninstall leftover matching, power telemetry mapping, the energy ledger and cost math. `swift run OrbitCheck bench` prints timings. CI runs it on every push.
+`swift run OrbitCheck` runs the self-contained check suite (XCTest isn't available with Command Line Tools alone). It uses temporary fixtures only and covers: read-only scanning, symlink / protected-path / stale-inode rejection, dry-run execution, disk scanning, uninstall leftover matching, power telemetry mapping, the energy ledger and cost math, and an uninstaller regression suite (malicious bundle IDs, look-alike apps such as Chrome vs Chrome Canary, Apple apps, symlinks, injected paths, Trash failures). `swift run OrbitCheck bench` prints timings. CI runs it on every push.
 
 ## Project layout
 

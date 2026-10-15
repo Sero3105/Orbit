@@ -123,6 +123,12 @@ final class AppsVM: ObservableObject { @Published var apps:[AppInfo]=[]; @Publis
     var sortTitle: String { ["Name A–Z","Size ↓ largest","Size ↑ smallest","Name Z–A"][sortMode] }
     var sorted: [AppInfo] { switch sortMode { case 1: return apps.sorted{$0.size>$1.size}; case 2: return apps.sorted{$0.size<$1.size}; case 3: return apps.sorted{$0.name.lowercased()>$1.name.lowercased()}; default: return apps.sorted{$0.name.lowercased()<$1.name.lowercased()} } }
     @Published var sel: AppInfo? = nil; @Published var leftovers:[String]=[]; @Published var confirm=false; @Published var msg=""
+    @Published var plan: Uninstaller.Plan? = nil; @Published var block = ""
+    /// Ownership checks read signatures and other apps, so they run off the main thread.
+    func select(_ a: AppInfo?) { plan=nil; leftovers=[]; block=""; guard let a else { return }
+        DispatchQueue.global().async { let r = Result { try Uninstaller.plan(appPath: a.path) }
+            DispatchQueue.main.async { guard self.sel == a else { return }
+                switch r { case .success(let p): self.plan=p; self.leftovers=p.leftovers; case .failure(let e): self.block = "\(e)" } } } }
     func load(){ DispatchQueue.global().async{ let a=AppDiscovery.apps(); DispatchQueue.main.async{ self.apps=a } } }
     func sizeOf(_ path:String) -> Int64 { var d: ObjCBool=false; if FileManager.default.fileExists(atPath:path,isDirectory:&d), d.boolValue { return SafetyValidator.dirSize(URL(fileURLWithPath:path)).0 }; return ((try? FileManager.default.attributesOfItem(atPath:path))?[.size] as? NSNumber)?.int64Value ?? 0 }
     func detail(_ a: AppInfo) -> [(String,String)] {
@@ -167,11 +173,16 @@ struct AppsView: View {
             }
         }.padding(22).background(T.bg).navigationTitle(model.t("Applications"))
         .onAppear { if model.accessGranted("apps") && vm.apps.isEmpty { vm.load() } }
-        .onChange(of: vm.sel) { a in vm.leftovers = a.map{ AppDiscovery.leftovers(bundleID:$0.bundleID, appName:$0.name) } ?? [] }
+        .onChange(of: vm.sel) { a in vm.select(a) }
         .alert("\(tr("Uninstall")) \(vm.sel?.name ?? "")?", isPresented:$vm.confirm) { Button(tr("Cancel"), role:.cancel){}; Button(tr("Move to Trash"), role:.destructive){
-            guard let a=vm.sel else { return }; var done=0; var failed:[String]=[]
-            for path in [a.path]+vm.leftovers { do { try FileManager.default.trashItem(at:URL(fileURLWithPath:path), resultingItemURL:nil); done+=1; model.history.add(.init(date:Date(),action:"uninstall",path:path,result:"trashed")) } catch { failed.append("\(path): \(error.localizedDescription)") } }
-            model.reloadHistory(); vm.msg = "\(tr("Trashed")) \(done). \(tr("Failed")): \(failed.joined(separator:"; "))"; vm.load(); vm.sel=nil
+            guard let p=vm.plan else { return }
+            DispatchQueue.global().async { let results = Uninstaller.execute(p)
+                DispatchQueue.main.async {
+                    for (path, o) in results { let r: String; switch o { case .trashed: r = "trashed"; case .skipped(let w): r = "skipped: \(w)"; case .failed(let w): r = "failed: \(w)" }
+                        model.history.add(.init(date:Date(), action:"uninstall", path:path, result:r)) }
+                    let done = results.filter { $0.1 == .trashed }.count
+                    let notDone = results.filter { $0.1 != .trashed }.map { "\(($0.0 as NSString).lastPathComponent): \(trResult($0.1))" }
+                    model.reloadHistory(); vm.msg = "\(tr("Trashed")) \(done)" + (notDone.isEmpty ? "" : ". \(tr("Not moved")): \(notDone.joined(separator:"; "))"); vm.load(); vm.sel=nil } }
         } } message: { Text(tr("Only the app bundle and the listed bundle-ID files move to Trash. Nothing else is touched.")) }
     }
     @ViewBuilder var detail: some View {
@@ -185,12 +196,15 @@ struct AppsView: View {
                         VStack(alignment:.leading, spacing: 2){ Text(tr(row.0)).font(.system(size: 9.5, weight: .semibold)).foregroundStyle(T.muted); Text(row.1).font(.system(size: 11.5)).foregroundStyle(T.ink).lineLimit(2) } }
                 }
                 Text("\(tr("Related files")) · \(fmtBytes(vm.leftovers.reduce(0){ $0 + vm.sizeOf($1) })) \(tr("total"))").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-                if vm.leftovers.isEmpty { Text(tr("No preferences, caches or support files match this bundle ID.")).font(.system(size: 11)).foregroundStyle(T.muted) }
+                if !vm.block.isEmpty { Text("\(tr("Orbit will not uninstall this app")): \(tr(vm.block))").font(.system(size: 11, weight: .medium)).foregroundStyle(T.amber) }
+                else if vm.plan == nil { Text(tr("Checking which files belong to this app…")).font(.system(size: 11)).foregroundStyle(T.muted) }
+                else if vm.plan?.sharedBundleID == true { Text(tr("Another installed copy uses the same bundle ID, so its data is shared: only this app bundle will be moved to Trash.")).font(.system(size: 11)).foregroundStyle(T.amber) }
+                else if vm.leftovers.isEmpty { Text(tr("No preferences, caches or support files match this bundle ID.")).font(.system(size: 11)).foregroundStyle(T.muted) }
                 ForEach(vm.leftovers,id:\.self){ lf in HStack { Text(lf).font(.system(size: 10.5)).foregroundStyle(T.ink).lineLimit(1); Spacer(); Text(fmtBytes(vm.sizeOf(lf))).font(.system(size: 10.5)).monospacedDigit().foregroundStyle(T.muted) } }
                 Text(tr("Update check: not available — no reliable source integrated, so Orbit does not claim updates.")).font(.system(size: 10.5)).foregroundStyle(T.muted)
                 Spacer()
                 HStack { Text(vm.msg).font(.system(size: 11)).foregroundStyle(T.muted); Spacer()
-                    Button(tr("Uninstall… (app + listed files to Trash)")) { vm.confirm=true }.buttonStyle(DangerButtonStyle()).disabled(a.path.hasPrefix("/System")) }
+                    Button(tr("Uninstall… (app + listed files to Trash)")) { vm.confirm=true }.buttonStyle(DangerButtonStyle()).disabled(vm.plan == nil) }
             }
         } else {
             VStack(alignment: .leading, spacing: 10) {

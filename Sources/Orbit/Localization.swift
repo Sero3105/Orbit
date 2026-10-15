@@ -1,4 +1,5 @@
 import Foundation
+import OrbitCore
 enum L10n {
     static let it: [String: String] = [
         "Dashboard":"Dashboard", "Processes":"Processi", "Cleanup":"Pulizia", "Disk Analyzer":"Analisi disco",
@@ -148,3 +149,8 @@ enum L10n {
 
 /// Translate an English UI string to the current language (falls back to English).
 func tr(_ en: String) -> String { Model.shared.t(en) }
+
+/// Localized text for an uninstall outcome.
+func trResult(_ o: Uninstaller.Outcome) -> String {
+    switch o { case .trashed: return tr("trashed"); case .skipped(let w): return "\(tr("skipped")): \(tr(w))"; case .failed(let w): return "\(tr("failed")): \(w)" }
+}
