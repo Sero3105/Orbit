@@ -1,0 +1,5 @@
+# UI Testing (2026-10-15)
+- swift build -c release OK; OrbitCheck 8/8 PASS (via scripts/package.sh); installed /Applications/Orbit.app, codesign OK, launched.
+- Screenshot-verified in final build (images inspected): Dashboard (ring gauge, storage, live chip, health chip, quick actions, real values), Cleanup empty state, Processes loading state. Earlier build also verified Disk/Apps lists and Cleanup results (111 candidates) with identical view models/logic.
+- Fix from visual review: Disk/Apps/Processes showed blank screens while loading -> added explicit loading empty-states, rebuilt, reinstalled, Processes loading state re-verified visually.
+- Not re-verified visually in final build: Disk loaded treemap, Apps loaded list, Maintenance, History (synthetic CGEvent navigation across dual displays with the window being moved proved unreliable; these sections share the verified Panel/SectionTitle/EmptyState components and unchanged logic). Window resizing: layout uses flexible frames/min sizes only; no fixed content widths except sidebar 212 and app list 400.
