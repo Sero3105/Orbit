@@ -26,10 +26,14 @@ final class Model: ObservableObject {
     @Published var metrics = SystemMetrics.sample()
     @Published var history = HistoryStore()
     @Published var section: Section = .dashboard
+    let cleanupVM = CleanupVM(); let diskVM = DiskVM(); let appsVM = AppsVM(); let procVM = ProcVM(); let maintVM = MaintVM()
     @Published var cpuSamples: [Double] = []
     @Published var memSamples: [Double] = []
     init() { Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in DispatchQueue.global().async { let m = SystemMetrics.sample(); DispatchQueue.main.async { guard let self else { return }; self.metrics = m; self.cpuSamples.append(m.cpu); self.memSamples.append(m.memTotal > 0 ? Double(m.memUsed)/Double(m.memTotal)*100 : 0); if self.cpuSamples.count > 45 { self.cpuSamples.removeFirst() ; self.memSamples.removeFirst() } } } } }
     var allowedRoots: [String] { CleanupScanner().categories().map(\.root) + [NSHomeDirectory()+"/Applications", "/Applications"] }
+    func accessGranted(_ key: String) -> Bool { UserDefaults.standard.bool(forKey: "orbit.access.\(key)") }
+    func setAccess(_ key: String, _ v: Bool) { UserDefaults.standard.set(v, forKey: "orbit.access.\(key)"); objectWillChange.send() }
+    func resetAccess() { for k in ["cleanup","disk","apps"] { UserDefaults.standard.removeObject(forKey: "orbit.access.\(k)") }; objectWillChange.send() }
     func reloadHistory() { history = HistoryStore() }
 }
 
@@ -39,7 +43,7 @@ struct ContentView: View {
         HStack(spacing: 0) {
             sidebar.frame(width: 212)
             Rectangle().fill(T.surface).frame(width: 1)
-            detail.frame(maxWidth: .infinity, maxHeight: .infinity)
+            detail.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }.background(T.bg)
     }
     var sidebar: some View {
@@ -75,11 +79,11 @@ struct ContentView: View {
     @ViewBuilder var detail: some View {
         switch model.section {
         case .dashboard: DashboardView()
-        case .cleanup: CleanupView()
-        case .disk: DiskView()
-        case .apps: AppsView()
-        case .maintenance: MaintenanceView()
-        case .processes: ProcessesView()
+        case .cleanup: CleanupView(vm: model.cleanupVM)
+        case .disk: DiskView(vm: model.diskVM)
+        case .apps: AppsView(vm: model.appsVM)
+        case .maintenance: MaintenanceView(vm: model.maintVM)
+        case .processes: ProcessesView(vm: model.procVM)
         case .history: HistoryView()
         }
     }
@@ -96,64 +100,101 @@ struct DashboardView: View {
                 StatusChip(text: "Live · updating every 2s", color: T.accent)
             }
             HStack(alignment: .top, spacing: 16) {
-                Panel { VStack(alignment: .leading, spacing: 10) {
-                    Text("Processor").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-                    HStack(spacing: 18) {
-                        RingGauge(value: m.cpu/100, label: "CPU", big: String(format: "%.0f%%", m.cpu)).frame(width: 118, height: 118)
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Memory").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-                            Text(fmtBytes(m.memUsed)).font(.system(size: 24, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
-                            Text("of \(fmtBytes(m.memTotal)) used").font(.system(size: 11)).foregroundStyle(T.muted)
-                            MeterBar(value: m.memTotal > 0 ? Double(m.memUsed)/Double(m.memTotal) : 0, color: T.cyan).frame(width: 170)
-                        }
-                    }
-                    Text("Session trend — real samples since launch, 2s interval").font(.system(size: 10)).foregroundStyle(T.muted).padding(.top, 4)
-                    HStack(spacing: 14) {
-                        VStack(alignment: .leading, spacing: 3) { Text("CPU").font(.system(size: 9)).foregroundStyle(T.muted); Sparkline(samples: model.cpuSamples).frame(width: 190, height: 30) }
-                        VStack(alignment: .leading, spacing: 3) { Text("Memory %").font(.system(size: 9)).foregroundStyle(T.muted); Sparkline(samples: model.memSamples, color: T.cyan).frame(width: 190, height: 30) }
-                    }
-                } }
                 VStack(spacing: 16) {
-                    Panel { VStack(alignment: .leading, spacing: 8) {
-                        Text("Storage").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-                        Text("\(fmtBytes(m.diskFree)) free").font(.system(size: 24, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
-                        MeterBar(value: m.diskTotal > 0 ? 1 - Double(m.diskFree)/Double(m.diskTotal) : 0, color: T.cyan)
-                        Text("of \(fmtBytes(m.diskTotal)) total").font(.system(size: 11)).foregroundStyle(T.muted)
-                    } }
-                    HStack(spacing: 16) {
-                        Panel { VStack(alignment: .leading, spacing: 4) { Text("Uptime").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-                            Text("\(Int(m.uptime/3600))h \(Int(m.uptime.truncatingRemainder(dividingBy: 3600)/60))m").font(.system(size: 20, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink) } }
-                        Panel { VStack(alignment: .leading, spacing: 4) { Text("Processes").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-                            Text("\(m.processCount)").font(.system(size: 20, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink) } }
-                    }
-                    Panel { VStack(alignment: .leading, spacing: 4) {
-                        Text("Battery · Temperature · Fan · GPU").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-                        Text(m.battery.map { "\($0)%" } ?? "Unavailable").font(.system(size: 15, weight: .medium)).foregroundStyle(T.ink)
-                        Text("No public API without a privileged helper — shown unavailable, never invented.").font(.system(size: 10)).foregroundStyle(T.muted)
-                    } }
+                    processorPanel
+                    topCpuPanel
+                }
+                VStack(spacing: 16) {
+                    storagePanel
+                    HStack(spacing: 16) { uptimePanel; processesPanel }
+                    memoryPanel
+                    batteryPanel
                 }.frame(maxWidth: .infinity)
             }
-            Panel { VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Quick actions").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
                 HStack(spacing: 10) {
                     quick("Scan for cleanup", "sparkles", .cleanup); quick("Analyze disk", "externaldrive", .disk)
                     quick("Review applications", "square.grid.2x2", .apps); quick("Inspect processes", "list.bullet.rectangle", .processes); quick("Maintenance", "wrench.and.screwdriver", .maintenance)
                 }
-            } }
-            Panel { VStack(alignment: .leading, spacing: 8) {
-                Text("Recent activity").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-                if model.history.entries.isEmpty {
-                    EmptyState(icon: "clock.arrow.circlepath", title: "No operations yet", sub: "Cleanup and uninstall actions you confirm will be recorded here.")
-                } else {
-                    ForEach(model.history.entries.prefix(5)) { e in
-                        HStack { Text(e.action).font(.system(size: 12, weight: .medium)).foregroundStyle(T.ink)
-                            Text(e.result).font(.system(size: 11)).foregroundStyle(T.muted)
-                            Spacer(); Text(e.date.formatted(date: .abbreviated, time: .shortened)).font(.system(size: 11)).foregroundStyle(T.muted) }
-                    }
-                }
-            } }
+            }
+            recentPanel
         }.padding(22) }.background(T.bg)
+        .onAppear { if model.procVM.procs.isEmpty { model.procVM.load() } }
     }
+    var processorPanel: some View { Panel { VStack(alignment: .leading, spacing: 12) {
+        Text("Processor").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
+        HStack(spacing: 20) {
+            RingGauge(value: m.cpu/100, label: "CPU", big: String(format: "%.0f%%", m.cpu)).frame(width: 124, height: 124)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Memory").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
+                Text(fmtBytes(m.memUsed)).font(.system(size: 24, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
+                Text("of \(fmtBytes(m.memTotal)) used").font(.system(size: 11)).foregroundStyle(T.muted)
+                MeterBar(value: m.memTotal > 0 ? Double(m.memUsed)/Double(m.memTotal) : 0, color: T.cyan).frame(width: 180)
+            }
+        }
+        Text("Session trend — real samples since launch, 2s interval").font(.system(size: 10)).foregroundStyle(T.muted)
+        HStack(spacing: 14) {
+            VStack(alignment: .leading, spacing: 3) { Text("CPU").font(.system(size: 9)).foregroundStyle(T.muted); Sparkline(samples: model.cpuSamples).frame(width: 200, height: 36) }
+            VStack(alignment: .leading, spacing: 3) { Text("Memory %").font(.system(size: 9)).foregroundStyle(T.muted); Sparkline(samples: model.memSamples, color: T.cyan).frame(width: 200, height: 36) }
+        }
+        HStack(spacing: 26) {
+            stat("Peak CPU (session)", model.cpuSamples.max().map{ String(format:"%.0f%%", $0) } ?? "—")
+            stat("Peak memory (session)", model.memSamples.max().map{ String(format:"%.0f%%", $0) } ?? "—")
+            stat("Samples", "\(model.cpuSamples.count)")
+        }
+    } } }
+    var topCpuPanel: some View { Panel { VStack(alignment: .leading, spacing: 8) {
+        HStack { Text("Top processes · CPU").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted); Spacer(); Button("Open Processes") { model.section = .processes }.buttonStyle(GhostButtonStyle()) }
+        if model.procVM.procs.isEmpty { Text("Loading process table…").font(.system(size: 11)).foregroundStyle(T.muted) }
+        ForEach(model.procVM.procs.sorted{$0.cpu>$1.cpu}.prefix(5), id: \.pid) { pr in
+            HStack { Text(pr.name).font(.system(size: 12)).foregroundStyle(T.ink).lineLimit(1); Spacer()
+                MeterBar(value: pr.cpu/100, color: pr.cpu > 50 ? T.amber : T.accent).frame(width: 70)
+                Text(String(format: "%.1f%%", pr.cpu)).font(.system(size: 11)).monospacedDigit().foregroundStyle(T.muted).frame(width: 48, alignment: .trailing)
+                Text(fmtBytes(pr.memKB*1024)).font(.system(size: 11)).monospacedDigit().foregroundStyle(T.muted).frame(width: 64, alignment: .trailing) } }
+    } } }
+    var storagePanel: some View { Panel { VStack(alignment: .leading, spacing: 8) {
+        Text("Storage").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
+        Text("\(fmtBytes(m.diskFree)) free").font(.system(size: 24, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
+        MeterBar(value: m.diskTotal > 0 ? 1 - Double(m.diskFree)/Double(m.diskTotal) : 0, color: T.cyan)
+        Text("of \(fmtBytes(m.diskTotal)) total").font(.system(size: 11)).foregroundStyle(T.muted)
+    } } }
+    var uptimePanel: some View { Panel { VStack(alignment: .leading, spacing: 4) { Text("Uptime").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
+        Text("\(Int(m.uptime/3600))h \(Int(m.uptime.truncatingRemainder(dividingBy: 3600)/60))m").font(.system(size: 20, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink) } } }
+    var processesPanel: some View { Panel { VStack(alignment: .leading, spacing: 4) { Text("Processes").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
+        Text("\(m.processCount)").font(.system(size: 20, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink) } } }
+    var memoryPanel: some View { Panel { VStack(alignment: .leading, spacing: 7) {
+        HStack { Text("Memory by process").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted); Spacer(); Text("click a row to inspect").font(.system(size: 9.5)).foregroundStyle(T.muted) }
+        if model.procVM.procs.isEmpty { Text("Loading process table…").font(.system(size: 11)).foregroundStyle(T.muted) }
+        ForEach(model.procVM.procs.sorted{$0.memKB>$1.memKB}.prefix(5), id: \.pid) { pr in
+            Button { model.section = .processes } label: {
+                HStack { Text(pr.name).font(.system(size: 12)).foregroundStyle(T.ink).lineLimit(1); Spacer()
+                    MeterBar(value: m.memTotal > 0 ? Double(pr.memKB*1024)/Double(m.memTotal) : 0, color: T.cyan).frame(width: 70)
+                    Text(fmtBytes(pr.memKB*1024)).font(.system(size: 11, weight: .medium)).monospacedDigit().foregroundStyle(T.ink).frame(width: 68, alignment: .trailing) }
+                .contentShape(Rectangle())
+            }.buttonStyle(.plain)
+        }
+        Text("Share of total RAM per process. Opens Processes for detail and termination.").font(.system(size: 9.5)).foregroundStyle(T.muted)
+    } } }
+    var batteryPanel: some View { Panel { VStack(alignment: .leading, spacing: 6) {
+        Text("Power & thermal").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
+        HStack(spacing: 8) { Image(systemName: m.battery != nil ? "battery.75" : "powerplug").foregroundStyle(T.accent)
+            Text(m.battery.map { "Battery \($0)%" } ?? "\(m.power) · No battery (desktop Mac)").font(.system(size: 13.5, weight: .medium)).foregroundStyle(T.ink) }
+        Text("This \(m.model.isEmpty ? "Mac" : m.model) draws from mains power, confirmed by the system power source.").font(.system(size: 10)).foregroundStyle(T.muted)
+        Text("Temperature · Fan · GPU: macOS exposes no public API for these on Apple Silicon, and Orbit installs no privileged helper — so they are not shown rather than estimated.").font(.system(size: 10)).foregroundStyle(T.muted)
+    } } }
+    var recentPanel: some View { Panel { VStack(alignment: .leading, spacing: 8) {
+        Text("Recent activity").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
+        if model.history.entries.isEmpty {
+            EmptyState(icon: "clock.arrow.circlepath", title: "No operations yet", sub: "Cleanup and uninstall actions you confirm will be recorded here.")
+        } else {
+            ForEach(model.history.entries.prefix(5)) { e in
+                HStack { Text(e.action).font(.system(size: 12, weight: .medium)).foregroundStyle(T.ink)
+                    Text(e.result).font(.system(size: 11)).foregroundStyle(T.muted)
+                    Spacer(); Text(e.date.formatted(date: .abbreviated, time: .shortened)).font(.system(size: 11)).foregroundStyle(T.muted) } }
+        }
+    } } }
+    func stat(_ label: String, _ value: String) -> some View { VStack(alignment: .leading, spacing: 2) { Text(label).font(.system(size: 9.5)).foregroundStyle(T.muted); Text(value).font(.system(size: 15, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink) } }
     func quick(_ title: String, _ icon: String, _ s: Section) -> some View {
         Button { model.section = s } label: { HStack(spacing: 7) { Image(systemName: icon).foregroundStyle(T.accent); Text(title) } }
             .buttonStyle(GhostButtonStyle())
