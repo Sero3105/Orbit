@@ -1,0 +1,5 @@
+# UI Redesign Audit
+Current: single-file SwiftUI (Sources/Orbit/App.swift, 189 lines), NavigationSplitView + default List sidebar, identical MetricTile cards, .quaternary backgrounds, system accent. OrbitCore unchanged and working (metrics, scanners, safety, history).
+Problems: generic tutorial look, identical card grid, wasted space, no hierarchy, no live history, weak sidebar, no app icons, no treemap.
+Plan: keep all VMs/logic; add Theme.swift (tokens/components), selection-based shell, dashboard with ring gauge + real sparkline (samples collected live, labeled "since launch"), derived health (documented thresholds), quick actions via nav state, disk treemap strip (top 12 + Other), app icons via NSWorkspace.
+Taste-Skill: installed as design-taste-frontend (web-oriented; declares "not for dashboards or app screens"). Applied adapted: flat colour, one accent, tone-step surfaces instead of hairlines/shadows, no gradients, strong type scale, no rows of identical cards, substance over ornament. Web inspector/browser steps not applicable to native SwiftUI — visual gate done via real app screenshots instead.
