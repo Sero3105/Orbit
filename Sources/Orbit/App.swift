@@ -6,6 +6,7 @@ enum Section: String, CaseIterable { case dashboard = "Dashboard", energy = "Ene
 
 @main struct OrbitApp: App {
     @ObservedObject var model = Model.shared
+    init() { let m = Model.shared; DispatchQueue.main.async { Snapshots.runIfRequested(model: m) } }
     var body: some Scene {
         WindowGroup { ContentView().environmentObject(model).preferredColorScheme(.dark).frame(minWidth: 920, minHeight: 580) }
         MenuBarExtra("Orbit", systemImage: "circle.hexagongrid") {
