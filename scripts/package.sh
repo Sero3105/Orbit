@@ -22,7 +22,15 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 <key>CFBundleIconFile</key><string>AppIcon</string>
 </dict></plist>
 PLIST
-# Icon: draw with built binary helper if present, else skip (Finder shows generic)
+# Icon: regenerate from committed asset when available
+if [ -f assets/AppIcon-1024.png ]; then
+  rm -rf /tmp/OrbitAppIcon.iconset; mkdir -p /tmp/OrbitAppIcon.iconset
+  for s in 16 32 64 128 256 512; do
+    sips -z $s $s assets/AppIcon-1024.png --out /tmp/OrbitAppIcon.iconset/icon_${s}x${s}.png >/dev/null
+    sips -z $((s*2)) $((s*2)) assets/AppIcon-1024.png --out /tmp/OrbitAppIcon.iconset/icon_${s}x${s}@2x.png >/dev/null
+  done
+  iconutil -c icns /tmp/OrbitAppIcon.iconset -o build/AppIcon.icns
+fi
 if [ -f build/AppIcon.icns ]; then cp build/AppIcon.icns "$APP/Contents/Resources/"; fi
 codesign --force --deep --sign - "$APP"
 echo "Built $APP"
