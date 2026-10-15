@@ -33,4 +33,17 @@ check(SafetyValidator.validate(Candidate(path:real,category:"t",reason:"t",size:
 let r = TrashExecutor.run(scan, allowedRoots:[tmp], execute:false, history:nil)
 check(r.allSatisfy{ $0.1.hasPrefix("Dry-run") || $0.1.hasPrefix("Skipped") } && FileManager.default.fileExists(atPath: tmp+"/Library/Caches/Foo/a.bin"), "dry-run deletes nothing")
 check(!DiskScanner.scan(tmp).entries.isEmpty, "disk scan")
+// Power telemetry mapping (milliwatts in, watts out)
+let pr = PowerTelemetry.reading(from: ["SystemPowerIn": 7483, "AdapterEfficiencyLoss": 519, "SystemLoad": 7483])
+check(pr == PowerReading(systemW: 7.483, wallW: 8.002, onBattery: false), "power reading on AC")
+check(PowerTelemetry.reading(from: ["BatteryPower": 5000])?.onBattery == true && PowerTelemetry.reading(from: ["BatteryPower": 5000])?.wallW == 0, "power reading on battery")
+check(PowerTelemetry.reading(from: [:]) == nil, "no telemetry -> nil, never a guess")
+if let live = PowerTelemetry.read() { check(live.systemW > 0 && live.systemW < 1000, "live power sane (\(live.systemW) W)") }
+// Energy ledger + cost
+var led = EnergyLedger(); let now = Date()
+led.add(watts: 10, seconds: 3600, at: now); led.add(watts: 20, seconds: 1800, at: Calendar.current.date(byAdding: .day, value: -3, to: now)!)
+led.add(watts: -5, seconds: 100, at: now)
+check(abs(led.total(days: 1, now: now) - 10) < 1e-9 && abs(led.total(days: 7, now: now) - 20) < 1e-9 && abs(led.allTime - 20) < 1e-9, "energy ledger buckets")
+let ef = URL(fileURLWithPath: tmp + "/energy.json"); led.save(to: ef); check(EnergyLedger.load(from: ef) == led, "energy ledger persists")
+check(abs(energyCost(wh: 2000, pricePerKWh: 0.25) - 0.5) < 1e-12, "energy cost")
 try? FileManager.default.removeItem(atPath: tmp); print("ALL PASS")

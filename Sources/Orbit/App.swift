@@ -1,8 +1,8 @@
 import SwiftUI
 import OrbitCore
 
-enum Section: String, CaseIterable { case dashboard = "Dashboard", cleanup = "Cleanup", disk = "Disk Analyzer", apps = "Applications", maintenance = "Maintenance", processes = "Processes", history = "History"
-    var icon: String { switch self { case .dashboard: return "gauge.with.dots.needle.33percent"; case .cleanup: return "sparkles"; case .disk: return "externaldrive"; case .apps: return "square.grid.2x2"; case .maintenance: return "wrench.and.screwdriver"; case .processes: return "list.bullet.rectangle"; case .history: return "clock.arrow.circlepath" } } }
+enum Section: String, CaseIterable { case dashboard = "Dashboard", energy = "Energy", cleanup = "Cleanup", disk = "Disk Analyzer", apps = "Applications", maintenance = "Maintenance", processes = "Processes", history = "History"
+    var icon: String { switch self { case .dashboard: return "gauge.with.dots.needle.33percent"; case .energy: return "bolt"; case .cleanup: return "sparkles"; case .disk: return "externaldrive"; case .apps: return "square.grid.2x2"; case .maintenance: return "wrench.and.screwdriver"; case .processes: return "list.bullet.rectangle"; case .history: return "clock.arrow.circlepath" } } }
 
 @main struct OrbitApp: App {
     @ObservedObject var model = Model.shared
@@ -13,6 +13,7 @@ enum Section: String, CaseIterable { case dashboard = "Dashboard", cleanup = "Cl
                 Text(tr("Orbit — Your Mac, in balance.")).font(.headline)
                 Text("CPU \(Int(model.metrics.cpu))% · \(tr("Memory")) \(fmtBytes(model.metrics.memUsed)) / \(fmtBytes(model.metrics.memTotal))")
                 Text("\(tr("Disk free")) \(fmtBytes(model.metrics.diskFree))")
+                if let p = model.power { Text(String(format: "%@ %.1f W", tr("Power"), p.wallW > 0 ? p.wallW : p.systemW)) }
                 Button(tr("Open Orbit")) { NSApp.activate(ignoringOtherApps: true); for w in NSApp.windows { w.makeKeyAndOrderFront(nil) } }
                 Button(tr("Quit")) { NSApp.terminate(nil) }
             }.padding()
@@ -32,7 +33,23 @@ final class Model: ObservableObject {
     let cleanupVM = CleanupVM(); let diskVM = DiskVM(); let appsVM = AppsVM(); let procVM = ProcVM(); let maintVM = MaintVM()
     @Published var cpuSamples: [Double] = []
     @Published var memSamples: [Double] = []
-    init() { Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in DispatchQueue.global().async { let m = SystemMetrics.sample(); DispatchQueue.main.async { guard let self else { return }; self.metrics = m; self.cpuSamples.append(m.cpu); self.memSamples.append(m.memTotal > 0 ? Double(m.memUsed)/Double(m.memTotal)*100 : 0); if self.cpuSamples.count > 45 { self.cpuSamples.removeFirst() ; self.memSamples.removeFirst() } } } } }
+    @Published var power: PowerReading? = PowerTelemetry.read()
+    @Published var wattSamples: [Double] = []
+    @Published var energy = EnergyLedger.load()
+    @Published var kwhPrice: Double = UserDefaults.standard.double(forKey: "orbit.kwhPrice") { didSet { UserDefaults.standard.set(kwhPrice, forKey: "orbit.kwhPrice") } }
+    private var lastPowerTick = Date()
+    private var ticks = 0
+    /// Integrate wall power into the per-day ledger; gaps over 10s (sleep, app suspended) are not counted.
+    func recordPower(_ p: PowerReading?) {
+        power = p
+        let now = Date(), dt = now.timeIntervalSince(lastPowerTick); lastPowerTick = now
+        guard let p else { return }
+        wattSamples.append(p.wallW > 0 ? p.wallW : p.systemW); if wattSamples.count > 45 { wattSamples.removeFirst() }
+        if dt <= 10 { energy.add(watts: p.wallW, seconds: dt, at: now) }
+        ticks += 1; if ticks % 15 == 0 { energy.save() }
+    }
+    init() { NotificationCenter.default.addObserver(forName: NSApplication.willTerminateNotification, object: nil, queue: .main) { [weak self] _ in self?.energy.save() }
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in DispatchQueue.global().async { let m = SystemMetrics.sample(); let p = PowerTelemetry.read(); DispatchQueue.main.async { guard let self else { return }; self.metrics = m; self.recordPower(p); self.cpuSamples.append(m.cpu); self.memSamples.append(m.memTotal > 0 ? Double(m.memUsed)/Double(m.memTotal)*100 : 0); if self.cpuSamples.count > 45 { self.cpuSamples.removeFirst() ; self.memSamples.removeFirst() } } } } }
     var allowedRoots: [String] { CleanupScanner().categories().map(\.root) + [NSHomeDirectory()+"/Applications", "/Applications"] }
     func accessGranted(_ key: String) -> Bool { UserDefaults.standard.bool(forKey: "orbit.access.\(key)") }
     func setAccess(_ key: String, _ v: Bool) { UserDefaults.standard.set(v, forKey: "orbit.access.\(key)"); objectWillChange.send() }
@@ -58,7 +75,7 @@ struct ContentView: View {
                     Text(model.t("Your Mac, in balance.")).font(.system(size: 9)).foregroundStyle(T.muted) }
             }.padding(.horizontal, 14).padding(.top, 16).padding(.bottom, 18)
             Text(model.t("Monitor")).font(.system(size: 10, weight: .semibold)).foregroundStyle(T.muted).padding(.horizontal, 16).padding(.bottom, 4)
-            navItem(.dashboard); navItem(.processes)
+            navItem(.dashboard); navItem(.energy); navItem(.processes)
             Text(model.t("Manage")).font(.system(size: 10, weight: .semibold)).foregroundStyle(T.muted).padding(.horizontal, 16).padding(.top, 14).padding(.bottom, 4)
             navItem(.cleanup); navItem(.disk); navItem(.apps); navItem(.maintenance)
             Text(model.t("Record")).font(.system(size: 10, weight: .semibold)).foregroundStyle(T.muted).padding(.horizontal, 16).padding(.top, 14).padding(.bottom, 4)
@@ -92,6 +109,7 @@ struct ContentView: View {
     @ViewBuilder var detail: some View {
         switch model.section {
         case .dashboard: DashboardView()
+        case .energy: EnergyView()
         case .cleanup: CleanupView(vm: model.cleanupVM)
         case .disk: DiskView(vm: model.diskVM)
         case .apps: AppsView(vm: model.appsVM)
