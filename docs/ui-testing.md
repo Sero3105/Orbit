@@ -1,5 +1,19 @@
-# UI Testing (2026-10-15)
-- swift build -c release OK; OrbitCheck 8/8 PASS (via scripts/package.sh); installed /Applications/Orbit.app, codesign OK, launched.
-- Screenshot-verified in final build (images inspected): Dashboard (ring gauge, storage, live chip, health chip, quick actions, real values), Cleanup empty state, Processes loading state. Earlier build also verified Disk/Apps lists and Cleanup results (111 candidates) with identical view models/logic.
-- Fix from visual review: Disk/Apps/Processes showed blank screens while loading -> added explicit loading empty-states, rebuilt, reinstalled, Processes loading state re-verified visually.
-- Not re-verified visually in final build: Disk loaded treemap, Apps loaded list, Maintenance, History (synthetic CGEvent navigation across dual displays with the window being moved proved unreliable; these sections share the verified Panel/SectionTitle/EmptyState components and unchanged logic). Window resizing: layout uses flexible frames/min sizes only; no fixed content widths except sidebar 212 and app list 400.
+# UI Testing
+
+UI checks are visual. Render every section offscreen with fictional data (no Screen Recording permission needed, nothing read from or written to the real system):
+
+```bash
+swift build
+.build/debug/Orbit --demo --screenshots /tmp/orbit-shots -orbit.lang en \
+  -orbit.access.cleanup YES -orbit.access.apps YES -AppleLocale en_IE
+```
+
+This writes one PNG per section plus `tour.gif`. Use `-orbit.lang it` to review the Italian interface.
+
+## Checklist
+- Dashboard, Energy, Processes, Cleanup, Applications and Maintenance render with no blank or clipped panels.
+- Loading and empty states appear while data is missing (Disk, Applications, Processes).
+- No untranslated strings when the language is switched to Italian.
+- Layout uses flexible frames and minimum sizes; the only fixed widths are the sidebar (212 pt) and the application list.
+
+Interactive flows (selection, confirmation dialogs, Move to Trash, uninstall, terminate) are verified by code review and by the `OrbitCheck` suite, not by driving the UI on real data.

@@ -1,20 +1,24 @@
 # Testing
-swift test (temp-dir fixtures: scan read-only, symlink rejection, inode revalidation, protected paths, disk sizes, partial scan). Manual: launch installed app, check dashboard/cleanup/disk read-only flows. No destructive test on real data.
 
-## Verification report (2026-10-15)
-- Build: `swift build -c release` OK (CLT Swift 6.4, no Xcode; XCTest unavailable -> OrbitCheck executable suite used).
-- OrbitCheck: 8/8 PASS (scan finds cache, scan read-only, symlink rejected, protected rejected, stale inode rejected, valid accepted, dry-run deletes nothing, disk scan).
-- Package: scripts/package.sh built build/Orbit.app, ad-hoc codesign --verify --deep --strict OK, installed /Applications/Orbit.app (820K, com.orbit.Orbit 1.0.0).
-- Launch: installed app running (launchd parent), main window 900x612 present via CGWindowList, main thread idle in NSApplication run loop (sample), ~/Library/Application Support/Orbit/ created.
-- Bug found+fixed during verification: ProcessList pipe deadlock (waitUntilExit before reading pipe) blocked Model.init; fixed to read before wait, reinstalled, re-verified.
-- Not verified: pixel/screenshot check (screencapture denied in this session: "could not create image from display"), destructive flows on real data (by design — only temp fixtures + Trash semantics in code), Gatekeeper on other Macs (ad-hoc signature).
+XCTest is not available with a Command Line Tools-only toolchain, so tests live in an executable check suite: `Sources/OrbitCheck`.
 
-## UI verification via screenshots (2026-10-15, installed app)
-- Dashboard: VERIFIED visually, multiple frames with changing values (CPU 21.8%->7.9%->20%, Memory ~13-14.9/25.77 GB, Disk 332.6 GB free, Processes 804-833, Uptime 3h30-3h36, Battery/Temp/Fan/GPU "Unavailable" as designed).
-- Disk Analyzer: VERIFIED visually (home listing, real sizes sorted desc, Reveal/Open/Trash buttons, breadcrumb path).
-- Cleanup scan: VERIFIED visually in real UI (111 candidates, 8.1 GB; AI caches codex-runtimes 3.46 GB, uv 2.59 GB, huggingface 1.46 GB; all "review", none pre-selected).
-- Cleanup select/confirm/Trash, Applications uninstall, Maintenance, Processes terminate, Settings, menu-bar panel: NOT driven end-to-end in this session. Synthetic CGEvent input across dual displays with another fullscreen app stealing frontmost proved unreliable (sidebar navigation worked; button activation intermittent; stray clicks risked hitting other apps, so blind input was stopped). Destructive flows were deliberately not executed on real user data; they are covered by OrbitCheck temp-fixture tests (dry-run, revalidation, symlink/protected rejection) and code review.
-- No crash reports for Orbit; observed terminations were clean (window close -> terminate), no .ips generated.
+```bash
+swift run OrbitCheck          # full check suite (prints PASS/FAIL per check, exits non-zero on failure)
+swift run OrbitCheck bench    # timings on a generated fixture (results depend on the machine)
+```
 
-## Performance round (2026-10-15)
-Baseline and after measurements in docs/performance-baseline.md and docs/performance-results.md (OrbitCheck bench mode, controlled 2,000-file fixture). Regression checks added: fast process count, dirSize cancellation. No destructive tests on real data; no commit/push performed in this round per instructions.
+All checks run against temporary fixtures created under `NSTemporaryDirectory()`; nothing in the real home folder is scanned for changes or moved to Trash. Trash operations in tests use an injected closure instead of the real Trash.
+
+## What is covered
+- **Cleanup** — scanning is read-only; revalidation rejects symlinks, protected system paths, stale inodes and paths outside the allowed roots; dry-run deletes nothing.
+- **Disk Analyzer** — inodes recorded at scan time; Move to Trash only inside the home folder, never the home itself, its standard folders or `~/Library` and its direct subfolders; rejects symlinks (including a symlinked parent), non-canonical and missing paths, items swapped since the scan; errors are reported and every outcome is recorded in History.
+- **Uninstaller** — strict bundle-ID validation (path traversal and other malformed IDs), no data from look-alike apps (e.g. Chrome vs Chrome Canary), helpers only when nested and prefixed, shared/foreign group containers excluded, Apple and symlinked apps refused, every path revalidated before trashing, nothing touched when the app bundle cannot be trashed.
+- **Energy** — power telemetry mapping, energy ledger buckets and persistence, cost math.
+- **Metrics** — process count sanity, cancellation of directory sizing.
+
+Security-relevant guards are mutation-tested: disabling any of them makes at least one check fail.
+
+## Not covered automatically
+- UI rendering and interaction (use `Orbit --demo --screenshots <dir>` to render every section with fictional data and inspect the images).
+- Destructive flows on real user data — deliberately never exercised.
+- Gatekeeper behaviour on other Macs (the app is ad-hoc signed and not notarized).
