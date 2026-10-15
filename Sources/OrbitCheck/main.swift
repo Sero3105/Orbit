@@ -177,4 +177,43 @@ do {
     check(or.allSatisfy { $0.1 == .trashed } && Set(trashed) == Set([ok] + op.leftovers) && op.leftovers.count == 4, "happy path: app + 4 owned items trashed")
     check(fm.fileExists(atPath: L + "Caches/com.acme.okayish"), "look-alike ID (okayish) untouched")
 }
+// MARK: Disk Analyzer trash: validation, protected locations, errors, history
+do {
+    let fm = FileManager.default, H = tmp + "/dh"
+    func dir(_ p: String) { try! fm.createDirectory(atPath: p, withIntermediateDirectories: true) }
+    func file(_ p: String) { dir((p as NSString).deletingLastPathComponent); try! "x".write(toFile: p, atomically: true, encoding: .utf8) }
+    func entry(_ p: String) -> DiskEntry { DiskScanner.scan((p as NSString).deletingLastPathComponent).entries.first { $0.path == p }! }
+    for d in ["Documents", "Library/Caches/app.cache", "Projects", "Downloads"] { dir(H + "/" + d) }
+    file(H + "/Projects/a.txt"); file(H + "/Projects/b.txt"); file(H + "/Library/Caches/app.cache/x")
+    file(tmp + "/outside/secret.txt"); try! fm.createSymbolicLink(atPath: H + "/Projects/link", withDestinationPath: tmp + "/outside")
+    try! fm.createSymbolicLink(atPath: H + "/linkdir", withDestinationPath: tmp + "/outside")
+    let ok = entry(H + "/Projects/a.txt")
+    check(DiskScanner.scan(H + "/Projects").entries.allSatisfy { $0.inode != 0 }, "disk scan records inodes")
+    check(DiskTrash.problem(ok.path, inode: ok.inode, home: H) == nil, "disk trash: normal item inside home allowed")
+    check(DiskTrash.problem(H + "/Library/Caches/app.cache", inode: entry(H + "/Library/Caches/app.cache").inode, home: H) == nil, "disk trash: item deeper in ~/Library allowed")
+    for p in ["/Documents", "/Library", "/Library/Caches", "/Downloads"] {
+        check(DiskTrash.problem(H + p, inode: entry(H + p).inode, home: H) == "protected system path", "disk trash: protected \(p)")
+    }
+    let homeIno = DiskScanner.scan(tmp).entries.first { $0.path == H }!.inode
+    check(DiskTrash.problem(H, inode: homeIno, home: H) == "outside allowed roots", "disk trash: home folder itself refused")
+    check(DiskTrash.problem(H + "/Projects/link", inode: entry(H + "/Projects/link").inode, home: H) == "symlink — skipped", "disk trash: symlink refused")
+    var st = stat(); _ = lstat(tmp + "/outside/secret.txt", &st)
+    check(DiskTrash.problem(H + "/linkdir/secret.txt", inode: UInt64(st.st_ino), home: H) == "outside allowed roots", "disk trash: symlinked parent refused")
+    check(DiskTrash.problem(tmp + "/outside/secret.txt", inode: UInt64(st.st_ino), home: H) == "outside allowed roots", "disk trash: path outside home refused")
+    _ = lstat("/etc/hosts", &st); check(DiskTrash.problem("/etc/hosts", inode: UInt64(st.st_ino), home: H) != nil, "disk trash: system file refused")
+    check(DiskTrash.problem(H + "/Projects/../Projects/a.txt", inode: ok.inode, home: H) == "invalid path", "disk trash: non-canonical path refused")
+    check(DiskTrash.problem(H + "/Projects/missing.txt", inode: 1, home: H) == "missing", "disk trash: missing item refused")
+    let b = entry(H + "/Projects/b.txt"); try! fm.removeItem(atPath: b.path); file(b.path)
+    check(DiskTrash.problem(b.path, inode: b.inode, home: H) == "changed since scan (inode mismatch)", "disk trash: item swapped since scan refused")
+    // Execution: outcomes and history
+    let hist = HistoryStore(memory: [])
+    var moved: [String] = []
+    let r1 = DiskTrash.run(ok, home: H, history: hist, trash: { moved.append($0.path); try fm.removeItem(at: $0) })
+    check(r1 == "Moved to Trash" && moved == [ok.path] && hist.entries.first?.result == "trashed" && hist.entries.first?.path == ok.path, "disk trash: success moved and recorded in history")
+    let r2 = DiskTrash.run(entry(H + "/Projects/link"), home: H, history: hist, trash: { moved.append($0.path) })
+    check(r2.hasPrefix("Skipped:") && moved.count == 1 && hist.entries.first?.result.hasPrefix("skipped:") == true && fm.fileExists(atPath: tmp + "/outside/secret.txt"), "disk trash: refusal reported, recorded, nothing moved")
+    let c = entry(H + "/Projects/b.txt")
+    let r3 = DiskTrash.run(c, home: H, history: hist, trash: { _ in throw CocoaError(.fileWriteNoPermission) })
+    check(r3.hasPrefix("Failed:") && hist.entries.first?.result.hasPrefix("failed:") == true && fm.fileExists(atPath: c.path), "disk trash: Trash error reported explicitly and recorded")
+}
 try? FileManager.default.removeItem(atPath: tmp); print("ALL PASS")

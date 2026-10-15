@@ -94,8 +94,8 @@ public struct CleanupScanner {
 }
 extension String { var withDot: String { hasPrefix(".") ? self : "." + self } }
 
-public struct DiskEntry: Identifiable, Hashable { public var id:String{path}; public var name:String; public var path:String; public var size:Int64; public var isDir:Bool; public var complete:Bool
-    public init(name:String,path:String,size:Int64,isDir:Bool,complete:Bool){self.name=name;self.path=path;self.size=size;self.isDir=isDir;self.complete=complete} }
+public struct DiskEntry: Identifiable, Hashable { public var id:String{path}; public var name:String; public var path:String; public var size:Int64; public var isDir:Bool; public var complete:Bool; public var inode:UInt64
+    public init(name:String,path:String,size:Int64,isDir:Bool,complete:Bool,inode:UInt64=0){self.name=name;self.path=path;self.size=size;self.isDir=isDir;self.complete=complete;self.inode=inode} }
 public enum DiskScanner {
     public static func scan(_ dir: String, shouldCancel: () -> Bool = { false }) -> (entries:[DiskEntry], complete:Bool) {
         let fm = FileManager.default; let allComplete = true; var out:[DiskEntry]=[]
@@ -104,9 +104,41 @@ public enum DiskScanner {
         let sizes = SafetyValidator.parallelSizes(paths, shouldCancel: shouldCancel)
         for (i,k) in names.enumerated() {
             var isDir: ObjCBool=false; guard fm.fileExists(atPath:paths[i],isDirectory:&isDir) else { continue }
-            out.append(.init(name:k,path:paths[i],size:sizes[i],isDir:isDir.boolValue,complete:!shouldCancel()))
+            var st = stat(); let ino = lstat(paths[i], &st) == 0 ? UInt64(st.st_ino) : 0
+            out.append(.init(name:k,path:paths[i],size:sizes[i],isDir:isDir.boolValue,complete:!shouldCancel(),inode:ino))
         }
         return (out.sorted{$0.size>$1.size}, allComplete && !shouldCancel())
+    }
+}
+
+/// Disk Analyzer "Move to Trash": only items inside the home folder, never the home itself, its standard
+/// top-level folders, ~/Library or its direct subfolders. Revalidated right before the move; every outcome is recorded.
+public enum DiskTrash {
+    static let protectedHomeFolders: Set<String> = ["Library", "Desktop", "Documents", "Downloads", "Pictures", "Movies", "Music", "Public", "Applications", ".Trash"]
+
+    /// nil when `path` may be trashed now.
+    public static func problem(_ path: String, inode: UInt64, home: String = NSHomeDirectory()) -> String? {
+        guard !path.contains("\0"), path.hasPrefix("/"), (path as NSString).standardizingPath == path else { return "invalid path" }
+        var st = stat(); guard lstat(path, &st) == 0 else { return "missing" }
+        if (st.st_mode & S_IFMT) == S_IFLNK { return "symlink — skipped" }
+        if UInt64(st.st_ino) != inode { return "changed since scan (inode mismatch)" }
+        guard path.hasPrefix(home + "/"), let realHome = Uninstaller.realpath(home), let real = Uninstaller.realpath(path),
+              real == realHome + path.dropFirst(home.count) else { return "outside allowed roots" }  // also catches a symlink in any parent
+        let rel = path.dropFirst(home.count + 1).split(separator: "/").map(String.init)
+        if (rel.count == 1 && protectedHomeFolders.contains(rel[0])) || (rel.first == "Library" && rel.count <= 2) { return "protected system path" }
+        for pre in SafetyValidator.protectedPrefixes where real == pre || real.hasPrefix(pre + "/") { return "protected system path" }
+        return nil
+    }
+
+    /// Validate, move to Trash, record the outcome. Returns "Moved to Trash", "Skipped: <why>" or "Failed: <error>".
+    @discardableResult
+    public static func run(_ e: DiskEntry, home: String = NSHomeDirectory(), history: HistoryStore?,
+                           trash: (URL) throws -> Void = { try FileManager.default.trashItem(at: $0, resultingItemURL: nil) }) -> String {
+        if let why = problem(e.path, inode: e.inode, home: home) {
+            history?.add(.init(date: Date(), action: "trash", path: e.path, result: "skipped: \(why)")); return "Skipped: \(why)"
+        }
+        do { try trash(URL(fileURLWithPath: e.path)); history?.add(.init(date: Date(), action: "trash", path: e.path, result: "trashed")); return "Moved to Trash" }
+        catch { history?.add(.init(date: Date(), action: "trash", path: e.path, result: "failed: \(error.localizedDescription)")); return "Failed: \(error.localizedDescription)" }
     }
 }
 

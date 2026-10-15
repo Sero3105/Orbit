@@ -66,7 +66,7 @@ struct CleanupView: View {
 
 final class DiskVM: ObservableObject {
     @Published var path = NSHomeDirectory(); @Published var entries:[DiskEntry]=[]; @Published var complete=true
-    @Published var query=""; @Published var sortMode=0; @Published var trashTarget: DiskEntry? = nil
+    @Published var query=""; @Published var sortMode=0; @Published var trashTarget: DiskEntry? = nil; @Published var status=""
     var sortTitle: String { ["Size ↓ largest","Size ↑ smallest","Name A–Z","Name Z–A"][sortMode] }
     @Published var busy=false; var cancelFlag=false
     func cancel(){ cancelFlag=true }
@@ -93,6 +93,7 @@ struct DiskView: View {
                     TextField(model.t("Filter by name"), text:$vm.query).textFieldStyle(.plain) }
                     .padding(.horizontal, 10).padding(.vertical, 7).background(T.raised, in: RoundedRectangle(cornerRadius: 7)).frame(width: 200)
                 Text("\(shown.count) \(tr("items"))").font(.system(size: 11)).foregroundStyle(T.muted) }
+            if !vm.status.isEmpty { Text(vm.status).font(.system(size: 11, weight: .medium)).foregroundStyle(vm.status.hasPrefix(tr("Moved to Trash")) ? T.accent : T.amber).lineLimit(2) }
             HStack { if !vm.complete { StatusChip(text: model.t("Partial scan — some directories unreadable; sizes are a lower bound"), color: T.amber) }; if vm.busy { ProgressView().controlSize(.small); Button(model.t("Cancel scan"), action: vm.cancel).buttonStyle(GhostButtonStyle()) } }
             if vm.entries.isEmpty { Panel { EmptyState(icon: "externaldrive", title: model.t("Scanning…"), sub: "Measuring directory sizes. Large folders can take a while.") } }
             if !vm.entries.isEmpty { TreemapStrip(entries: Array(shown.prefix(11)).map{($0.name,$0.size,$0.isDir)} + [(name:tr("Other"), size: shown.dropFirst(11).reduce(0){$0+$1.size}, isDir:true)]).frame(height: 86) }
@@ -114,7 +115,7 @@ struct DiskView: View {
             }.scrollContentBackground(.hidden)
         }.padding(22).background(T.bg).navigationTitle(model.t("Disk Analyzer")).onAppear { if model.accessGranted("disk") { vm.load() } }
         .alert(tr("Move to Trash?"), item:$vm.trashTarget) { e in
-            Button(tr("Cancel"), role:.cancel) {}; Button(tr("Move to Trash"), role:.destructive) { try? FileManager.default.trashItem(at: URL(fileURLWithPath:e.path), resultingItemURL:nil); vm.load() }
+            Button(tr("Cancel"), role:.cancel) {}; Button(tr("Move to Trash"), role:.destructive) { if isDemo { return }; let r = DiskTrash.run(e, history: model.history); vm.status = "\(trStatus(r)): \(e.name)"; model.reloadHistory(); vm.load() }
         } message: { e in Text("\(e.path)\n\(tr("Separate confirmation for the disk analyzer. The item moves to Trash."))") }
     }
 }
