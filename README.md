@@ -11,10 +11,10 @@ A native macOS maintenance app that shows you what your Mac is really doing — 
 [![macOS 14+](https://img.shields.io/badge/macOS-14%2B-111?logo=apple)](#install)
 [![Swift 5.9](https://img.shields.io/badge/Swift-5.9-F05138?logo=swift&logoColor=white)](Package.swift)
 [![No dependencies](https://img.shields.io/badge/dependencies-0-8bc34a)](Package.swift)
-[![CI](https://github.com/Sero3105/OrbitA/actions/workflows/ci.yml/badge.svg)](https://github.com/Sero3105/OrbitA/actions/workflows/ci.yml)
+[![CI](https://github.com/Sero3105/Orbit/actions/workflows/ci.yml/badge.svg)](https://github.com/Sero3105/Orbit/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-[**⬇︎ Download the latest .dmg**](https://github.com/Sero3105/OrbitA/releases/latest) · [Features](#features) · [Safety](#safety-first) · [Build](#build-from-source)
+[**⬇︎ Download the latest .dmg**](https://github.com/Sero3105/Orbit/releases/latest) · [Features](#features) · [Safety](#safety-first) · [Build](#build-from-source)
 
 <img src="docs/media/tour.gif" width="860" alt="Orbit tour: dashboard, energy, processes, cleanup, applications, maintenance">
 
@@ -81,7 +81,7 @@ Enter the **all-in price per kWh** from your electricity bill (energy + network 
 
 ## Install
 
-1. Download **`Orbit-x.y.z.dmg`** from [Releases](https://github.com/Sero3105/OrbitA/releases/latest).
+1. Download **`Orbit-x.y.z.dmg`** from [Releases](https://github.com/Sero3105/Orbit/releases/latest).
 2. Open it and drag **Orbit** onto **Applications**.
 3. First launch: Orbit is not notarized by Apple yet, so macOS will block it once. Open **System Settings → Privacy & Security**, scroll down and click **Open Anyway**.
    <br><sub>Terminal alternative: `xattr -dr com.apple.quarantine /Applications/Orbit.app`</sub>
@@ -107,7 +107,7 @@ Details: [docs/security-model.md](docs/security-model.md) · [docs/cleanup-safet
 Only the Swift toolchain is needed — Command Line Tools are enough, Xcode is optional.
 
 ```bash
-git clone https://github.com/Sero3105/OrbitA.git && cd OrbitA
+git clone https://github.com/Sero3105/Orbit.git && cd Orbit
 swift run Orbit                   # run in development
 swift run OrbitCheck              # run the check suite
 ./scripts/package.sh              # build, check, sign ad hoc, install to /Applications
