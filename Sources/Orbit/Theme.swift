@@ -1,0 +1,139 @@
+import SwiftUI
+import OrbitCore
+
+enum T {
+    static let bg = Color(red: 0.043, green: 0.055, blue: 0.067)
+    static let surface = Color(red: 0.075, green: 0.094, blue: 0.122)
+    static let raised = Color(red: 0.102, green: 0.129, blue: 0.169)
+    static let ink = Color(red: 0.929, green: 0.949, blue: 0.961)
+    static let muted = Color(red: 0.541, green: 0.592, blue: 0.647)
+    static let accent = Color(red: 0.659, green: 0.878, blue: 0.290)
+    static let cyan = Color(red: 0.337, green: 0.784, blue: 0.863)
+    static let amber = Color(red: 0.910, green: 0.702, blue: 0.294)
+    static let red = Color(red: 0.898, green: 0.376, blue: 0.361)
+    static let radius: CGFloat = 10
+}
+
+struct Panel<Content: View>: View {
+    var pad: CGFloat = 16
+    @ViewBuilder var content: Content
+    var body: some View { content.padding(pad).frame(maxWidth: .infinity, alignment: .leading)
+        .background(T.surface, in: RoundedRectangle(cornerRadius: T.radius)) }
+}
+
+struct SectionTitle: View {
+    var title: String; var sub: String = ""
+    var body: some View { VStack(alignment: .leading, spacing: 3) {
+        Text(title).font(.system(size: 28, weight: .semibold)).foregroundStyle(T.ink)
+        if !sub.isEmpty { Text(sub).font(.system(size: 12)).foregroundStyle(T.muted) } } }
+}
+
+struct RingGauge: View {
+    var value: Double // 0...1
+    var label: String; var big: String
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
+    var body: some View {
+        ZStack {
+            Circle().stroke(T.raised, lineWidth: 9)
+            Circle().trim(from: 0, to: min(max(value, 0), 1))
+                .stroke(T.accent, style: StrokeStyle(lineWidth: 9, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .animation(reduceMotion ? nil : .easeOut(duration: 0.25), value: value)
+            VStack(spacing: 1) { Text(big).font(.system(size: 26, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
+                Text(label).font(.system(size: 10)).foregroundStyle(T.muted) }
+        }
+    }
+}
+
+struct MeterBar: View {
+    var value: Double; var color: Color = T.accent; var height: CGFloat = 6
+    var body: some View { GeometryReader { g in
+        ZStack(alignment: .leading) { RoundedRectangle(cornerRadius: height/2).fill(T.raised)
+            RoundedRectangle(cornerRadius: height/2).fill(color).frame(width: g.size.width * min(max(value,0),1)) }
+    }.frame(height: height) }
+}
+
+struct Sparkline: View {
+    var samples: [Double]; var maxV: Double = 100; var color: Color = T.accent
+    var body: some View {
+        GeometryReader { g in
+            if samples.count > 1 {
+                Path { p in
+                    let step = g.size.width / CGFloat(samples.count - 1)
+                    for (i, v) in samples.enumerated() {
+                        let pt = CGPoint(x: CGFloat(i) * step, y: g.size.height - CGFloat(min(max(v,0),maxV)/maxV) * g.size.height)
+                        if i == 0 { p.move(to: pt) } else { p.addLine(to: pt) }
+                    }
+                }.stroke(color, lineWidth: 1.5)
+            }
+        }
+    }
+}
+
+struct StatusChip: View {
+    var text: String; var color: Color
+    var body: some View { HStack(spacing: 6) { Circle().fill(color).frame(width: 7, height: 7)
+        Text(text).font(.system(size: 11, weight: .medium)).foregroundStyle(T.ink) }
+        .padding(.horizontal, 9).padding(.vertical, 5).background(T.raised, in: Capsule()) }
+}
+
+struct EmptyState: View {
+    var icon: String; var title: String; var sub: String
+    var body: some View { VStack(spacing: 8) {
+        Image(systemName: icon).font(.system(size: 26)).foregroundStyle(T.muted)
+        Text(title).font(.system(size: 13, weight: .medium)).foregroundStyle(T.ink)
+        Text(sub).font(.system(size: 11)).foregroundStyle(T.muted).multilineTextAlignment(.center)
+    }.frame(maxWidth: .infinity).padding(.vertical, 36) }
+}
+
+struct TreemapStrip: View {
+    var entries: [(name: String, size: Int64, isDir: Bool)]
+    var total: Int64 { entries.reduce(0) { $0 + $1.size } }
+    var body: some View {
+        GeometryReader { g in
+            HStack(spacing: 2) {
+                ForEach(Array(entries.enumerated()), id: \.offset) { i, e in
+                    let frac = total > 0 ? CGFloat(e.size) / CGFloat(total) : 0
+                    ZStack(alignment: .bottomLeading) {
+                        Rectangle().fill(i % 2 == 0 ? T.cyan.opacity(0.55) : T.accent.opacity(0.5))
+                        if frac * g.size.width > 64 {
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(e.name).font(.system(size: 10, weight: .medium)).foregroundStyle(.black.opacity(0.75)).lineLimit(1)
+                                Text(fmtBytes(e.size)).font(.system(size: 9)).foregroundStyle(.black.opacity(0.6))
+                            }.padding(5)
+                        }
+                    }.frame(width: max(frac * g.size.width - 2, 3))
+                }
+            }
+        }
+    }
+}
+
+struct AccentButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.font(.system(size: 12, weight: .semibold)).foregroundStyle(.black)
+            .padding(.horizontal, 14).padding(.vertical, 7)
+            .background(T.accent.opacity(configuration.isPressed ? 0.75 : 1), in: RoundedRectangle(cornerRadius: 7))
+    }
+}
+struct GhostButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.font(.system(size: 12, weight: .medium)).foregroundStyle(T.ink)
+            .padding(.horizontal, 12).padding(.vertical, 7)
+            .background(T.raised.opacity(configuration.isPressed ? 0.6 : 1), in: RoundedRectangle(cornerRadius: 7))
+    }
+}
+struct DangerButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.font(.system(size: 12, weight: .semibold)).foregroundStyle(.white)
+            .padding(.horizontal, 14).padding(.vertical, 7)
+            .background(T.red.opacity(configuration.isPressed ? 0.75 : 1), in: RoundedRectangle(cornerRadius: 7))
+    }
+}
+
+func healthStatus(_ m: Metrics) -> (String, Color) {
+    if m.diskTotal > 0 && Double(m.diskFree) / Double(m.diskTotal) < 0.10 { return ("Low disk space", T.red) }
+    if m.memTotal > 0 && Double(m.memUsed) / Double(m.memTotal) > 0.90 { return ("High memory pressure", T.amber) }
+    if m.cpu > 85 { return ("Elevated CPU usage", T.amber) }
+    return ("System normal", T.accent)
+}
