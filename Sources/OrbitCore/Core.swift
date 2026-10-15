@@ -28,14 +28,29 @@ public enum SafetyValidator {
         if p.split(separator: "/").count < 3 { return "too shallow" }
         return nil
     }
-    public static func dirSize(_ url: URL) -> (Int64, Bool) { // (bytes, complete)
-        var total: Int64 = 0; var complete = true
-        guard let en = FileManager.default.enumerator(at: url, includingPropertiesForKeys: [.fileSizeKey,.isRegularFileKey], options: []) else { return (0,false) }
+    public static func dirSize(_ url: URL, shouldCancel: () -> Bool = { false }) -> (Int64, Bool) { // (bytes, complete)
+        var total: Int64 = 0; var complete = true; var seen = 0
+        guard let en = FileManager.default.enumerator(at: url, includingPropertiesForKeys: [.totalFileAllocatedSizeKey,.fileSizeKey,.isRegularFileKey], options: []) else { return (0,false) }
         for case let f as URL in en {
-            do { let v = try f.resourceValues(forKeys: [.fileSizeKey,.isRegularFileKey]); if v.isRegularFile == true { total += Int64(v.fileSize ?? 0) } }
+            seen += 1; if seen % 2048 == 0 && shouldCancel() { return (total, false) }
+            do { let v = try f.resourceValues(forKeys: [.totalFileAllocatedSizeKey,.fileSizeKey,.isRegularFileKey]); if v.isRegularFile == true { total += Int64(v.totalFileAllocatedSize ?? v.fileSize ?? 0) } }
             catch { complete = false }
         }
         return (total, complete)
+    }
+    /// Bounded parallel sizing of sibling paths (GCD caps concurrency at core count).
+    public static func parallelSizes(_ paths: [String], shouldCancel: () -> Bool = { false }) -> [Int64] {
+        var out = [Int64](repeating: 0, count: paths.count)
+        out.withUnsafeMutableBufferPointer { buf in
+            DispatchQueue.concurrentPerform(iterations: paths.count) { i in
+                if shouldCancel() { return }
+                var isDir: ObjCBool = false
+                guard FileManager.default.fileExists(atPath: paths[i], isDirectory: &isDir) else { return }
+                buf[i] = isDir.boolValue ? dirSize(URL(fileURLWithPath: paths[i]), shouldCancel: shouldCancel).0
+                    : ((try? FileManager.default.attributesOfItem(atPath: paths[i]))?[.size] as? NSNumber)?.int64Value ?? 0
+            }
+        }
+        return out
     }
 }
 
@@ -54,19 +69,22 @@ public struct CleanupScanner {
         ]
     }
     /// Read-only scan. Direct children of each root become candidates (installers: matching files only).
-    public func scan() -> [Candidate] {
+    public func scan(shouldCancel: () -> Bool = { false }) -> [Candidate] {
         var out: [Candidate] = []
         let fm = FileManager.default; let now = Date()
         for cat in categories() {
+            if shouldCancel() { break }
             guard let kids = try? fm.contentsOfDirectory(atPath: cat.root) else { continue }
-            for k in kids.sorted() {
+            let kidPaths = kids.sorted().map { (cat.root as NSString).appendingPathComponent($0) }
+            let kidSizes = SafetyValidator.parallelSizes(kidPaths, shouldCancel: shouldCancel)
+            for (idx, k) in kids.sorted().enumerated() {
                 let p = (cat.root as NSString).appendingPathComponent(k)
                 if cat.name == "Old installers" { guard [".dmg",".pkg"].contains((p as NSString).pathExtension.lowercased().withDot) else { continue } }
                 let attrs = try? fm.attributesOfItem(atPath: p)
                 let mod = attrs?[.modificationDate] as? Date
                 if let m = mod, now.timeIntervalSince(m) < cat.minAgeDays * 86400 { continue }
                 var isDir: ObjCBool = false; guard fm.fileExists(atPath: p, isDirectory: &isDir) else { continue }
-                let sz = isDir.boolValue ? SafetyValidator.dirSize(URL(fileURLWithPath: p)).0 : (attrs?[.size] as? NSNumber)?.int64Value ?? 0
+                let sz = kidSizes[idx]
                 guard sz > 0, let ino = SafetyValidator.inode(of: p) else { continue }
                 out.append(Candidate(path:p, category:cat.name, reason:cat.reason, size:sz, safety:cat.safety, inode:ino, modified:mod))
             }
@@ -79,15 +97,16 @@ extension String { var withDot: String { hasPrefix(".") ? self : "." + self } }
 public struct DiskEntry: Identifiable, Hashable { public var id:String{path}; public var name:String; public var path:String; public var size:Int64; public var isDir:Bool; public var complete:Bool
     public init(name:String,path:String,size:Int64,isDir:Bool,complete:Bool){self.name=name;self.path=path;self.size=size;self.isDir=isDir;self.complete=complete} }
 public enum DiskScanner {
-    public static func scan(_ dir: String) -> (entries:[DiskEntry], complete:Bool) {
-        let fm = FileManager.default; var allComplete = true; var out:[DiskEntry]=[]
-        for k in (try? fm.contentsOfDirectory(atPath: dir))?.sorted() ?? [] {
-            let p = (dir as NSString).appendingPathComponent(k); var isDir: ObjCBool=false
-            guard fm.fileExists(atPath:p,isDirectory:&isDir) else { continue }
-            if isDir.boolValue { let (s,c)=SafetyValidator.dirSize(URL(fileURLWithPath:p)); if !c {allComplete=false}; out.append(.init(name:k,path:p,size:s,isDir:true,complete:c)) }
-            else { let sz=(try? fm.attributesOfItem(atPath:p))?[.size] as? NSNumber; out.append(.init(name:k,path:p,size:sz?.int64Value ?? 0,isDir:false,complete:true)) }
+    public static func scan(_ dir: String, shouldCancel: () -> Bool = { false }) -> (entries:[DiskEntry], complete:Bool) {
+        let fm = FileManager.default; let allComplete = true; var out:[DiskEntry]=[]
+        let names = (try? fm.contentsOfDirectory(atPath: dir))?.sorted() ?? []
+        let paths = names.map { (dir as NSString).appendingPathComponent($0) }
+        let sizes = SafetyValidator.parallelSizes(paths, shouldCancel: shouldCancel)
+        for (i,k) in names.enumerated() {
+            var isDir: ObjCBool=false; guard fm.fileExists(atPath:paths[i],isDirectory:&isDir) else { continue }
+            out.append(.init(name:k,path:paths[i],size:sizes[i],isDir:isDir.boolValue,complete:!shouldCancel()))
         }
-        return (out.sorted{$0.size>$1.size}, allComplete)
+        return (out.sorted{$0.size>$1.size}, allComplete && !shouldCancel())
     }
 }
 
@@ -96,10 +115,11 @@ public struct AppInfo: Identifiable, Hashable { public var id:String{bundleID+pa
 public enum AppDiscovery {
     public static func apps(extraRoots:[String]=[]) -> [AppInfo] {
         let roots = ["/Applications", NSHomeDirectory()+"/Applications"] + extraRoots; var out:[AppInfo]=[]
-        for r in roots { for k in (try? FileManager.default.contentsOfDirectory(atPath:r)) ?? [] where k.hasSuffix(".app") {
-            let p=(r as NSString).appendingPathComponent(k); let b=Bundle(path:p)
-            out.append(.init(name:(k as NSString).deletingPathExtension, path:p, bundleID:b?.bundleIdentifier ?? "—", version:(b?.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "—", size:SafetyValidator.dirSize(URL(fileURLWithPath:p)).0))
-        }}
+        var paths:[String]=[]
+        for r in roots { for k in (try? FileManager.default.contentsOfDirectory(atPath:r)) ?? [] where k.hasSuffix(".app") { paths.append((r as NSString).appendingPathComponent(k)) } }
+        let sizes = SafetyValidator.parallelSizes(paths)
+        for (i,p) in paths.enumerated() { let b=Bundle(path:p); let k=(p as NSString).lastPathComponent
+            out.append(.init(name:(k as NSString).deletingPathExtension, path:p, bundleID:b?.bundleIdentifier ?? "—", version:(b?.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "—", size:sizes[i])) }
         return out.sorted{$0.name.lowercased()<$1.name.lowercased()}
     }
     public static func leftovers(bundleID:String, home:String=NSHomeDirectory()) -> [String] {
@@ -111,8 +131,13 @@ public enum AppDiscovery {
     }
 }
 
-public struct Metrics { public var cpu:Double; public var memUsed:Int64; public var memTotal:Int64; public var diskFree:Int64; public var diskTotal:Int64; public var uptime:TimeInterval; public var battery:Int?; public var processCount:Int }
+public struct Metrics { public var model:String = ""; public var power:String = ""; public var cpu:Double; public var memUsed:Int64; public var memTotal:Int64; public var diskFree:Int64; public var diskTotal:Int64; public var uptime:TimeInterval; public var battery:Int?; public var processCount:Int }
 public enum SystemMetrics {
+    public static func processCount() -> Int {
+        let n = proc_listpids(UInt32(PROC_ALL_PIDS), 0, nil, 0)
+        guard n > 0 else { return 0 }
+        return Int(n) / MemoryLayout<Int32>.size
+    }
     static var lastCPU: (user:UInt64,sys:UInt64,idle:UInt64,nice:UInt64)?
     public static func sample() -> Metrics {
         var cpu = 0.0
@@ -134,7 +159,8 @@ public enum SystemMetrics {
         if let blob = IOPSCopyPowerSourcesInfo()?.takeRetainedValue(), let list = IOPSCopyPowerSourcesList(blob)?.takeRetainedValue() as? [CFTypeRef] {
             for src in list { if let d = IOPSGetPowerSourceDescription(blob, src)?.takeUnretainedValue() as? [String:Any], let pct = d[kIOPSCurrentCapacityKey as String] as? Int { batt = pct } }
         }
-        return Metrics(cpu:cpu, memUsed:used, memTotal:total, diskFree:Int64(vals?.volumeAvailableCapacity ?? 0), diskTotal:Int64(vals?.volumeTotalCapacity ?? 0), uptime:ProcessInfo.processInfo.systemUptime, battery:batt, processCount:ProcessList.list().count)
+        var modelBuf = [CChar](repeating: 0, count: 128); var msz = 128; sysctlbyname("hw.model", &modelBuf, &msz, nil, 0)
+        return Metrics(model: String(cString: modelBuf), power: batt != nil ? "Battery" : "AC Power", cpu:cpu, memUsed:used, memTotal:total, diskFree:Int64(vals?.volumeAvailableCapacity ?? 0), diskTotal:Int64(vals?.volumeTotalCapacity ?? 0), uptime:ProcessInfo.processInfo.systemUptime, battery:batt, processCount:SystemMetrics.processCount())
     }
 }
 
