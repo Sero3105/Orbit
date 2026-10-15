@@ -24,8 +24,8 @@ struct Panel<Content: View>: View {
 struct SectionTitle: View {
     var title: String; var sub: String = ""
     var body: some View { VStack(alignment: .leading, spacing: 3) {
-        Text(title).font(.system(size: 28, weight: .semibold)).foregroundStyle(T.ink)
-        if !sub.isEmpty { Text(sub).font(.system(size: 12)).foregroundStyle(T.muted) } } }
+        Text(tr(title)).font(.system(size: 28, weight: .semibold)).foregroundStyle(T.ink)
+        if !sub.isEmpty { Text(tr(sub)).font(.system(size: 12)).foregroundStyle(T.muted) } } }
 }
 
 struct RingGauge: View {
@@ -73,7 +73,7 @@ struct Sparkline: View {
 struct StatusChip: View {
     var text: String; var color: Color
     var body: some View { HStack(spacing: 6) { Circle().fill(color).frame(width: 7, height: 7)
-        Text(text).font(.system(size: 11, weight: .medium)).foregroundStyle(T.ink) }
+        Text(tr(text)).font(.system(size: 11, weight: .medium)).foregroundStyle(T.ink) }
         .padding(.horizontal, 9).padding(.vertical, 5).background(T.raised, in: Capsule()) }
 }
 
@@ -81,8 +81,8 @@ struct EmptyState: View {
     var icon: String; var title: String; var sub: String
     var body: some View { VStack(spacing: 8) {
         Image(systemName: icon).font(.system(size: 26)).foregroundStyle(T.muted)
-        Text(title).font(.system(size: 13, weight: .medium)).foregroundStyle(T.ink)
-        Text(sub).font(.system(size: 11)).foregroundStyle(T.muted).multilineTextAlignment(.center)
+        Text(tr(title)).font(.system(size: 13, weight: .medium)).foregroundStyle(T.ink)
+        Text(tr(sub)).font(.system(size: 11)).foregroundStyle(T.muted).multilineTextAlignment(.center)
     }.frame(maxWidth: .infinity).padding(.vertical, 36) }
 }
 
@@ -116,13 +116,13 @@ struct PermissionGate: View {
     var onEnable: () -> Void; var onSkip: () -> Void
     var body: some View { Panel { VStack(alignment: .leading, spacing: 10) {
         HStack(spacing: 10) { Image(systemName: icon).font(.system(size: 18)).foregroundStyle(T.accent)
-            Text(title).font(.system(size: 15, weight: .semibold)).foregroundStyle(T.ink) }
-        Text(bodyText).font(.system(size: 12)).foregroundStyle(T.muted)
+            Text(tr(title)).font(.system(size: 15, weight: .semibold)).foregroundStyle(T.ink) }
+        Text(tr(bodyText)).font(.system(size: 12)).foregroundStyle(T.muted)
         HStack(spacing: 10) {
-            Button("Enable access", action: onEnable).buttonStyle(AccentButtonStyle())
-            Button("Not now", action: onSkip).buttonStyle(GhostButtonStyle())
+            Button(tr("Enable access"), action: onEnable).buttonStyle(AccentButtonStyle())
+            Button(tr("Not now"), action: onSkip).buttonStyle(GhostButtonStyle())
         }
-        Text("Your choice is saved on this Mac and remembered between launches. You can change it later in Settings (⌘,). macOS may still show its own system prompt the first time a protected folder is read — that one is controlled by macOS, in System Settings → Privacy & Security.").font(.system(size: 10)).foregroundStyle(T.muted)
+        Text(tr("Your choice is saved on this Mac and remembered between launches. You can change it later in Settings (⌘,). macOS may still show its own system prompt the first time a protected folder is read — that one is controlled by macOS, in System Settings → Privacy & Security.")).font(.system(size: 10)).foregroundStyle(T.muted)
     } } }
 }
 
@@ -136,7 +136,7 @@ struct SortHead: View {
     var title: String; var active: Bool; var asc: Bool; var align: Alignment = .center; var action: () -> Void
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 4) { Text(title).font(.system(size: 10.5, weight: .semibold)).foregroundStyle(active ? T.ink : T.muted)
+            HStack(spacing: 4) { Text(tr(title)).font(.system(size: 10.5, weight: .semibold)).foregroundStyle(active ? T.ink : T.muted)
                 if active { Image(systemName: asc ? "arrow.up" : "arrow.down").font(.system(size: 8, weight: .bold)).foregroundStyle(T.accent) } }
             .frame(maxWidth: .infinity, alignment: align).contentShape(Rectangle())
         }.buttonStyle(.plain)

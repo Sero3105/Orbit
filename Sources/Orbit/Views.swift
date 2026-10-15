@@ -30,22 +30,22 @@ struct CleanupView: View {
     var total: Int64 { vm.items.filter{vm.selected.contains($0.id)}.reduce(0){$0+$1.size} }
     var body: some View {
         VStack(alignment:.leading, spacing: 14) {
-            HStack(alignment:.top) { SectionTitle(title: "Cleanup", sub: "Review-first. Scanning deletes nothing; execution revalidates every path before moving it to Trash.")
-                Spacer(); StatusChip(text: "\(vm.items.count) candidates · \(fmtBytes(vm.items.reduce(0){$0+$1.size}))", color: T.cyan) }
+            HStack(alignment:.top) { SectionTitle(title: model.t("Cleanup"), sub: model.t("Review-first. Scanning deletes nothing; execution revalidates every path before moving it to Trash."))
+                Spacer(); StatusChip(text: "\(vm.items.count) \(tr("candidates")) · \(fmtBytes(vm.items.reduce(0){$0+$1.size}))", color: T.cyan) }
             if !model.accessGranted("cleanup") {
-                PermissionGate(icon: "sparkles", title: "Cleanup needs folder access",
+                PermissionGate(icon: "sparkles", title: model.t("Cleanup needs folder access"),
                     bodyText: "To find reclaimable space, Orbit reads the names and sizes of files in your Library Caches, Library Logs, Downloads and ~/.cache. It reads nothing else, uploads nothing, and deletes nothing without your review and confirmation.",
                     onEnable: { model.setAccess("cleanup", true) }, onSkip: { model.setAccess("cleanup", false) })
             }
             HStack(spacing: 10) {
-                Button("Scan (read-only)", action: vm.scan).buttonStyle(AccentButtonStyle()).disabled(vm.busy || !model.accessGranted("cleanup"))
-                if vm.busy { ProgressView().controlSize(.small); Button("Cancel", action: vm.cancel).buttonStyle(GhostButtonStyle()) }
+                Button(model.t("Scan (read-only)"), action: vm.scan).buttonStyle(AccentButtonStyle()).disabled(vm.busy || !model.accessGranted("cleanup"))
+                if vm.busy { ProgressView().controlSize(.small); Button(tr("Cancel"), action: vm.cancel).buttonStyle(GhostButtonStyle()) }
                 if vm.cancelled { StatusChip(text: "Scan cancelled — partial results", color: T.amber) }
                 Spacer()
-                Button("Move selected to Trash…") { vm.confirm=true }.buttonStyle(DangerButtonStyle()).disabled(vm.selected.isEmpty).opacity(vm.selected.isEmpty ? 0.45 : 1)
+                Button(model.t("Move selected to Trash…")) { vm.confirm=true }.buttonStyle(DangerButtonStyle()).disabled(vm.selected.isEmpty).opacity(vm.selected.isEmpty ? 0.45 : 1)
             }
             if vm.items.isEmpty && !vm.busy {
-                Panel { EmptyState(icon: "sparkles", title: "No scan yet", sub: "Run a read-only scan to see reclaimable caches, logs, old installers and AI-tool caches. Safe items are pre-selected; review items never are.") }
+                Panel { EmptyState(icon: "sparkles", title: model.t("No scan yet"), sub: "Run a read-only scan to see reclaimable caches, logs, old installers and AI-tool caches. Safe items are pre-selected; review items never are.") }
             } else {
                 List {
                     ForEach(vm.groups) { g in
@@ -56,11 +56,11 @@ struct CleanupView: View {
             }
             if !vm.results.isEmpty { Panel(pad: 10) { VStack(alignment:.leading, spacing: 3) { ForEach(vm.results, id:\.0.id) { r in Text("\(r.1): \(r.0.path)").font(.system(size: 10.5)).foregroundStyle(T.muted) } } }.frame(maxHeight: 110) }
             Spacer(minLength: 0)
-        }.padding(22).background(T.bg).navigationTitle("Cleanup")
-        .alert("Move \(vm.selected.count) items (\(fmtBytes(total))) to Trash?", isPresented: $vm.confirm) {
-            Button("Cancel", role:.cancel) {}
-            Button("Move to Trash", role:.destructive) { let sel=vm.items.filter{vm.selected.contains($0.id)}; vm.results=TrashExecutor.run(sel, allowedRoots:model.allowedRoots, execute:true, history:model.history); model.reloadHistory(); vm.scan() }
-        } message: { Text("Items move to Trash and can be restored. Paths are revalidated immediately before the operation; changed or unsafe items are skipped and reported.") }
+        }.padding(22).background(T.bg).navigationTitle(model.t("Cleanup"))
+        .alert(String(format: tr("Move %d items (%@) to Trash?"), vm.selected.count, fmtBytes(total)), isPresented: $vm.confirm) {
+            Button(tr("Cancel"), role:.cancel) {}
+            Button(tr("Move to Trash"), role:.destructive) { let sel=vm.items.filter{vm.selected.contains($0.id)}; vm.results=TrashExecutor.run(sel, allowedRoots:model.allowedRoots, execute:true, history:model.history); model.reloadHistory(); vm.scan() }
+        } message: { Text(tr("Items move to Trash and can be restored. Paths are revalidated immediately before the operation; changed or unsafe items are skipped and reported.")) }
     }
 }
 
@@ -80,9 +80,9 @@ struct DiskView: View {
     var maxSize: Int64 { shown.map(\.size).max() ?? 1 }
     var body: some View {
         VStack(alignment:.leading, spacing: 12) {
-            SectionTitle(title: "Disk Analyzer", sub: "Measured sizes. Partial scans are flagged — never reported as complete.")
+            SectionTitle(title: model.t("Disk Analyzer"), sub: model.t("Measured sizes. Partial scans are flagged — never reported as complete."))
             if !model.accessGranted("disk") {
-                PermissionGate(icon: "externaldrive", title: "Disk Analyzer needs folder access",
+                PermissionGate(icon: "externaldrive", title: model.t("Disk Analyzer needs folder access"),
                     bodyText: "Orbit measures the size of folders you open, starting with your home folder. Some system folders stay unreadable without extra macOS permission — those are reported as partial, never guessed.",
                     onEnable: { model.setAccess("disk", true); vm.load() }, onSkip: { model.setAccess("disk", false) })
             }
@@ -90,11 +90,11 @@ struct DiskView: View {
                 Text(vm.path).font(.system(size: 12)).foregroundStyle(T.ink).lineLimit(1); Spacer()
 
                 HStack(spacing: 7) { Image(systemName: "magnifyingglass").font(.system(size: 11)).foregroundStyle(T.muted)
-                    TextField("Filter by name", text:$vm.query).textFieldStyle(.plain) }
+                    TextField(model.t("Filter by name"), text:$vm.query).textFieldStyle(.plain) }
                     .padding(.horizontal, 10).padding(.vertical, 7).background(T.raised, in: RoundedRectangle(cornerRadius: 7)).frame(width: 200)
                 Text("\(shown.count) items").font(.system(size: 11)).foregroundStyle(T.muted) }
-            HStack { if !vm.complete { StatusChip(text: "Partial scan — some directories unreadable; sizes are a lower bound", color: T.amber) }; if vm.busy { ProgressView().controlSize(.small); Button("Cancel scan", action: vm.cancel).buttonStyle(GhostButtonStyle()) } }
-            if vm.entries.isEmpty { Panel { EmptyState(icon: "externaldrive", title: "Scanning…", sub: "Measuring directory sizes. Large folders can take a while.") } }
+            HStack { if !vm.complete { StatusChip(text: model.t("Partial scan — some directories unreadable; sizes are a lower bound"), color: T.amber) }; if vm.busy { ProgressView().controlSize(.small); Button(model.t("Cancel scan"), action: vm.cancel).buttonStyle(GhostButtonStyle()) } }
+            if vm.entries.isEmpty { Panel { EmptyState(icon: "externaldrive", title: model.t("Scanning…"), sub: "Measuring directory sizes. Large folders can take a while.") } }
             if !vm.entries.isEmpty { TreemapStrip(entries: Array(shown.prefix(11)).map{($0.name,$0.size,$0.isDir)} + [(name:"Other", size: shown.dropFirst(11).reduce(0){$0+$1.size}, isDir:true)]).frame(height: 86) }
             HStack(spacing: 9) {
                 SortHead(title: "Name", active: vm.sortMode >= 2, asc: vm.sortMode == 2, align: .center) { vm.sortMode = vm.sortMode == 2 ? 3 : 2 }
@@ -104,18 +104,18 @@ struct DiskView: View {
             }.padding(.horizontal, 6)
             List(shown) { e in
                 HStack(spacing: 9) { Image(systemName: e.isDir ? "folder" : "doc").foregroundStyle(e.isDir ? T.cyan : T.muted)
-                    VStack(alignment:.leading, spacing: 1){ Text(e.name).font(.system(size: 12.5)).foregroundStyle(T.ink); if !e.complete { Text("partial").font(.system(size: 10)).foregroundStyle(T.amber) } }
+                    VStack(alignment:.leading, spacing: 1){ Text(e.name).font(.system(size: 12.5)).foregroundStyle(T.ink); if !e.complete { Text(tr("partial")).font(.system(size: 10)).foregroundStyle(T.amber) } }
                     Spacer(); MeterBar(value: maxSize > 0 ? Double(e.size)/Double(maxSize) : 0, color: T.cyan).frame(width: 90)
                     Text(fmtBytes(e.size)).font(.system(size: 12)).monospacedDigit().foregroundStyle(T.ink).frame(width: 86, alignment: .center)
-                    Button("Reveal") { NSWorkspace.shared.selectFile(e.path, inFileViewerRootedAtPath: (e.path as NSString).deletingLastPathComponent) }.buttonStyle(AccentTextButtonStyle()).frame(width: 54)
-                    if e.isDir { Button("Open") { vm.path=e.path; vm.load() }.buttonStyle(AccentTextButtonStyle()).frame(width: 46) } else { Text("").frame(width: 46) }
-                    Button("Trash…") { vm.trashTarget=e }.buttonStyle(AccentTextButtonStyle()).frame(width: 62).padding(.trailing, 10) }
+                    Button(model.t("Reveal")) { NSWorkspace.shared.selectFile(e.path, inFileViewerRootedAtPath: (e.path as NSString).deletingLastPathComponent) }.buttonStyle(AccentTextButtonStyle()).frame(width: 54)
+                    if e.isDir { Button(model.t("Open")) { vm.path=e.path; vm.load() }.buttonStyle(AccentTextButtonStyle()).frame(width: 46) } else { Text("").frame(width: 46) }
+                    Button(model.t("Trash…")) { vm.trashTarget=e }.buttonStyle(AccentTextButtonStyle()).frame(width: 62).padding(.trailing, 10) }
                 .listRowBackground(T.surface)
             }.scrollContentBackground(.hidden)
-        }.padding(22).background(T.bg).navigationTitle("Disk Analyzer").onAppear { if model.accessGranted("disk") { vm.load() } }
-        .alert("Move to Trash?", item:$vm.trashTarget) { e in
-            Button("Cancel", role:.cancel) {}; Button("Move to Trash", role:.destructive) { try? FileManager.default.trashItem(at: URL(fileURLWithPath:e.path), resultingItemURL:nil); vm.load() }
-        } message: { e in Text("\(e.path)\nSeparate confirmation for the disk analyzer. The item moves to Trash.") }
+        }.padding(22).background(T.bg).navigationTitle(model.t("Disk Analyzer")).onAppear { if model.accessGranted("disk") { vm.load() } }
+        .alert(tr("Move to Trash?"), item:$vm.trashTarget) { e in
+            Button(tr("Cancel"), role:.cancel) {}; Button(tr("Move to Trash"), role:.destructive) { try? FileManager.default.trashItem(at: URL(fileURLWithPath:e.path), resultingItemURL:nil); vm.load() }
+        } message: { e in Text("\(e.path)\n\(tr("Separate confirmation for the disk analyzer. The item moves to Trash."))") }
     }
 }
 
@@ -142,9 +142,9 @@ struct AppsView: View {
     @ObservedObject var vm: AppsVM
     var body: some View {
         VStack(alignment:.leading, spacing: 12) {
-            SectionTitle(title: "Applications", sub: "Installed apps and files verified by exact bundle ID. Shared data and user documents are never included.")
+            SectionTitle(title: model.t("Applications"), sub: model.t("Installed apps and files verified by exact bundle ID. Shared data and user documents are never included."))
             if !model.accessGranted("apps") {
-                PermissionGate(icon: "square.grid.2x2", title: "Applications needs folder access",
+                PermissionGate(icon: "square.grid.2x2", title: model.t("Applications needs folder access"),
                     bodyText: "Orbit lists the apps in /Applications and your home Applications folder, reads their version and size, and looks up files matching their exact bundle ID. Nothing is removed without a preview and your confirmation.",
                     onEnable: { model.setAccess("apps", true); vm.load() }, onSkip: { model.setAccess("apps", false) })
             }
@@ -162,40 +162,40 @@ struct AppsView: View {
                         }.scrollContentBackground(.hidden)
                     }
                 }.frame(width: 430)
-                .overlay { if vm.apps.isEmpty { VStack(spacing: 8){ ProgressView(); Text("Loading applications…").font(.system(size: 11)).foregroundStyle(T.muted) } } }
+                .overlay { if vm.apps.isEmpty { VStack(spacing: 8){ ProgressView(); Text(model.t("Loading applications…")).font(.system(size: 11)).foregroundStyle(T.muted) } } }
                 Panel { detail }
             }
-        }.padding(22).background(T.bg).navigationTitle("Applications")
+        }.padding(22).background(T.bg).navigationTitle(model.t("Applications"))
         .onAppear { if model.accessGranted("apps") && vm.apps.isEmpty { vm.load() } }
         .onChange(of: vm.sel) { a in vm.leftovers = a.map{ AppDiscovery.leftovers(bundleID:$0.bundleID) } ?? [] }
-        .alert("Uninstall \(vm.sel?.name ?? "")?", isPresented:$vm.confirm) { Button("Cancel", role:.cancel){}; Button("Move to Trash", role:.destructive){
+        .alert("\(tr("Uninstall")) \(vm.sel?.name ?? "")?", isPresented:$vm.confirm) { Button(tr("Cancel"), role:.cancel){}; Button(tr("Move to Trash"), role:.destructive){
             guard let a=vm.sel else { return }; var done=0; var failed:[String]=[]
             for path in [a.path]+vm.leftovers { do { try FileManager.default.trashItem(at:URL(fileURLWithPath:path), resultingItemURL:nil); done+=1; model.history.add(.init(date:Date(),action:"uninstall",path:path,result:"trashed")) } catch { failed.append("\(path): \(error.localizedDescription)") } }
-            model.reloadHistory(); vm.msg = "Trashed \(done). Failed: \(failed.joined(separator:"; "))"; vm.load(); vm.sel=nil
-        } } message: { Text("Only the app bundle and the listed bundle-ID files move to Trash. Nothing else is touched.") }
+            model.reloadHistory(); vm.msg = "\(tr("Trashed")) \(done). \(tr("Failed")): \(failed.joined(separator:"; "))"; vm.load(); vm.sel=nil
+        } } message: { Text(tr("Only the app bundle and the listed bundle-ID files move to Trash. Nothing else is touched.")) }
     }
     @ViewBuilder var detail: some View {
         if let a=vm.sel {
             VStack(alignment:.leading, spacing: 12) {
                 HStack(spacing: 12) { Image(nsImage: NSWorkspace.shared.icon(forFile: a.path)).resizable().frame(width: 48, height: 48)
                     VStack(alignment:.leading, spacing: 2){ Text(a.name).font(.system(size: 20, weight: .semibold)).foregroundStyle(T.ink)
-                        Text("Version \(a.version) · \(fmtBytes(a.size)) on disk").font(.system(size: 11)).foregroundStyle(T.muted) } }
+                        Text("\(tr("Version")) \(a.version) · \(fmtBytes(a.size)) \(tr("on disk"))").font(.system(size: 11)).foregroundStyle(T.muted) } }
                 LazyVGrid(columns: [GridItem(.flexible(), alignment: .leading), GridItem(.flexible(), alignment: .leading)], spacing: 10) {
                     ForEach(vm.detail(a), id: \.0) { row in
-                        VStack(alignment:.leading, spacing: 2){ Text(row.0).font(.system(size: 9.5, weight: .semibold)).foregroundStyle(T.muted); Text(row.1).font(.system(size: 11.5)).foregroundStyle(T.ink).lineLimit(2) } }
+                        VStack(alignment:.leading, spacing: 2){ Text(tr(row.0)).font(.system(size: 9.5, weight: .semibold)).foregroundStyle(T.muted); Text(row.1).font(.system(size: 11.5)).foregroundStyle(T.ink).lineLimit(2) } }
                 }
-                Text("Related files · \(fmtBytes(vm.leftovers.reduce(0){ $0 + vm.sizeOf($1) })) total").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-                if vm.leftovers.isEmpty { Text("No preferences, caches or support files match this bundle ID.").font(.system(size: 11)).foregroundStyle(T.muted) }
+                Text("\(tr("Related files")) · \(fmtBytes(vm.leftovers.reduce(0){ $0 + vm.sizeOf($1) })) \(tr("total"))").font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
+                if vm.leftovers.isEmpty { Text(tr("No preferences, caches or support files match this bundle ID.")).font(.system(size: 11)).foregroundStyle(T.muted) }
                 ForEach(vm.leftovers,id:\.self){ lf in HStack { Text(lf).font(.system(size: 10.5)).foregroundStyle(T.ink).lineLimit(1); Spacer(); Text(fmtBytes(vm.sizeOf(lf))).font(.system(size: 10.5)).monospacedDigit().foregroundStyle(T.muted) } }
-                Text("Update check: not available — no reliable source integrated, so Orbit does not claim updates.").font(.system(size: 10.5)).foregroundStyle(T.muted)
+                Text(tr("Update check: not available — no reliable source integrated, so Orbit does not claim updates.")).font(.system(size: 10.5)).foregroundStyle(T.muted)
                 Spacer()
                 HStack { Text(vm.msg).font(.system(size: 11)).foregroundStyle(T.muted); Spacer()
-                    Button("Uninstall… (app + listed files to Trash)") { vm.confirm=true }.buttonStyle(DangerButtonStyle()).disabled(a.path.hasPrefix("/System")) }
+                    Button(tr("Uninstall… (app + listed files to Trash)")) { vm.confirm=true }.buttonStyle(DangerButtonStyle()).disabled(a.path.hasPrefix("/System")) }
             }
         } else {
             VStack(alignment: .leading, spacing: 10) {
                 Text("\(vm.apps.count) applications · \(fmtBytes(vm.apps.reduce(0){$0+$1.size})) total").font(.system(size: 15, weight: .semibold)).foregroundStyle(T.ink)
-                Text("Largest applications — select one to see its details, related files and uninstall options.").font(.system(size: 11)).foregroundStyle(T.muted)
+                Text(tr("Largest applications — select one to see its details, related files and uninstall options.")).font(.system(size: 11)).foregroundStyle(T.muted)
                 ForEach(vm.apps.sorted{$0.size>$1.size}.prefix(6), id: \.id) { a in
                     Button { vm.sel = a } label: { HStack(spacing: 9) { Image(nsImage: NSWorkspace.shared.icon(forFile: a.path)).resizable().frame(width: 24, height: 24)
                         Text(a.name).font(.system(size: 12.5)).foregroundStyle(T.ink); Spacer(); Text(fmtBytes(a.size)).font(.system(size: 11.5, weight: .medium)).monospacedDigit().foregroundStyle(T.ink) }.contentShape(Rectangle()) }.buttonStyle(.plain)
@@ -208,40 +208,42 @@ struct AppsView: View {
 
 final class MaintVM: ObservableObject { @Published var log:[String]=[]; @Published var cacheInfo = ""
     func loadCacheInfo(){ DispatchQueue.global().async { let h=NSHomeDirectory(); let ql=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches/com.apple.QuickLook.thumbnailcache")).0; let icons=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches/com.apple.iconservices")).0; let all=SafetyValidator.dirSize(URL(fileURLWithPath: h+"/Library/Caches")).0
-        DispatchQueue.main.async { self.cacheInfo = "Right now: Quick Look cache \(fmtBytes(ql)) · Icon cache \(fmtBytes(icons)) · All user caches \(fmtBytes(all))" } } }
+        DispatchQueue.main.async { self.cacheInfo = "\(tr("Right now: Quick Look cache")) \(fmtBytes(ql)) · \(tr("Icon cache")) \(fmtBytes(icons)) · \(tr("All user caches")) \(fmtBytes(all))" } } }
     func run(_ label:String, _ exe:String, _ args:[String]) { DispatchQueue.global().async { let p=Process(); p.executableURL=URL(fileURLWithPath:exe); p.arguments=args; let pipe=Pipe(); p.standardOutput=pipe; p.standardError=pipe
         do { try p.run(); let data=pipe.fileHandleForReading.readDataToEndOfFile(); p.waitUntilExit(); let out=String(data:data,encoding:.utf8) ?? ""; DispatchQueue.main.async { self.log.insert("\(label): exit \(p.terminationStatus) \(out.prefix(120))", at:0) } } catch { DispatchQueue.main.async { self.log.insert("\(label): failed \(error.localizedDescription)", at:0) } } } } }
-struct MaintenanceView: View { @ObservedObject var vm: MaintVM
+struct MaintenanceView: View { @EnvironmentObject var model: Model
+    @ObservedObject var vm: MaintVM
     var body: some View { VStack(alignment:.leading, spacing: 12) {
-        SectionTitle(title: "Maintenance", sub: "Fix a specific glitch. Find your symptom below, press its Run button, then read the result at the bottom.")
+        SectionTitle(title: model.t("Maintenance"), sub: model.t("Fix a specific glitch. Find your symptom below, press its Run button, then read the result at the bottom."))
         Panel { VStack(alignment: .leading, spacing: 5) {
-            Text("How to use this page").font(.system(size: 12, weight: .semibold)).foregroundStyle(T.ink)
-            Text("1. Match your symptom to a task.  2. Press Run — macOS rebuilds that cache itself.  3. The real outcome appears under Results. Nothing here speeds up your Mac, deletes your files, or needs an administrator password.").font(.system(size: 11.5)).foregroundStyle(T.muted)
+            Text(model.t("How to use this page")).font(.system(size: 12, weight: .semibold)).foregroundStyle(T.ink)
+            Text(tr("1. Match your symptom to a task.  2. Press Run — macOS rebuilds that cache itself.  3. The real outcome appears under Results. Nothing here speeds up your Mac, deletes your files, or needs an administrator password.")).font(.system(size: 11.5)).foregroundStyle(T.muted)
             if !vm.cacheInfo.isEmpty { Text(vm.cacheInfo).font(.system(size: 11)).foregroundStyle(T.cyan) }
         } }.onAppear(perform: vm.loadCacheInfo)
         task("Symptom: Finder previews or thumbnails are stale or broken", "Task: rebuild the Quick Look preview cache. Runs: qlmanage -r cache. First previews may be slower for a few minutes afterwards.", "eye") { vm.run("QuickLook","/usr/bin/qlmanage",["-r","cache"]) }
         task("Symptom: a website opens the wrong address after a network change", "Task: clear the DNS lookup cache. Runs: dscacheutil -flushcache. Lookups rebuild automatically; nothing else changes.", "network") { vm.run("DNS","/usr/bin/dscacheutil",["-flushcache"]) }
         task("Symptom: app icons in Finder or Launchpad are generic or wrong", "Task: restart the icon service. Runs: killall iconservicesagent — it relaunches itself and redraws icons.", "app.badge") { vm.run("Icons","/usr/bin/killall",["iconservicesagent"]) }
-        VStack(alignment: .leading, spacing: 6) { Text("Results").font(.system(size: 12, weight: .semibold)).foregroundStyle(T.ink)
-            if vm.log.isEmpty { Text("Nothing run yet in this session. When you press Run, the task name, exit code and any output will be listed here.").font(.system(size: 11.5)).foregroundStyle(T.muted) }
+        VStack(alignment: .leading, spacing: 6) { Text(model.t("Results")).font(.system(size: 12, weight: .semibold)).foregroundStyle(T.ink)
+            if vm.log.isEmpty { Text(tr("Nothing run yet in this session. When you press Run, the task name, exit code and any output will be listed here.")).font(.system(size: 11.5)).foregroundStyle(T.muted) }
             ForEach(vm.log,id:\.self){ Text($0).font(.system(size: 11).monospaced()).foregroundStyle(T.muted) } }
             .padding(12).frame(maxWidth: .infinity, alignment: .leading).background(T.surface, in: RoundedRectangle(cornerRadius: T.radius))
         Spacer()
-    }.padding(22).background(T.bg).navigationTitle("Maintenance") }
+    }.padding(22).background(T.bg).navigationTitle(model.t("Maintenance")) }
     func task(_ title:String, _ sub:String, _ icon:String, _ action:@escaping ()->Void) -> some View {
         Panel { HStack(spacing: 12) { Image(systemName: icon).foregroundStyle(T.accent).frame(width: 20)
-            VStack(alignment:.leading, spacing: 2){ Text(title).font(.system(size: 13, weight: .medium)).foregroundStyle(T.ink); Text(sub).font(.system(size: 11)).foregroundStyle(T.muted) }
-            Spacer(); Button("Run", action: action).buttonStyle(GhostButtonStyle()) } }
+            VStack(alignment:.leading, spacing: 2){ Text(tr(title)).font(.system(size: 13, weight: .medium)).foregroundStyle(T.ink); Text(tr(sub)).font(.system(size: 11)).foregroundStyle(T.muted) }
+            Spacer(); Button(model.t("Run"), action: action).buttonStyle(GhostButtonStyle()) } }
     }
 }
 
 final class ProcVM: ObservableObject { @Published var procs:[ProcInfo]=[]; @Published var query=""; @Published var killTarget: ProcInfo? = nil; @Published var sortKey="cpu"; @Published var sortAsc=false
     func sortBy(_ key:String){ if sortKey==key { sortAsc.toggle() } else { sortKey=key; sortAsc=(key=="name"||key=="pid"||key=="user") } }
     func load(){ DispatchQueue.global().async{ let p=ProcessList.list(); DispatchQueue.main.async{ self.procs=p } } } }
-struct ProcessesView: View { @ObservedObject var vm: ProcVM
+struct ProcessesView: View { @EnvironmentObject var model: Model
+    @ObservedObject var vm: ProcVM
     func head(_ title: String, _ key: String, _ align: Alignment) -> some View {
         Button { vm.sortBy(key) } label: {
-            HStack(spacing: 4) { Text(title).font(.system(size: 10.5, weight: .semibold)).foregroundStyle(vm.sortKey == key ? T.ink : T.muted)
+            HStack(spacing: 4) { Text(tr(title)).font(.system(size: 10.5, weight: .semibold)).foregroundStyle(vm.sortKey == key ? T.ink : T.muted)
                 if vm.sortKey == key { Image(systemName: vm.sortAsc ? "arrow.up" : "arrow.down").font(.system(size: 8, weight: .bold)).foregroundStyle(T.accent) } }
             .frame(maxWidth: .infinity, alignment: .center).contentShape(Rectangle())
         }.buttonStyle(.plain)
@@ -251,22 +253,22 @@ struct ProcessesView: View { @ObservedObject var vm: ProcVM
         switch vm.sortKey { case "memory": sorted=f.sorted{$0.memKB<$1.memKB}; case "name": sorted=f.sorted{$0.name.lowercased()<$1.name.lowercased()}; case "pid": sorted=f.sorted{$0.pid<$1.pid}; case "user": sorted=f.sorted{$0.user.lowercased()<$1.user.lowercased()}; default: sorted=f.sorted{$0.cpu<$1.cpu} }
         return vm.sortAsc ? sorted : sorted.reversed() }
     var body: some View { VStack(alignment:.leading, spacing: 12) {
-        HStack(alignment:.top){ SectionTitle(title: "Processes", sub: "Live process table — sort it how you like. Termination is explicit, confirmed, and limited to your own processes.")
-            Spacer(); Button("Refresh", action:vm.load).buttonStyle(GhostButtonStyle()) }
+        HStack(alignment:.top){ SectionTitle(title: model.t("Processes"), sub: "Live process table — sort it how you like. Termination is explicit, confirmed, and limited to your own processes.")
+            Spacer(); Button(model.t("Refresh"), action:vm.load).buttonStyle(GhostButtonStyle()) }
         HStack(spacing: 12) {
             HStack(spacing: 7) { Image(systemName: "magnifyingglass").font(.system(size: 11)).foregroundStyle(T.muted)
-                TextField("Filter by name", text:$vm.query).textFieldStyle(.plain) }
+                TextField(model.t("Filter by name"), text:$vm.query).textFieldStyle(.plain) }
                 .padding(.horizontal, 10).padding(.vertical, 7).background(T.raised, in: RoundedRectangle(cornerRadius: 7)).frame(maxWidth: 320)
 
-            Text("\(shown.count) processes").font(.system(size: 11)).foregroundStyle(T.muted)
+            Text("\(shown.count) \(tr("processes"))").font(.system(size: 11)).foregroundStyle(T.muted)
             Spacer()
         }
-        if vm.procs.isEmpty { Panel { EmptyState(icon: "list.bullet.rectangle", title: "Loading processes…", sub: "Reading the live process table.") } }
+        if vm.procs.isEmpty { Panel { EmptyState(icon: "list.bullet.rectangle", title: model.t("Loading processes…"), sub: "Reading the live process table.") } }
         HStack(spacing: 9) {
             head("Process", "name", .leading).frame(maxWidth: .infinity, alignment: .leading)
             head("PID", "pid", .trailing).frame(width: 64, alignment: .trailing)
             head("CPU", "cpu", .trailing).frame(width: 147, alignment: .trailing)
-            head("Memory", "memory", .trailing).frame(width: 84, alignment: .trailing)
+            head(model.t("Memory"), "memory", .trailing).frame(width: 84, alignment: .trailing)
             head("User", "user", .leading).frame(width: 132, alignment: .leading)
             Text("").frame(width: 96)
         }.padding(.horizontal, 6)
@@ -277,33 +279,34 @@ struct ProcessesView: View { @ObservedObject var vm: ProcVM
             MeterBar(value: p.cpu/100, color: p.cpu > 50 ? T.amber : T.accent).frame(width: 60)
             Text(fmtBytes(p.memKB*1024)).font(.system(size: 11.5)).monospacedDigit().foregroundStyle(T.ink).frame(width: 84, alignment: .trailing)
             Text(p.user).font(.system(size: 11)).foregroundStyle(T.muted).lineLimit(1).frame(width: 132, alignment: .leading)
-            Button("Terminate…"){ vm.killTarget=p }.buttonStyle(GhostButtonStyle()).disabled(p.pid < 100 || p.user != NSUserName()).frame(width: 96)
+            Button(model.t("Terminate…")){ vm.killTarget=p }.buttonStyle(GhostButtonStyle()).disabled(p.pid < 100 || p.user != NSUserName()).frame(width: 96)
         }.listRowBackground(T.surface) }
             .scrollContentBackground(.hidden)
-    }.padding(22).background(T.bg).navigationTitle("Processes").onAppear(perform:vm.load)
-    .alert("Terminate process?", item:$vm.killTarget){ p in Button("Cancel", role:.cancel){}; Button("Terminate", role:.destructive){ _=ProcessList.terminate(pid:p.pid); vm.load() } } message:{ p in Text("\(p.name) (PID \(p.pid)) will receive SIGTERM. Unsaved work in that process may be lost.") } } }
+    }.padding(22).background(T.bg).navigationTitle(model.t("Processes")).onAppear(perform:vm.load)
+    .alert(tr("Terminate process?"), item:$vm.killTarget){ p in Button(tr("Cancel"), role:.cancel){}; Button(tr("Terminate"), role:.destructive){ _=ProcessList.terminate(pid:p.pid); vm.load() } } message:{ p in Text("\(p.name) (PID \(p.pid)) \(tr("will receive SIGTERM. Unsaved work in that process may be lost."))") } } }
 
 struct HistoryView: View { @EnvironmentObject var model: Model
     var body: some View { VStack(alignment:.leading, spacing: 12) {
-        HStack(alignment:.top){ SectionTitle(title: "History", sub: "Everything Orbit has changed on this Mac, recorded locally. Nothing is uploaded, ever.")
-            Spacer(); StatusChip(text: "\(model.history.entries.count) operations", color: T.cyan) }
+        HStack(alignment:.top){ SectionTitle(title: model.t("History"), sub: model.t("Everything Orbit has changed on this Mac, recorded locally. Nothing is uploaded, ever."))
+            Spacer(); StatusChip(text: "\(model.history.entries.count) \(tr("operations"))", color: T.cyan) }
         Panel { VStack(alignment:.leading, spacing: 6) {
-            Text("What gets recorded").font(.system(size: 12, weight: .semibold)).foregroundStyle(T.ink)
-            Text("Every confirmed Cleanup move-to-Trash and every application uninstall, with date, path and outcome (trashed, skipped or failed, and why). Scans and browsing are not recorded. Stored in ~/Library/Application Support/Orbit/history.json (last 500 entries).").font(.system(size: 11.5)).foregroundStyle(T.muted)
+            Text(model.t("What gets recorded")).font(.system(size: 12, weight: .semibold)).foregroundStyle(T.ink)
+            Text(tr("Every confirmed Cleanup move-to-Trash and every application uninstall, with date, path and outcome (trashed, skipped or failed, and why). Scans and browsing are not recorded. Stored in ~/Library/Application Support/Orbit/history.json (last 500 entries).")).font(.system(size: 11.5)).foregroundStyle(T.muted)
         } }
-        if model.history.entries.isEmpty { Panel(pad: 12) { HStack(spacing: 10){ Image(systemName: "clock.arrow.circlepath").foregroundStyle(T.muted); Text("No operations yet — run a Cleanup scan and confirm an action, and it will be listed here.").font(.system(size: 12)).foregroundStyle(T.muted) } } }
+        if model.history.entries.isEmpty { Panel(pad: 12) { HStack(spacing: 10){ Image(systemName: "clock.arrow.circlepath").foregroundStyle(T.muted); Text(tr("No operations yet — run a Cleanup scan and confirm an action, and it will be listed here.")).font(.system(size: 12)).foregroundStyle(T.muted) } } }
         else { List(model.history.entries){ e in VStack(alignment:.leading, spacing: 2){ HStack{ Text(e.action).font(.system(size: 12.5, weight: .medium)).foregroundStyle(T.ink); Text(e.result).font(.system(size: 11)).foregroundStyle(e.result.hasPrefix("trashed") ? T.accent : T.muted); Spacer(); Text(e.date.formatted(date: .abbreviated, time: .shortened)).font(.system(size: 11)).foregroundStyle(T.muted) }
             Text(e.path).font(.system(size: 10.5)).foregroundStyle(T.muted).lineLimit(1) }.listRowBackground(T.surface) }.scrollContentBackground(.hidden) }
-    }.padding(22).background(T.bg).navigationTitle("History") } }
+    }.padding(22).background(T.bg).navigationTitle(model.t("History")) } }
 
 struct SettingsView: View { @EnvironmentObject var model: Model
     var body: some View { Form {
-        Text("Orbit — Your Mac, in balance.").font(.headline)
+        Text(tr("Orbit — Your Mac, in balance.")).font(.headline)
+        Picker(tr("Language / Lingua"), selection: Binding(get: { model.lang }, set: { model.setLang($0) })) { Text(tr("English")).tag("en"); Text(tr("Italiano")).tag("it") }
         VStack(alignment: .leading, spacing: 6) {
-            Text("Saved folder-access choices").font(.headline)
-            Text("Cleanup: \(model.accessGranted("cleanup") ? "enabled" : "not enabled") · Disk Analyzer: \(model.accessGranted("disk") ? "enabled" : "not enabled") · Applications: \(model.accessGranted("apps") ? "enabled" : "not enabled")").font(.caption)
-            Button("Reset saved access choices") { model.resetAccess() }
-            Text("Resetting makes Orbit ask again the next time you open those sections. This controls Orbit's own prompt only; macOS privacy grants live in System Settings → Privacy & Security → Files & Folders / Full Disk Access.").font(.caption)
+            Text(tr("Saved folder-access choices")).font(.headline)
+            Text([("cleanup", "Cleanup"), ("disk", "Disk Analyzer"), ("apps", "Applications")].map { "\(tr($0.1)): \(tr(model.accessGranted($0.0) ? "enabled" : "not enabled"))" }.joined(separator: " · ")).font(.caption)
+            Button(tr("Reset saved access choices")) { model.resetAccess() }
+            Text(tr("Resetting makes Orbit ask again the next time you open those sections. This controls Orbit's own prompt only; macOS privacy grants live in System Settings → Privacy & Security → Files & Folders / Full Disk Access.")).font(.caption)
         }
-        Text("History: ~/Library/Application Support/Orbit/history.json. No telemetry, no network, scans are local and read-only. Temperature/fan/GPU: unavailable without a privileged helper (not installed). App updates: not claimed — no reliable source integrated.").font(.caption)
+        Text(tr("History: ~/Library/Application Support/Orbit/history.json. No telemetry, no network, scans are local and read-only. Temperature/fan/GPU: unavailable without a privileged helper (not installed). App updates: not claimed — no reliable source integrated.")).font(.caption)
     }.padding().frame(width:460).preferredColorScheme(.dark) } }
