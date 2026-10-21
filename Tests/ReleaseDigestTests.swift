@@ -27,7 +27,7 @@ enum ReleaseDigestTests {
             return
         }
         let listed = ReleaseNotes.allVersions(changelog: changelog)
-        suite.expect(listed.count > 12, "the changelog lists its releases")
+        suite.expect(!listed.isEmpty, "the changelog lists its releases")  // Orbit's history restarts at 2.0.0
         for version in ["Unreleased"] + listed.prefix(6) {
             for line in ReleaseNotes.rawNotes(for: version, changelog: changelog).components(separatedBy: .newlines)
             where line.hasPrefix("* ") || line.hasPrefix("+ ") || line.hasPrefix("#### ") {
