@@ -207,6 +207,16 @@ final class UpdateService: ObservableObject {
 
     func downloadAndInstall() {
         if AppInfo.isDeveloperBuild { return }  // never replace the local dev build over itself
+        // Without a Developer ID the installer cannot verify the download's
+        // signature, so send the user to the release page instead.
+        if OrbitSigning.teamID.isEmpty {
+            var page = AppInfo.repositoryURL.appendingPathComponent("releases")
+            if case .available(let version) = state {
+                page = page.appendingPathComponent("tag").appendingPathComponent("v\(version)")
+            }
+            NSWorkspace.shared.open(page)
+            return
+        }
         guard let downloadURL else { return }
         // Pre-flight BEFORE spending the download: a translocated app or one
         // running from a read-only volume (the mounted DMG) can never be

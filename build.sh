@@ -444,6 +444,7 @@ if (( TEST )); then
         Sources/Orbit/Core/ShelfPromiseDeliveryStrings.swift
         Sources/Orbit/Services/Finder/FinderRenameSupport.swift
         Sources/Orbit/Services/Update/UpdateInstallerSupport.swift
+        Sources/Orbit/Core/OrbitSigning.swift
         Sources/Orbit/Services/Update/UpdateServiceSupport.swift
         Sources/Orbit/Services/InstalledApps.swift
         Sources/Orbit/Services/LaunchAtLoginSupport.swift
@@ -616,6 +617,7 @@ echo "▸ Compiling protected fan helper…"
 swiftc -O -target "$TARGET" -sdk "$SDK" "${SDK_COMPAT_FLAGS[@]}" "${BUILD_VARIANT_FLAGS[@]}" \
     Sources/Orbit/Services/FanControl/FanControlSupport.swift \
     Sources/Orbit/Services/FanControl/FanControlXPC.swift \
+    Sources/Orbit/Core/OrbitSigning.swift \
     Sources/Orbit/Services/SystemMonitor/SMCClient.swift \
     Sources/Orbit/Services/Metrics/TemperatureSensorSelector.swift \
     Sources/Orbit/Services/FanControl/FanControlHardware.swift \

@@ -4,7 +4,7 @@
 import Foundation
 
 enum FanControlIdentifiers {
-    static let teamID = "3D485NHW29"
+    static let teamID = OrbitSigning.teamID
 
     #if ORBIT_DEVELOPMENT
     static let appBundleID = "com.orbit.Orbit.dev"
