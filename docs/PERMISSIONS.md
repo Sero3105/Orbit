@@ -1,0 +1,175 @@
+# Permissions
+
+Vorssaint asks for a macOS permission only when a feature actually needs it, and every one of them is optional. Skip a permission and the feature that leans on it simply stays off or runs in a lighter mode, while the rest of the app carries on as normal. The first run walks you through each grant, and you can come back to it anytime from Settings under About.
+
+You can review or change every grant in System Settings, under Privacy and Security, and reset them whenever you like. The [troubleshooting guide](TROUBLESHOOTING.md) shows how.
+
+| Permission | Optional | Powers |
+|---|---|---|
+| Accessibility | Yes | Scroll direction, Window Layout, the app and window switcher, Dock Preview, Dock click to minimize, middle click, paste as plain text, Finder cut and paste, quit on close, radial menu key actions, optional notch notification mirroring and keyboard feedback |
+| Screen Recording | Yes | Window previews, screenshots, copy text from screen, magnified color picking and screen recordings |
+| System Audio Recording | Yes | Volume mixer, optional live equalizer and system audio capture for recordings |
+| Microphone | Yes | Your voice in a screen recording, only when you turn it on |
+| Camera | Yes | The camera preview mirror, floating or inside the notch |
+| Calendars | Yes | Upcoming appointments in the notch |
+| Bluetooth | Yes | Accessory battery levels in Monitor, optional accessory alerts in the notch and Bluetooth on sleep |
+| Files and Folders | Yes | Monitoring downloads in a folder you choose |
+| Notifications | Yes | Keep awake, battery, Monitor and update alerts |
+| Full Disk Access | Yes | A deeper uninstaller scan |
+| Administrator (one time) | Yes | Password free closed lid toggling |
+| Automation | Yes | Finder actions, Homebrew Terminal handoff and supported music playback controls |
+| App Management | Yes | App installs, updates and removal |
+
+## Accessibility
+
+**Why it comes up.** macOS keeps control of keyboard and pointer input, along with the ability to read other apps' windows, behind the Accessibility permission.
+
+**What uses it.**
+
+- **Notch**, for optional mirroring of new visible notifications, opening their original native action and optionally hiding the original banner, plus system key feedback. Scrolling gestures inside the notch window need no global input permission.
+- **Scroll direction inverter**, which flips the mouse wheel.
+- **Window Layout**, which moves or resizes windows when you use a layout action, shortcut or optional trackpad or mouse gesture.
+- **App and window switcher**, which captures the switcher hotkey and reads the window list.
+- **Dock Preview**, which reads Dock items and brings windows forward for a temporary peek.
+- **Dock click to minimize**, which spots clicks on the Dock icon of the active app and minimizes or restores its windows.
+- **Middle click**, which turns a three finger press on the trackpad into a middle click.
+- **Paste as plain text**, which presses ⌘V for you after stripping the formatting.
+- **Finder cut and paste**, which steps in on ⌘X and ⌘V while Finder is in front.
+- **Quit on close**, which spots when an app's last window goes away.
+- **Radial menu**, for wheel actions that press a key combo or a media key
+  for you and for the optional side button trigger; opening apps, files and
+  links with the keyboard shortcut alone needs nothing.
+
+**If you say no.** These features stay off. Vorssaint sees the moment you grant the permission and brings them to life with no relaunch.
+
+**Optional.** Yes. macOS shows its prompt the first time a feature needs it, and you can also grant it later in System Settings, under Privacy and Security, Accessibility.
+
+## Screen Recording
+
+**Why it comes up.** On macOS, reading other windows' titles and grabbing their thumbnails counts as screen recording.
+
+**What uses it.** The window switcher and Dock Preview for live thumbnails and titles, screenshots and copy text from screen for the area you select, and the screen recorder for the area, window or display you choose.
+
+The color picker also uses this permission for Vorssaint's magnifier and keyboard controls. Arrow keys select a pixel; Return or keypad Enter copies its color and closes the picker. C copies without closing. Without this permission, the native macOS color picker remains available.
+
+**If you say no.** The switcher falls back to app icons. Dock Preview, screenshots, copy text from screen and screen recording stay unavailable. Previews and text recognition remain local. A screenshot or recording is written only when you ask, and leaves your Mac only if you explicitly create a temporary link.
+
+**Optional.** Yes.
+
+## System Audio Recording
+
+**Why it comes up.** macOS gates app audio taps behind the System Audio Recording permission.
+
+**What uses it.** The Volume Mixer, the optional live equalizer in Dynamic Island, and the screen recorder's system audio tap.
+
+**If you say no.** Apps keep using normal system audio. The mixer cannot adjust or route individual apps, and the island uses animated music bars. The recorder can fall back to the screen capture stream's audio when available.
+
+**Optional.** Yes. The mixer and equalizer process audio in memory without saving or uploading it; apps you route to AirPlay are streamed from memory to the speaker you pick on your local network, through macOS's own AirPlay. The recorder saves audio only as part of a recording you start; sharing that recording is a separate action.
+
+## Microphone
+
+**Why it comes up.** macOS asks before an app can record your microphone.
+
+**What uses it.** The screen recorder, only when you turn on microphone audio. Your voice is kept on a separate track so you can adjust or remove it in the editor.
+
+**If you say no.** Screen recording still works without your microphone. System audio remains a separate choice.
+
+**Optional.** Yes. Microphone audio stays in the recording on your Mac unless you explicitly create a temporary link for the finished video.
+
+## Camera
+
+**Why it comes up.** macOS asks before any app can show the camera image.
+
+**What uses it.** Camera preview, either in its floating mirror or inside the notch. The camera starts only from an explicit action and stops when the preview closes, its notch section is hidden, the feature is disabled or the Mac locks.
+
+**If you say no.** The preview window explains the state and offers the System Settings shortcut. Everything else in the app carries on as normal.
+
+**Optional.** Yes. The image goes straight to the local preview. This feature does not save or upload camera frames. Visible notch content can still appear in a screenshot or recording when you include the notch in captures.
+
+## Calendars
+
+The optional notch calendar asks for access when you press its permission button. macOS calls this full calendar access; Vorssaint uses it only to read appointments and never modifies them. If access is denied, the calendar shows a System Settings shortcut while the rest of the notch remains available. Event content stays on this Mac.
+
+## Bluetooth
+
+**Why it comes up.** macOS asks before an app can use Bluetooth. Some accessories report their battery level only when an app talks to them over Bluetooth, and recent macOS versions also ask before an app checks or switches Bluetooth itself.
+
+**What uses it.**
+
+- **Monitor**, for the battery level of keyboards, mice, headphones and other accessories. It is read only while the battery details are open or while you show it in the menu bar or in the Power card. Both stay off until you turn them on.
+- **Notch**, for the optional accessory alerts when an accessory connects or runs low.
+- **Bluetooth on sleep**, which checks and switches Bluetooth around sleep while you have it turned on.
+
+**If you say no.** Accessories that report their battery to macOS directly, as many keyboards, mice and trackpads do, still show it. Others can be missing from the list and from accessory alerts. Bluetooth on sleep may be unable to switch Bluetooth off and back on.
+
+**Optional.** Yes. Battery levels and the Bluetooth state are read on your Mac and never leave it.
+
+## Files and Folders
+
+Download monitoring watches only the folder you choose in the system picker. Folder access is stored as a local bookmark and does not travel in a settings backup. If the folder becomes unavailable or access is revoked, the notch asks you to choose it again. It does not scan other folders or need Full Disk Access for this feature.
+
+## Notifications
+
+**Why it comes up.** So the app can post the odd alert when something you set up actually happens.
+
+**What uses it.**
+
+- **Keep awake**, with a note when a keep awake timer finishes.
+- **Battery**, with the battery protection alerts.
+- **Monitor**, with optional alerts for the conditions you turn on.
+- **Updates**, with a one time note when a new version shows up, and only while automatic update checks are on.
+- **App updates**, with a note when other apps on the Mac have a newer version, and only while the background check is on.
+
+**If you say no.** These system notifications are not posted. Status remains available inside the app, and alarms from timers you start still work. Mirroring existing system banners uses Accessibility instead of this permission.
+
+**Optional.** Yes.
+
+## Full Disk Access
+
+**Why it comes up.** The uninstaller hunts down the files an app leaves behind, like caches, preferences and logs. Some of those spots are protected by macOS and only open up with Full Disk Access.
+
+**What uses it.** The uninstaller, for a deeper scan.
+
+**If you say no.** The uninstaller still works and scans the places it can reach. It just might not surface files tucked away in protected folders.
+
+**Optional.** Yes. There is no pop up for Full Disk Access. You add Vorssaint in System Settings, under Privacy and Security, Full Disk Access, and Vorssaint opens that pane for you when the feature calls for it.
+
+## Administrator, one time and optional
+
+**Why it comes up.** Keeping the Mac awake with the lid shut relies on `pmset disablesleep`, which needs administrator rights. So it does not have to ask for your password every time you flip closed lid mode, Vorssaint can install a tightly scoped `sudoers` rule that allows only that single command.
+
+**What uses it.** Closed lid keep awake.
+
+**If you say no.** Closed lid mode still works. macOS just asks for your administrator password each time you turn it on or off.
+
+**Optional.** Yes, and it is a one time choice. The rule is limited to `pmset disablesleep` and nothing else, and it goes away on its own when you uninstall Vorssaint or reset things from Settings under Advanced.
+
+## Automation
+
+**Why it comes up.** A few features ask another app to carry out an action you choose. macOS protects that interaction with permission for each target app.
+
+**What uses it.**
+
+- **Finder cut and paste**, which reads the current Finder selection and the destination folder, then moves the files.
+- **Uninstaller**, which moves leftover files to the Trash.
+- **Empty the Trash** in Quick toggles, which asks Finder to empty it. The other quick toggles, dark mode included, need no permission.
+- **Homebrew manager**, which can open Terminal with the exact Homebrew install or setup command when the app should not collect a password itself.
+- **Dynamic Island playback**, when a music app requires Automation to control its own playback while another app is active. Only playback commands declared by the selected app are used; an explicit button requests permission before a new action can be sent. The shuffle button on the music page reads and switches only the shuffle setting the app declares, and reads whether shuffle is available for what is playing when the app declares that too. Until the app is allowed, its first press only asks for this permission, even for an app whose playback controls work without it.
+
+**If you say no.** Those Finder or Terminal handoff steps will not go through. Music stays visible, and you can open its player to control it there. You can switch Automation back on in System Settings, under Privacy and Security, Automation.
+
+**Optional.** Yes.
+
+## App Management
+
+**Why it comes up.** macOS protects installed app bundles from changes by apps signed by another developer.
+
+**What uses it.** The package manager, App updates and disk image installer, when they install, replace or remove apps.
+
+**If you say no.** Package updates keep working, but operations that change installed apps can be blocked. You can grant access later in System Settings, under Privacy and Security, App Management.
+
+**Optional.** Yes. macOS records the request when an update first tries to change an installed app, so Vorssaint cannot check the status beforehand.
+
+## Resetting permissions
+
+To clear what you have granted and start over, follow the reset steps in the [troubleshooting guide](TROUBLESHOOTING.md#resetting-permissions), or use Settings under Advanced, which clears every permission, the login item and the closed lid rule while leaving the app in place.
