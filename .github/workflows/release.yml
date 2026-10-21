@@ -1,7 +1,8 @@
 name: Release
+# Disabled for tags: it still builds with Orbit 1.x scripts. Releases are made
+# locally with ./build.sh and ./Tools/make-dmg.sh, then published with gh.
 on:
-  push:
-    tags: ["v*"]
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
