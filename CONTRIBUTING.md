@@ -12,7 +12,7 @@ sign the app bundle.
 
 ```sh
 git clone https://github.com/Sero3105/Orbit.git
-cd orbit-utils
+cd Orbit
 ./build.sh --dev
 ./build/OrbitDeveloper --selftest
 ./build.sh --test

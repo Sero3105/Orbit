@@ -1,6 +1,6 @@
 # Security Policy
 
-Orbit moves files to the Trash and terminates processes, so safety bugs matter. Thank you for helping keep it safe.
+Orbit moves files to the Trash, terminates processes, controls input devices, captures the screen and can install an optional privileged fan-control helper, so safety bugs matter. Thank you for helping keep it safe.
 
 ## Supported versions
 
@@ -16,12 +16,15 @@ You can expect an acknowledgement within 7 days. Once a fix is released, the adv
 
 ## In scope
 
-- Orbit trashing or modifying anything the user did not confirm, or anything outside the allowed roots
+- Trashing or modifying anything the user did not confirm, or anything outside the allowed roots
 - Bypassing path revalidation (symlinks, inode swaps / TOCTOU, protected paths)
 - Uninstall matching files that do not belong to the app being removed
-- Any network access, data leaving the Mac, or privilege escalation
-- Command injection into the fixed maintenance commands
+- Data leaving the Mac other than through the connections listed in [docs/PRIVACY.md](docs/PRIVACY.md)
+- Privilege escalation through the fan-control helper or its XPC interface
+- Command injection into any command Orbit runs
 
 ## Design guarantees
 
-Scans are read-only; removal is Trash-only after explicit confirmation and revalidation; no `sudo`, privileged helper, SIP/TCC bypass, network or telemetry. See [docs/security-model.md](docs/security-model.md).
+- **Maintenance window** (Dashboard, Energy, Cleanup, Disk Analyzer, Applications, Maintenance, Processes, History): scans are read-only; removal is Trash-only after explicit confirmation and revalidation; no `sudo`, no network. See [docs/security-model.md](docs/security-model.md).
+- **Fan control** is opt-in. Its helper only accepts clients signed with Orbit's Apple Developer Team ID; until releases are signed with one, the helper refuses every client and the in-app updater opens the release page instead of installing.
+- **Network**: every connection is listed in [docs/PRIVACY.md](docs/PRIVACY.md). Orbit runs no server of its own.
