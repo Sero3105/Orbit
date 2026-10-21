@@ -37,7 +37,7 @@ VERSION="$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$APP/C
 OUT="dist/Orbit-$VERSION.dmg"
 
 echo "▸ Rendering installer background…"
-swift Tools/MakeDMGBackground.swift build/dmg-background.png
+swift Tools/MakeDMGBackground.swift build/dmg-background.png "$VERSION"
 
 echo "▸ Staging DMG contents…"
 STAGING="$(mktemp -d)"
@@ -87,14 +87,15 @@ tell application "Finder"
         set current view of container window to icon view
         set toolbar visible of container window to false
         set statusbar visible of container window to false
-        set the bounds of container window to {200, 120, 800, 520}
+        -- 660×420 content (Tools/MakeDMGBackground.swift) plus the title bar.
+        set the bounds of container window to {200, 120, 860, 568}
         set theOptions to the icon view options of container window
         set arrangement of theOptions to not arranged
         set icon size of theOptions to 128
         set text size of theOptions to 13
         set background picture of theOptions to file ".background:background.png"
-        set position of item "$APP_NAME.app" of container window to {150, 200}
-        set position of item "Applications" of container window to {450, 200}
+        set position of item "$APP_NAME.app" of container window to {170, 205}
+        set position of item "Applications" of container window to {490, 205}
         update without registering applications
         delay 1
         close
@@ -124,6 +125,10 @@ elif (( STYLE_STATUS != 0 )); then
     echo "  (window styling skipped)"
 fi
 
+# The mounted volume shows Orbit's icon instead of a generic disk. Copied into
+# the mounted image: hdiutil create -srcfolder leaves .VolumeIcon.icns out.
+cp build/AppIcon.icns "$MOUNT/.VolumeIcon.icns"
+SetFile -a C "$MOUNT" 2>/dev/null || true  # SetFile ships with the Command Line Tools
 sync
 hdiutil detach "$MOUNT" -quiet \
     || hdiutil detach "$MOUNT" -force -quiet
