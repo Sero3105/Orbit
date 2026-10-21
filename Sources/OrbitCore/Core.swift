@@ -112,9 +112,28 @@ public enum DiskScanner {
 }
 
 /// Disk Analyzer "Move to Trash": only items inside the home folder, never the home itself, its standard
-/// top-level folders, ~/Library or its direct subfolders. Revalidated right before the move; every outcome is recorded.
+/// top-level folders, ~/Library or its macOS-owned direct subfolders. Third-party ~/Library folders (Android,
+/// Google, …) may be trashed. Revalidated right before the move; every outcome is recorded.
 public enum DiskTrash {
     static let protectedHomeFolders: Set<String> = ["Library", "Desktop", "Documents", "Downloads", "Pictures", "Movies", "Music", "Public", "Applications", ".Trash"]
+    /// ~/Library subfolders created or used by macOS itself; anything starting with "com.apple" or "." is also protected.
+    static let systemLibraryFolders: Set<String> = [
+        "Accessibility", "Accounts", "Apple", "AppleMediaServices", "Application Scripts", "Application Support", "Assistant", "Assistants",
+        "Audio", "Autosave Information", "Biome", "Caches", "Calendars", "CallServices", "CloudStorage", "ColorPickers", "ColorSync", "Colors",
+        "Compositions", "Contacts", "ContainerManager", "Containers", "Cookies", "CoreData", "CoreFollowUp", "DES", "Daemon Containers",
+        "DataAccess", "DataDeliveryServices", "Developer", "Dictionaries", "DoNotDisturb", "DuetExpertCenter", "Favorites", "FileProvider",
+        "Finance", "FinanceBackup", "FontCollections", "Fonts", "FrontBoard", "GameKit", "Group Containers", "HTTPStorages", "HomeKit",
+        "IdentityServices", "Input Methods", "IntelligencePlatform", "Intents", "Internet Plug-Ins", "Keyboard", "Keyboard Layouts",
+        "KeyboardServices", "Keychains", "LanguageModeling", "LaunchAgents", "LockdownMode", "Logs", "Mail", "Maps", "MediaAnalysis",
+        "Messages", "Metadata", "Mobile Documents", "News", "PDF Services", "PPM", "Passes", "PersonalizationPortrait", "Photos",
+        "PreferencePanes", "Preferences", "Printers", "PrivateCloudCompute", "QuickLook", "Reminders", "ResponseKit", "Safari",
+        "SafariSafeBrowsing", "SafariSandboxBroker", "Saved Application State", "Screen Savers", "Scripts", "Services", "Sharing",
+        "Shortcuts", "Sounds", "Speech", "Spelling", "Spotlight", "StatusKit", "Suggestions", "SyncedPreferences", "Translation", "Trial",
+        "UnifiedAssetFramework", "Weather", "WebKit", "Workflows",
+    ]
+    static func isSystemLibraryFolder(_ name: String) -> Bool {
+        systemLibraryFolders.contains(name) || name.hasPrefix("com.apple") || name.hasPrefix(".")
+    }
 
     /// nil when `path` may be trashed now.
     public static func problem(_ path: String, inode: UInt64, home: String = NSHomeDirectory()) -> String? {
@@ -125,7 +144,7 @@ public enum DiskTrash {
         guard path.hasPrefix(home + "/"), let realHome = Uninstaller.realpath(home), let real = Uninstaller.realpath(path),
               real == realHome + path.dropFirst(home.count) else { return "outside allowed roots" }  // also catches a symlink in any parent
         let rel = path.dropFirst(home.count + 1).split(separator: "/").map(String.init)
-        if (rel.count == 1 && protectedHomeFolders.contains(rel[0])) || (rel.first == "Library" && rel.count <= 2) { return "protected system path" }
+        if (rel.count == 1 && protectedHomeFolders.contains(rel[0])) || (rel.first == "Library" && (rel.count == 1 || (rel.count == 2 && isSystemLibraryFolder(rel[1])))) { return "protected system path" }
         for pre in SafetyValidator.protectedPrefixes where real == pre || real.hasPrefix(pre + "/") { return "protected system path" }
         return nil
     }

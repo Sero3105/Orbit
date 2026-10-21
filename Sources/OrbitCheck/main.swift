@@ -191,7 +191,7 @@ do {
     func dir(_ p: String) { try! fm.createDirectory(atPath: p, withIntermediateDirectories: true) }
     func file(_ p: String) { dir((p as NSString).deletingLastPathComponent); try! "x".write(toFile: p, atomically: true, encoding: .utf8) }
     func entry(_ p: String) -> DiskEntry { DiskScanner.scan((p as NSString).deletingLastPathComponent).entries.first { $0.path == p }! }
-    for d in ["Documents", "Library/Caches/app.cache", "Projects", "Downloads"] { dir(H + "/" + d) }
+    for d in ["Documents", "Library/Caches/app.cache", "Library/Android/sdk", "Library/Preferences", "Library/com.apple.foo", "Projects", "Downloads"] { dir(H + "/" + d) }
     file(H + "/Projects/a.txt"); file(H + "/Projects/b.txt"); file(H + "/Library/Caches/app.cache/x")
     file(tmp + "/outside/secret.txt"); try! fm.createSymbolicLink(atPath: H + "/Projects/link", withDestinationPath: tmp + "/outside")
     try! fm.createSymbolicLink(atPath: H + "/linkdir", withDestinationPath: tmp + "/outside")
@@ -199,7 +199,8 @@ do {
     check(DiskScanner.scan(H + "/Projects").entries.allSatisfy { $0.inode != 0 }, "disk scan records inodes")
     check(DiskTrash.problem(ok.path, inode: ok.inode, home: H) == nil, "disk trash: normal item inside home allowed")
     check(DiskTrash.problem(H + "/Library/Caches/app.cache", inode: entry(H + "/Library/Caches/app.cache").inode, home: H) == nil, "disk trash: item deeper in ~/Library allowed")
-    for p in ["/Documents", "/Library", "/Library/Caches", "/Downloads"] {
+    check(DiskTrash.problem(H + "/Library/Android", inode: entry(H + "/Library/Android").inode, home: H) == nil, "disk trash: third-party ~/Library folder allowed")
+    for p in ["/Documents", "/Library", "/Library/Caches", "/Library/Preferences", "/Library/com.apple.foo", "/Downloads"] {
         check(DiskTrash.problem(H + p, inode: entry(H + p).inode, home: H) == "protected system path", "disk trash: protected \(p)")
     }
     let homeIno = DiskScanner.scan(tmp).entries.first { $0.path == H }!.inode
