@@ -7,13 +7,13 @@ jobs:
   check:
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: swift build
       - run: swift run OrbitCheck
   universal:
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Universal build
         run: swift build -c release --arch arm64 --arch x86_64
       - name: Check suite on both slices (x86_64 via Rosetta)

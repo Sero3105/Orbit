@@ -8,7 +8,7 @@ jobs:
   dmg:
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build DMG (universal)
         run: VERSION="${GITHUB_REF_NAME#v}" UNIVERSAL=1 ./scripts/release.sh
       - name: Publish GitHub release
