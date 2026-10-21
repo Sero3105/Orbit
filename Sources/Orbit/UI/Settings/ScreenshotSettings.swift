@@ -45,7 +45,7 @@ struct ScreenshotCaptureSettings: View {
     @AppStorage(DefaultsKey.screenshotPreviewEnabled) private var previewEnabled = true
     @AppStorage(DefaultsKey.screenshotPreviewDuration) private var previewDuration =
         ScreenshotSupport.defaultConfirmationPreviewDuration
-    @AppStorage(DefaultsKey.screenshotSharingEnabled) private var sharingEnabled = true
+    @AppStorage(DefaultsKey.screenshotSharingEnabled) private var sharingEnabled = false
     @AppStorage(DefaultsKey.screenshotUploadShortcutEnabled) private var uploadShortcutEnabled = false
     @AppStorage(DefaultsKey.screenshotUploadDuration) private var uploadDuration = ScreenshotShareDuration.oneHour.rawValue
     @State private var showingSharedLinks = false
@@ -203,6 +203,8 @@ struct ScreenshotCaptureSettings: View {
                 Text(strings.toolShortcutsTitle)
             }
 
+            // Share links need a hosting service Orbit does not run.
+            if ScreenshotSharingSupport.serviceAvailable {
             Section {
                 Toggle(strings.shareEnabledToggle, isOn: $sharingEnabled)
                     .onChange(of: sharingEnabled) { _, _ in service.syncWithPreferences() }
@@ -252,6 +254,7 @@ struct ScreenshotCaptureSettings: View {
                 }
             } header: {
                 Text(strings.shareSectionTitle)
+            }
             }
         }
         .onAppear { sharing.refresh() }

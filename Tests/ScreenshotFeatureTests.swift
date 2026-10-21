@@ -3628,8 +3628,12 @@ enum ScreenshotFeatureTests {
                 && !capturesGoToShelf(option: true, installed: true, on: false)
                 && !capturesGoToShelf(option: true, installed: false, on: true),
                "captures go to the shelf only with the option on and the shelf installed and switched on")
-        suite.expect(Defaults.registeredDefaults[DefaultsKey.screenshotSharingEnabled] as? Bool == true,
-               "temporary screenshot links preserve their existing availability by default")
+        suite.expect(Defaults.registeredDefaults[DefaultsKey.screenshotSharingEnabled] as? Bool == false
+                && Defaults.registeredDefaults[DefaultsKey.recorderSharingEnabled] as? Bool == false
+                && !ScreenshotSharingSupport.serviceAvailable
+                && ScreenshotSharingSupport.productionEndpoint.host == "sharing.invalid"
+                && RecordingSharingSupport.productionEndpoint.host == "sharing.invalid",
+               "Orbit runs no share-link service: links are off and never reach a real host")
         suite.expect(Defaults.registeredDefaults[DefaultsKey.screenshotToolOrder] as? String
                 == ScreenshotSupport.Tool.defaultOrderStorage,
                "the screenshot rail ships in its useful numbered order")

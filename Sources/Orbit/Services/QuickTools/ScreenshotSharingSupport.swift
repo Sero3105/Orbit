@@ -81,7 +81,10 @@ enum ScreenshotSharingSupport {
         return true
     }
 
-    static let productionEndpoint = URL(string: "https://screenshots.orbit.com")!
+    /// Orbit runs no hosting service for share links, so uploads are off and
+    /// their settings hidden. `.invalid` never resolves (RFC 6761).
+    static let serviceAvailable = false
+    static let productionEndpoint = URL(string: "https://sharing.invalid")!
     static let developerBundleIdentifier = "com.orbit.Orbit.dev"
     static let maximumUploadBytes = 25 * 1_024 * 1_024
 

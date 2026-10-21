@@ -546,7 +546,7 @@ private struct ScreenshotQuickPreviewView: View {
         view.actionsOnly = true
         return view
     }
-    @AppStorage(DefaultsKey.screenshotSharingEnabled) private var sharingEnabled = true
+    @AppStorage(DefaultsKey.screenshotSharingEnabled) private var sharingEnabled = false
 
     var body: some View {
         if actionsOnly { actionBar }

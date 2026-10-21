@@ -23,7 +23,7 @@ struct ScreenRecordingCaptureSettings: View {
     @AppStorage(DefaultsKey.recorderGIFSize) private var gifSizeRaw =
         RecorderSupport.GIFSize.medium.rawValue
     @AppStorage(DefaultsKey.recorderGIFFrameRate) private var gifFrameRate = 12
-    @AppStorage(DefaultsKey.recorderSharingEnabled) private var sharingEnabled = true
+    @AppStorage(DefaultsKey.recorderSharingEnabled) private var sharingEnabled = false
     @State private var showsMoreOptions = false
     @State private var showingSharedLinks = false
     @State private var showingSharePrivacy = false
@@ -152,6 +152,8 @@ struct ScreenRecordingCaptureSettings: View {
                 }
             }
 
+            // Share links need a hosting service Orbit does not run.
+            if ScreenshotSharingSupport.serviceAvailable {
             Section {
                 Toggle(screenshotStrings.shareEnabledToggle, isOn: $sharingEnabled)
                 if sharingEnabled {
@@ -182,6 +184,7 @@ struct ScreenRecordingCaptureSettings: View {
                 }
             } header: {
                 Text(screenshotStrings.shareSectionTitle)
+            }
             }
         }
         .onAppear { sharing.refresh() }

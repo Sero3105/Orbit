@@ -6,12 +6,9 @@ import Foundation
 /// Static identity of the app, shared by UI, notifications and tooling.
 enum AppInfo {
     static let name = "Orbit"
-    static let copyright = "© 2026 Orbit"
-    static let websiteURL = URL(string: "https://orbit.com")!
+    static let copyright = "© 2026 The Orbit Authors · includes Vorssaint © 2026 Vorssaint"
     static let repositoryURL = URL(string: "https://github.com/Sero3105/Orbit")!
-    static let coffeeURL = URL(string: "https://buymeacoffee.com/orbit")!
-    static let discordURL = URL(string: "https://discord.gg/M6BwWH4BJp")!
-    static let socialURL = URL(string: "https://x.com/orbit")!
+    static let issuesURL = URL(string: "https://github.com/Sero3105/Orbit/issues")!
 
     /// The bundle version. The fallback only applies to the bare binary
     /// (e.g. `--selftest`), never the shipped app, which reads its Info.plist.

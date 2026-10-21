@@ -42,7 +42,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     private var cancellables = Set<AnyCancellable>()
     private var settingsWindow: NSWindow?
     private var settingsKeepsAppRegular = false
-    private var feedbackWindow: NSWindow?
     private var onboardingWindow: NSWindow?
     private var supportIntroWindow: NSWindow?
     private var updateHighlightsWindow: NSWindow?
@@ -1763,26 +1762,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         }
     }
 
+    /// Feedback goes to the project's GitHub issues: Orbit runs no feedback server.
     func openFeedbackWindow(kind: FeedbackKind = .bug) {
         closePopover()
-        let host = NSHostingController(rootView: FeedbackView(initialKind: kind) { [weak self] in
-            self?.feedbackWindow?.close()
-        })
-        if let window = feedbackWindow {
-            window.contentViewController = host
-        } else {
-            let window = NSWindow(contentViewController: host)
-            window.styleMask = [.titled, .closable]
-            window.titleVisibility = .hidden
-            window.isReleasedWhenClosed = false
-            window.isRestorable = false
-            window.delegate = self
-            window.center()
-            feedbackWindow = window
-        }
-        feedbackWindow?.title = FeatureStrings.feedback(L10n.shared.language).windowTitle
-        NSApp.activate(ignoringOtherApps: true)
-        feedbackWindow?.makeKeyAndOrderFront(nil)
+        NSWorkspace.shared.open(AppInfo.issuesURL)
     }
 
     private func positionSettingsWindow(_ window: NSWindow, force: Bool, on targetScreen: NSScreen? = nil) {
@@ -2373,7 +2356,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         ))
         host.sizingOptions = .preferredContentSize
         let window = NSPanel(contentViewController: host)
-        window.title = L10n.shared.s.supportIntroTitle
+        window.title = L10n.shared.s.supportIntroStarButton
         window.styleMask = [.titled, .fullSizeContentView]
         window.standardWindowButton(.closeButton)?.isHidden = true
         window.titlebarAppearsTransparent = true

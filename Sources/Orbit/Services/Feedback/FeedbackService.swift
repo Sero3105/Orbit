@@ -58,7 +58,7 @@ enum FeedbackError: Error {
 final class FeedbackService {
     static let shared = FeedbackService()
 
-    private let endpoint = URL(string: "https://screenshots.orbit.com/v1/feedback")!
+    private let endpoint = URL(string: "https://feedback.invalid/v1/feedback")!  // unused: feedback opens GitHub issues
     private let session: URLSession
     private let encoder = JSONEncoder()
 
