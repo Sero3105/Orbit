@@ -61,7 +61,7 @@ enum Demo {
         ("Atlas Notes", "com.atlaslabs.notes", "4.2.1", 312), ("Brightline", "com.brightline.app", "2.8.0", 186), ("Canvasly", "io.canvasly.desktop", "1.14.2", 645),
         ("Driftwood", "com.driftwood.reader", "3.0.4", 74), ("Ember Terminal", "dev.ember.terminal", "0.19.3", 58), ("Fieldnote", "com.fieldnote.mac", "5.1.0", 228),
         ("Harbor VPN", "net.harborvpn.client", "7.3.2", 142), ("Kite Mail", "com.kitemail.mac", "2.6.1", 418), ("Lumen Editor", "dev.lumen.editor", "1.92.0", 1210),
-        ("Mosaic Photo", "com.mosaicphoto.studio", "12.4", 2840), ("Nimbus Drive", "com.nimbusdrive.sync", "9.0.7", 512), ("Orbit", "com.orbit.Orbit", "1.0.0", 3),
+        ("Mosaic Photo", "com.mosaicphoto.studio", "12.4", 2840), ("Nimbus Drive", "com.nimbusdrive.sync", "9.0.7", 512), ("Orbit", "com.orbit.Orbit", "2.0.0", 83),
         ("Paperboat", "com.paperboat.docs", "3.3.0", 1060), ("Quill", "io.quill.writer", "6.2", 96), ("Tidepool Music", "com.tidepool.music", "4.7.5", 780),
         ("Waypoint Maps", "com.waypoint.maps", "2.1.0", 204),
     ].map { AppInfo(name: $0.0, path: "/Applications/\($0.0).app", bundleID: $0.1, version: $0.2, size: Int64($0.3) * MB) }

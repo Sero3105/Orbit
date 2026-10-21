@@ -16,4 +16,7 @@ Orbit becomes a menu bar app with dozens of tools, merged from Vorssaint, while 
 - **Maintenance window kept.** Open it from the menu bar panel: everything Orbit 1.x did is still there.
 
 ### Changed
+- A new installer window: Orbit's dark style, an orbital arrow from the app to Applications, instructions in Italian and English, and Orbit's icon on the mounted disk.
+- The app icon sits on the macOS icon grid, so it matches the size of other apps in the Dock, Finder and installer.
+- The README is available in English and Italian, with new screenshots.
 - Orbit is now licensed under GPL-3.0-or-later, because it includes code from Vorssaint (https://github.com/vorssaint/vorssaint-utils). Earlier history is in docs/upstream-vorssaint-CHANGELOG.md.
