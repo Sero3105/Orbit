@@ -449,7 +449,7 @@ enum NotchScreenRefreshContract {
                "a display without a menu bar keeps the island at rest with nothing to measure or cover")
         pointerFollowContracts(suite)
 
-        let source = (try? String(contentsOfFile: "Sources/Vorssaint/Services/Notch/NotchService.swift",
+        let source = (try? String(contentsOfFile: "Sources/Orbit/Services/Notch/NotchService.swift",
                                   encoding: .utf8)) ?? ""
         let code = source.components(separatedBy: "\n")
             .map { line in line.range(of: "//").map { String(line[..<$0.lowerBound]) } ?? line }

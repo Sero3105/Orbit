@@ -189,7 +189,7 @@ enum AppUpdateRulesContract {
     }
 
     private static func listControls(_ suite: TestSuite) {
-        let source = (try? String(contentsOfFile: "Sources/Vorssaint/UI/AppUpdates/AppUpdatesListView.swift",
+        let source = (try? String(contentsOfFile: "Sources/Orbit/UI/AppUpdates/AppUpdatesListView.swift",
                                   encoding: .utf8)) ?? ""
         suite.expect(source.contains("guard !inNotch else {")
                      && source.contains("guard panel.runAboveIsland() == .OK, let url = panel.url else { return }"),
@@ -206,9 +206,9 @@ enum AppUpdateRulesContract {
 
         // Settings hosts the full list and the menu bar panel the compact one,
         // whose rows have no width to spare for the visible menu.
-        let settings = (try? String(contentsOfFile: "Sources/Vorssaint/UI/Settings/AppUpdatesSettings.swift",
+        let settings = (try? String(contentsOfFile: "Sources/Orbit/UI/Settings/AppUpdatesSettings.swift",
                                     encoding: .utf8)) ?? ""
-        let panel = (try? String(contentsOfFile: "Sources/Vorssaint/UI/MenuPanel/PanelAppUpdatesView.swift",
+        let panel = (try? String(contentsOfFile: "Sources/Orbit/UI/MenuPanel/PanelAppUpdatesView.swift",
                                  encoding: .utf8)) ?? ""
         let row = (source.components(separatedBy: "private func row(_ item: AppUpdatesSupport.Item) -> some View {")
             .dropFirst().first ?? "").components(separatedBy: "private func ruleActions(").first ?? ""

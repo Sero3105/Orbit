@@ -138,7 +138,7 @@ enum CommandBarFeatureTests {
             !$0.trimmingCharacters(in: .whitespaces).hasPrefix("//")
         }
         let commandBarCatalogLines = ((try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/CommandBar/CommandBarCatalog.swift",
+            contentsOfFile: "Sources/Orbit/Services/CommandBar/CommandBarCatalog.swift",
             encoding: .utf8)) ?? "").components(separatedBy: "\n")
         func pageVisible(_ page: SettingsPage, available: Set<AppFeature>) -> Bool {
             FeatureVisibilitySupport.isPageVisible(page) { available.contains($0) }
@@ -412,7 +412,7 @@ enum CommandBarFeatureTests {
         // at the next declaration, so a renamed or moved site fails here
         // instead of passing on some other part of the file.
         let actionsServiceCode = ((try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/CommandBar/CommandBarService.swift",
+            contentsOfFile: "Sources/Orbit/Services/CommandBar/CommandBarService.swift",
             encoding: .utf8)) ?? "")
             .components(separatedBy: "\n")
             .filter(isCodeLine)
@@ -912,7 +912,7 @@ enum CommandBarFeatureTests {
                "a source with no language leaves the notice its mark alone")
 
         let commandBarServiceSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/CommandBar/CommandBarService.swift",
+            contentsOfFile: "Sources/Orbit/Services/CommandBar/CommandBarService.swift",
             encoding: .utf8)) ?? ""
         suite.expect(commandBarServiceSource.contains("InputSourceSelection.asciiLayoutID"),
                "the bar borrows the ASCII layout through the shared TIS selection")
@@ -932,13 +932,13 @@ enum CommandBarFeatureTests {
                 options: .regularExpression) != nil,
                "the bar's app scan lists the apps other apps ship, such as Xcode's tools")
         let uninstallCatalogSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/CommandBar/CommandBarCatalog.swift",
+            contentsOfFile: "Sources/Orbit/Services/CommandBar/CommandBarCatalog.swift",
             encoding: .utf8)) ?? ""
         suite.expect(uninstallCatalogSource.contains("uninstallable.contains($0.id)")
                 && uninstallCatalogSource.contains("UninstallerSupport.selection(for: url) != nil"),
                "the uninstall browse and the Finder selection row offer only apps the uninstaller will take")
         let asciiSettingsSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/UI/Settings/CommandBarSettings.swift",
+            contentsOfFile: "Sources/Orbit/UI/Settings/CommandBarSettings.swift",
             encoding: .utf8)) ?? ""
         suite.expect(asciiSettingsSource.contains("DefaultsKey.commandBarASCIILayoutEnabled"),
                "the ASCII layout switch has its own settings row")
@@ -950,7 +950,7 @@ enum CommandBarFeatureTests {
                 && !SettingsBackupSupport.valueLooksRight(DefaultsKey.commandBarASCIILayoutEnabled, "yes"),
                "a restored ASCII layout switch has to be a switch, not text that looks like one")
         let superKeySource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/SuperKey/SuperKeyService.swift",
+            contentsOfFile: "Sources/Orbit/Services/SuperKey/SuperKeyService.swift",
             encoding: .utf8)) ?? ""
         suite.expect(superKeySource.contains("InputSourceSelection.selectableInputSources()"),
                "the Super key cycle shares the TIS plumbing instead of its own copy")
@@ -1399,7 +1399,7 @@ enum CommandBarFeatureTests {
                 && CommandBarPreferences.emojiIdentity(fromRowID: "emoji.") == nil,
                "a row of another kind, and an id with no emoji left in it, answer with nothing")
         let catalogSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/CommandBar/CommandBarCatalog.swift",
+            contentsOfFile: "Sources/Orbit/Services/CommandBar/CommandBarCatalog.swift",
             encoding: .utf8)) ?? ""
         suite.expect(catalogSource.contains(
             "CommandBarPreferences.emojiRowID(identity: emoji.identity)"),
@@ -1920,7 +1920,7 @@ enum CommandBarFeatureTests {
                     GlobalShortcut(keyCode: Int64(kVK_ANSI_Q), modifiers: [.command])),
                "Command Q is a real combination; the card has to be able to store it")
         let commandBarSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/CommandBar/CommandBarService.swift",
+            contentsOfFile: "Sources/Orbit/Services/CommandBar/CommandBarService.swift",
             encoding: .utf8)) ?? ""
         let commandBarCode = commandBarSource
             .split(separator: "\n", omittingEmptySubsequences: false)
@@ -2963,15 +2963,15 @@ enum CommandBarDropletContract {
             return parts[1].components(separatedBy: "\n    func ").first?
                 .components(separatedBy: "\n    private func ").first ?? ""
         }
-        let droplet = code("Sources/Vorssaint/UI/CommandBar/CommandBarDroplet.swift")
-        let view = code("Sources/Vorssaint/UI/CommandBar/CommandBarView.swift")
+        let droplet = code("Sources/Orbit/UI/CommandBar/CommandBarDroplet.swift")
+        let view = code("Sources/Orbit/UI/CommandBar/CommandBarView.swift")
 
         let typing = view.components(separatedBy: ".onChange(of: service.query) { _, query in").dropFirst().first ?? ""
         suite.expect((typing.components(separatedBy: "}").first ?? "")
                         .contains("if !query.isEmpty, service.presentation == .droplet { CommandBarDroplet.shared.hurry("),
                      "typing while the drop falls hurries it")
 
-        let service = code("Sources/Vorssaint/Services/CommandBar/CommandBarService.swift")
+        let service = code("Sources/Orbit/Services/CommandBar/CommandBarService.swift")
         let monitor = service.components(separatedBy: "keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown)")
             .dropFirst().first ?? ""
         let early = monitor.range(of: "if self.presentation == .droplet, event.keyCode != 53 { CommandBarDroplet.shared.hurry() }")

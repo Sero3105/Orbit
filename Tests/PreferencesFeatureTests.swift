@@ -306,7 +306,7 @@ enum PreferencesFeatureTests {
             automaticSessionActive: true
         ) == .none, "the same unplug leaves an Any session running, which is why All exists")
         let automationEditor = (try? String(
-            contentsOfFile: "Sources/Vorssaint/UI/KeepAwakeAutomationView.swift",
+            contentsOfFile: "Sources/Orbit/UI/KeepAwakeAutomationView.swift",
             encoding: .utf8)) ?? ""
         suite.expect(automationEditor.contains(".pickerStyle(.segmented)")
                 && automationEditor.contains(".controlSize(compact ? .small : .regular)"),

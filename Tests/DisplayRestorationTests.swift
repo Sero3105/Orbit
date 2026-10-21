@@ -178,7 +178,7 @@ enum DisplayRestorationTests {
     static func run(_ suite: TestSuite) {
         // A display mirroring another now has its own row and key route but
         // no screen of its own, so its overlay uses the mirror set's screen.
-        let overlay = (try? String(contentsOfFile: "Sources/Vorssaint/Services/Display/BrightnessOSD.swift",
+        let overlay = (try? String(contentsOfFile: "Sources/Orbit/Services/Display/BrightnessOSD.swift",
                                    encoding: .utf8)) ?? ""
         suite.expect(overlay.contains("let sharedScreenID = CGDisplayPrimaryDisplay(displayID)")
                 && overlay.contains("let mirroredID = CGDisplayMirrorsDisplay(displayID)")

@@ -311,7 +311,7 @@ enum NotchWatchTests {
     /// The service is not part of this test binary, so the reading loop's
     /// load-bearing lines are pinned at their source.
     private static func readingLoopContracts(_ suite: TestSuite) {
-        let source = (try? String(contentsOfFile: "Sources/Vorssaint/Services/Notch/NotchWatchService.swift",
+        let source = (try? String(contentsOfFile: "Sources/Orbit/Services/Notch/NotchWatchService.swift",
                                   encoding: .utf8)) ?? ""
         func line(_ fragment: String, after start: Int = 0) -> Int? {
             source.components(separatedBy: "\n").enumerated().first { offset, line in

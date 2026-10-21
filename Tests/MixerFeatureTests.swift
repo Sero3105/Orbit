@@ -741,7 +741,7 @@ enum MixerFeatureTests {
         // pool, which is issue #971's exhaustion. Read as source text because
         // the engine lives in a file the test target does not compile.
         let mixerCode = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/Audio/AppVolumeMixer.swift",
+            contentsOfFile: "Sources/Orbit/Services/Audio/AppVolumeMixer.swift",
             encoding: .utf8)) ?? ""
         let teardownQueueSetup = mixerCode.range(of: "let teardownQueue").flatMap { start in
             mixerCode.range(of: "}()", range: start.upperBound..<mixerCode.endIndex)
@@ -1600,7 +1600,7 @@ enum MixerFeatureTests {
 
         // The panel is not compiled into this target. Pin the three attachment
         // sites for this regression instead of trying to parse arbitrary SwiftUI.
-        let panel = (try? String(contentsOfFile: "Sources/Vorssaint/UI/MenuPanel/MixerSection.swift",
+        let panel = (try? String(contentsOfFile: "Sources/Orbit/UI/MenuPanel/MixerSection.swift",
                                  encoding: .utf8)) ?? ""
         func section(from start: String, to end: String) -> String {
             guard let lower = panel.range(of: start),

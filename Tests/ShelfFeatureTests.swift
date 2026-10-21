@@ -564,7 +564,7 @@ enum ShelfFeatureTests {
         suite.expect(ShelfDockDragSupport.hasDwelled(since: 100.0, now: 100.16, required: 0.15),
                "sustained hover over 150ms counts as dwelled")
         let shelfServiceSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/Shelf/ShelfService.swift",
+            contentsOfFile: "Sources/Orbit/Services/Shelf/ShelfService.swift",
             encoding: .utf8)) ?? ""
         let dockedWatchdog = shelfServiceSource
             .components(separatedBy: "private func startDockedWatchdog()")
@@ -579,10 +579,10 @@ enum ShelfFeatureTests {
             .components(separatedBy: "func hide()")
             .dropFirst().first?.components(separatedBy: "\n    func close").first ?? ""
         let shelfViewSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/UI/Shelf/ShelfView.swift",
+            contentsOfFile: "Sources/Orbit/UI/Shelf/ShelfView.swift",
             encoding: .utf8)) ?? ""
         let dockedShelfViewSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/UI/Shelf/ShelfDropZoneView.swift",
+            contentsOfFile: "Sources/Orbit/UI/Shelf/ShelfDropZoneView.swift",
             encoding: .utf8)) ?? ""
         suite.expect(explicitShelfClose.contains("DefaultsKey.shelfClearOnClose")
                 && explicitShelfClose.contains("clear()")
@@ -939,7 +939,7 @@ enum ShelfFeatureTests {
         // `.partial` store's dropped entries still own files in that
         // directory, and the blob it kept still points at them.
         let restoreItemsBody = ((try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/Shelf/ShelfService.swift",
+            contentsOfFile: "Sources/Orbit/Services/Shelf/ShelfService.swift",
             encoding: .utf8)) ?? "")
             .components(separatedBy: "private func restoreItems()")
             .dropFirst().first?
@@ -960,7 +960,7 @@ enum ShelfFeatureTests {
         suite.expect(overlay.accessibilityRole() == .window && overlay.isAccessibilityElement(),
                "a floating overlay stays an accessible window for assistive technology")
         let tooltipSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/UI/Shelf/ShelfTooltipPopover.swift", encoding: .utf8)) ?? ""
+            contentsOfFile: "Sources/Orbit/UI/Shelf/ShelfTooltipPopover.swift", encoding: .utf8)) ?? ""
         suite.expect(shelfServiceSource.contains("class KeyableShelfPanel: OverlayPanel")
                 && !shelfServiceSource.contains("NSPanel(contentRect")
                 && tooltipSource.contains("OverlayPanel(contentRect") && !tooltipSource.contains("NSPanel(contentRect"),

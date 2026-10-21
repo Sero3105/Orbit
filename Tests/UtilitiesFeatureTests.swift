@@ -119,8 +119,8 @@ enum UtilitiesFeatureTests {
 
         // An integer interpolated into Text("…") is formatted for the locale, so
         // port 5173 read "5,173" in English and "5.173" in Portuguese.
-        for path in ["Sources/Vorssaint/UI/PortManager/PortManagerView.swift",
-                     "Sources/Vorssaint/UI/MenuPanel/PanelPortManagerView.swift"] {
+        for path in ["Sources/Orbit/UI/PortManager/PortManagerView.swift",
+                     "Sources/Orbit/UI/MenuPanel/PanelPortManagerView.swift"] {
             let rowSource = (try? String(contentsOfFile: path, encoding: .utf8)) ?? ""
             suite.expect(rowSource.contains("Text(String(entry.port))")
                    && !rowSource.contains("\\(entry.port)") && !rowSource.contains("\\(entry.pid)"),
@@ -352,7 +352,7 @@ enum UtilitiesFeatureTests {
         // The service hands each typing path its own swallowed key: none
         // after a delimiter, the key that completed an immediate trigger.
         let snippetServiceCode = ((try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/Snippets/TextSnippetService.swift",
+            contentsOfFile: "Sources/Orbit/Services/Snippets/TextSnippetService.swift",
             encoding: .utf8)) ?? "")
             .components(separatedBy: "\n")
             .filter { !$0.trimmingCharacters(in: .whitespaces).hasPrefix("//") }
@@ -1121,7 +1121,7 @@ enum UtilitiesFeatureTests {
         suite.expect(wheelShortcuts() == [seedShortcut],
                "until a wheel is saved the role key is the shortcut the page lists")
         let shortcutsPageCode = ((try? String(
-            contentsOfFile: "Sources/Vorssaint/UI/Settings/ShortcutsSettings.swift",
+            contentsOfFile: "Sources/Orbit/UI/Settings/ShortcutsSettings.swift",
             encoding: .utf8)) ?? "")
             .components(separatedBy: "\n")
             .filter { !$0.trimmingCharacters(in: .whitespaces).hasPrefix("//") }
@@ -1215,7 +1215,7 @@ enum UtilitiesFeatureTests {
         // the button is claimed, nothing past that point hands an event back,
         // or the down and the up split.
         let radialServiceCode = ((try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/RadialMenu/RadialMenuService.swift",
+            contentsOfFile: "Sources/Orbit/Services/RadialMenu/RadialMenuService.swift",
             encoding: .utf8)) ?? "")
             .components(separatedBy: "\n")
             .filter { !$0.trimmingCharacters(in: .whitespaces).hasPrefix("//") }
@@ -1542,8 +1542,8 @@ enum UtilitiesFeatureTests {
                "disk eject exclusions travel in backups")
 
         // MARK: A sleeping clock
-        for shareService in ["Sources/Vorssaint/Services/QuickTools/ScreenshotShareService.swift",
-                             "Sources/Vorssaint/Services/Recorder/RecordingShareService.swift"] {
+        for shareService in ["Sources/Orbit/Services/QuickTools/ScreenshotShareService.swift",
+                             "Sources/Orbit/Services/Recorder/RecordingShareService.swift"] {
             let shareCode = ((try? String(contentsOfFile: shareService, encoding: .utf8)) ?? "")
                 .components(separatedBy: "\n")
                 .filter { !$0.trimmingCharacters(in: .whitespaces).hasPrefix("//") }
@@ -1559,7 +1559,7 @@ enum UtilitiesFeatureTests {
         // the label's cell adds unaccounted for -- the labels have to be the
         // ones asked.
         let quitHUDSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/UI/QuitProtection/QuitProtectionHUD.swift",
+            contentsOfFile: "Sources/Orbit/UI/QuitProtection/QuitProtectionHUD.swift",
             encoding: .utf8)) ?? ""
         suite.expect(quitHUDSource.count > 1_000,
                "the quit protection HUD source is readable (\(quitHUDSource.count) bytes)")
@@ -1595,7 +1595,7 @@ enum UtilitiesFeatureTests {
                                                    excludedVolumes: ["1234-5678-abcd"]),
                "an excluded volume UUID is honoured only when the caller hands the UUID over")
         let diskExclusionsListCode = ((try? String(
-            contentsOfFile: "Sources/Vorssaint/UI/Settings/DiskExclusionsList.swift",
+            contentsOfFile: "Sources/Orbit/UI/Settings/DiskExclusionsList.swift",
             encoding: .utf8)) ?? "").components(separatedBy: "\n")
             .filter { !$0.trimmingCharacters(in: .whitespaces).hasPrefix("//") }
             .joined(separator: "\n")

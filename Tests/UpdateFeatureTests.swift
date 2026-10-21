@@ -263,7 +263,7 @@ enum UpdateFeatureTests {
         // that delegate's deinit is what deletes the scratch file, so the
         // release path has to invalidate the session too.
         let showcaseSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/Update/UpdateShowcaseMedia.swift",
+            contentsOfFile: "Sources/Orbit/Services/Update/UpdateShowcaseMedia.swift",
             encoding: .utf8)) ?? ""
         let showcaseDeinitBody = (showcaseSource.components(separatedBy: "\n    deinit {")
             .dropFirst().first ?? "").components(separatedBy: "\n    }").first ?? ""
@@ -1235,7 +1235,7 @@ enum UpdateFeatureTests {
         // what the service does with the third state is pinned by source. Both
         // needles are public symbols, not a line's spelling.
         let launchAtLoginSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/LaunchAtLogin.swift",
+            contentsOfFile: "Sources/Orbit/Services/LaunchAtLogin.swift",
             encoding: .utf8)) ?? ""
         suite.expect(launchAtLoginSource.contains(".requiresApproval"),
                "an approval-pending login item is read as its own state")

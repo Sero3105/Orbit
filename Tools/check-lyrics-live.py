@@ -91,7 +91,7 @@ def main():
     parser.add_argument("--metrics", action="store_true", help="print per-track request counts without lyrics")
     parser.add_argument("--title", action="append", help="Replay only these exact fixture titles (repeatable)")
     options = parser.parse_args()
-    service_path = "Sources/Vorssaint/Services/Notch/NotchLyricsService.swift"
+    service_path = "Sources/Orbit/Services/Notch/NotchLyricsService.swift"
     bodies = "".join(sourcegen.declaration(service_path, prefix) for prefix in [
         "    private func load(", "    private func acceptsResult(",
         "    private func finish(", "    private func search(",
@@ -122,7 +122,7 @@ final class Probe {
             (directory / name).write_text(content)
         executable = directory / "probe"
         subprocess.run(["swiftc", str(directory / "Stubs.swift"),
-                        str(ROOT / "Sources/Vorssaint/Services/Notch/NotchLyricsSupport.swift"),
+                        str(ROOT / "Sources/Orbit/Services/Notch/NotchLyricsSupport.swift"),
                         str(directory / "Probe.swift"), str(directory / "main.swift"),
                         "-o", str(executable)], check=True)
         import json

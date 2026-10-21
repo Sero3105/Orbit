@@ -441,7 +441,7 @@ enum NotchTests {
         suite.expect(wraps, "a player set wider by hand wraps the camera as the preset's does")
         // The Layout tab previews the home page at the width the island opens
         // it at, never a preset's wider island around it.
-        let editor = (try? String(contentsOfFile: "Sources/Vorssaint/UI/Settings/NotchLayoutEditor.swift", encoding: .utf8)) ?? ""
+        let editor = (try? String(contentsOfFile: "Sources/Orbit/UI/Settings/NotchLayoutEditor.swift", encoding: .utf8)) ?? ""
         suite.expect(editor.contains("private var actualWidth: CGFloat { previewGeometry.expandedWidth }")
                      && editor.contains("return geometry.page(.controls, controls: NotchSupport.controls(),"),
                      "the Layout preview opens the home page as the island does")
@@ -596,7 +596,7 @@ enum NotchTests {
     /// controls with it, and the player shows it where the row does not.
     private static func sectionsButtonPlacementContracts(_ suite: TestSuite) {
         func source(_ path: String) -> String { (try? String(contentsOfFile: path, encoding: .utf8)) ?? "" }
-        let island = source("Sources/Vorssaint/UI/Notch/NotchView.swift")
+        let island = source("Sources/Orbit/UI/Notch/NotchView.swift")
         let row = (island.components(separatedBy: "private func bandRow(").dropFirst().first ?? "")
             .components(separatedBy: "private func updateControl(").first ?? ""
         let fallbacks = row.components(separatedBy: "HStack(spacing: 6) {").count - 1
@@ -604,7 +604,7 @@ enum NotchTests {
         suite.expect(fallbacks == 4 && ends == fallbacks
                      && row.contains("if band.trailingSectionsButton { NotchSectionsButton(action: service.toggleSections) }"),
                      "every fallback of the row's trailing side ends a wrapping page's controls with the sections button")
-        let player = source("Sources/Vorssaint/UI/Notch/NotchMusicView.swift")
+        let player = source("Sources/Orbit/UI/Notch/NotchMusicView.swift")
         let corners = player.components(separatedBy: "} corner: {").dropFirst().map { $0.components(separatedBy: "}").first ?? "" }
         let cornersShowIt = corners.count == 2 && corners.allSatisfy { $0.contains("sectionsButton") }
         let rowItems = (player.components(separatedBy: ".notchBand(trailing: {").dropFirst().first ?? "")
@@ -709,7 +709,7 @@ enum NotchTests {
         suite.expect(content.width == CGFloat(304) && rows == 2 && narrowGap == CGFloat(0),
                      "at the narrowest width eight tiles sit in two rows of four with their gaps closed")
         // The island and its Layout preview hand the rail the same least gap.
-        for path in ["Sources/Vorssaint/UI/Notch/NotchControlsView.swift", "Sources/Vorssaint/UI/Settings/NotchLayoutEditor.swift"] {
+        for path in ["Sources/Orbit/UI/Notch/NotchControlsView.swift", "Sources/Orbit/UI/Settings/NotchLayoutEditor.swift"] {
             let source = (try? String(contentsOfFile: path, encoding: .utf8)) ?? ""
             suite.expect(source.components(separatedBy: "leastSpacing: NotchLayout.shortcutLeastSpacing").count == 2,
                          "the home page's rail closes its gaps before it scrolls in \(path)")
@@ -834,8 +834,8 @@ enum NotchTests {
                          "below a \(Int(camera))-point camera the smallest island holds eight shortcuts in two rows of four")
         }
         // The island and its Layout preview space the rows as the layout does.
-        for (path, call) in [("Sources/Vorssaint/UI/Notch/NotchControlsView.swift", "rowSpacing: layout.shortcutRowSpacing"),
-                             ("Sources/Vorssaint/UI/Settings/NotchLayoutEditor.swift", "rowSpacing: controls.shortcutRowSpacing")] {
+        for (path, call) in [("Sources/Orbit/UI/Notch/NotchControlsView.swift", "rowSpacing: layout.shortcutRowSpacing"),
+                             ("Sources/Orbit/UI/Settings/NotchLayoutEditor.swift", "rowSpacing: controls.shortcutRowSpacing")] {
             let source = (try? String(contentsOfFile: path, encoding: .utf8)) ?? ""
             suite.expect(source.components(separatedBy: call).count == 2,
                          "the home page's rail spaces its rows as its layout does in \(path)")
@@ -939,7 +939,7 @@ enum NotchTests {
                          "at the narrowest width the Tools arrows walk two rows of four: \(camera)")
         }
         // The island's page and the Content tab's preview share the view.
-        let source = (try? String(contentsOfFile: "Sources/Vorssaint/UI/QuickLauncher/QuickLauncherView.swift",
+        let source = (try? String(contentsOfFile: "Sources/Orbit/UI/QuickLauncher/QuickLauncherView.swift",
                                   encoding: .utf8)) ?? ""
         let rail = source.contains("leastSpacing: NotchLayout.toolLeastSpacing")
         let titles = source.contains("cell(item, titleInset: titleInset)") && source.contains(".padding(.horizontal, titleInset)")
@@ -1652,7 +1652,7 @@ enum NotchTests {
         suite.expect(!holds(shortcut: false), "turning the island shortcut off releases its key")
         // The service is a singleton holding a real Carbon hotkey, so its
         // wiring is checked in the source, like the launch hooks below.
-        let service = (try? String(contentsOfFile: "Sources/Vorssaint/Services/Notch/NotchService.swift",
+        let service = (try? String(contentsOfFile: "Sources/Orbit/Services/Notch/NotchService.swift",
                                    encoding: .utf8)) ?? ""
         suite.expect(service.contains("hotkey.onPress = { [weak self] in self?.toggleFromShortcut() }"),
                "the island shortcut answers like a click on the island")
@@ -2217,11 +2217,11 @@ enum NotchTests {
                      "the keyboard light level is opt-in and follows the brightness feature")
         suite.expect(lightNeedsHardware,
                      "a level restored from a Mac with a keyboard light stays out of an island without one")
-        let launch = (try? String(contentsOfFile: "Sources/Vorssaint/main.swift", encoding: .utf8)) ?? ""
+        let launch = (try? String(contentsOfFile: "Sources/Orbit/main.swift", encoding: .utf8)) ?? ""
         suite.expect(launch.contains("NotchControlItem.keyboardLightIsSupported = { BrightnessService.keyboardLightIsSupported }"),
                      "launch asks the brightness service whether this Mac has a keyboard light")
-        let controlsView = (try? String(contentsOfFile: "Sources/Vorssaint/UI/Notch/NotchControlsView.swift", encoding: .utf8)) ?? ""
-        let layoutEditor = (try? String(contentsOfFile: "Sources/Vorssaint/UI/Settings/NotchLayoutEditor.swift", encoding: .utf8)) ?? ""
+        let controlsView = (try? String(contentsOfFile: "Sources/Orbit/UI/Notch/NotchControlsView.swift", encoding: .utf8)) ?? ""
+        let layoutEditor = (try? String(contentsOfFile: "Sources/Orbit/UI/Settings/NotchLayoutEditor.swift", encoding: .utf8)) ?? ""
         suite.expect(["NotchBandLevels(band: band, levels: bandLevels, side: .leading)",
                       "NotchBandLevels(band: band, levels: bandLevels, side: .trailing)",
                       "NotchLevelRow(levels: belowLevels)"].allSatisfy { layout in
@@ -3273,9 +3273,9 @@ enum NotchTests {
         }
         // Settings asks that rule with the displays connected now, and its
         // button switches to every display (issue #1711).
-        let notchSettings = (try? String(contentsOfFile: "Sources/Vorssaint/UI/Settings/NotchSettings.swift",
+        let notchSettings = (try? String(contentsOfFile: "Sources/Orbit/UI/Settings/NotchSettings.swift",
                                          encoding: .utf8)) ?? ""
-        let notchServiceSource = (try? String(contentsOfFile: "Sources/Vorssaint/Services/Notch/NotchService.swift",
+        let notchServiceSource = (try? String(contentsOfFile: "Sources/Orbit/Services/Notch/NotchService.swift",
                                               encoding: .utf8)) ?? ""
         suite.expect(notchSettings.contains("if enabled, !NotchService.reachesDisplayWithoutNotch(NotchDisplay(rawValue: display) ?? .automatic) {")
                      && notchSettings.contains("Button(text.showOnAllDisplays) { display = NotchDisplay.all.rawValue }")
@@ -3783,7 +3783,7 @@ enum NotchTests {
                    && label.contains("52") && !words.isEmpty,
                    "VoiceOver reads a row's week number as that week in \(language.rawValue)")
         }
-        let monthView = (try? String(contentsOfFile: "Sources/Vorssaint/UI/Notch/NotchCalendarMonthView.swift",
+        let monthView = (try? String(contentsOfFile: "Sources/Orbit/UI/Notch/NotchCalendarMonthView.swift",
                                      encoding: .utf8)) ?? ""
         let weekNumberView = monthView.components(separatedBy: "struct NotchCalendarWeekNumber: View {").last ?? ""
         suite.expect(monthView.components(separatedBy: "NotchCalendarWeekNumber(date: date, text: text,").count == 3

@@ -194,7 +194,7 @@ enum AppUpdatesContract {
         suite.expect(answeredTemplateFeed.checkedPaths == [templateApp.path]
                      && template.uncomparableAppNames(coveredBy: answeredTemplateFeed).isEmpty,
                      "an app its own feed compared is not also named as not compared")
-        let serviceSource = (try? String(contentsOfFile: "Sources/Vorssaint/Services/AppUpdates/AppUpdatesService.swift",
+        let serviceSource = (try? String(contentsOfFile: "Sources/Orbit/Services/AppUpdates/AppUpdatesService.swift",
                                          encoding: .utf8)) ?? ""
         suite.expect(serviceSource.contains("feedResult.resolvingCatalogFallback(\n                    answeredBy: onlineResult, candidates: onlineCandidates)")
                      && serviceSource.contains("uncomparableAppNames: onlineResult.uncomparableAppNames(coveredBy: resolvedFeed),"),

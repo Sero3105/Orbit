@@ -654,8 +654,8 @@ enum AppManagementFeatureTests {
                "an app is named from the file manager's name without its .app")
         suite.expect(InstalledApps.name(for: "com.example.not-installed.app") == "com.example.not-installed.app",
                "an identifier that names no installed app is shown as it is, even when it ends in .app")
-        for path in ["Sources/Vorssaint/UI/Uninstall/UninstallerView.swift",
-                     "Sources/Vorssaint/UI/MenuPanel/PanelUninstallerView.swift"] {
+        for path in ["Sources/Orbit/UI/Uninstall/UninstallerView.swift",
+                     "Sources/Orbit/UI/MenuPanel/PanelUninstallerView.swift"] {
             let pickerSource = (try? String(contentsOfFile: path, encoding: .utf8)) ?? ""
             suite.expect(pickerSource.contains("UninstallerSupport.offeredApplications()"),
                    "\(path) offers only the apps the shared selection checks accept")
@@ -998,7 +998,7 @@ enum AppManagementFeatureTests {
         // walk. JunkCleaner is not part of this test binary, so pin the gate
         // and the premise that makes an empty oracle safe at their source.
         let junkCleanerSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/Cleaner/JunkCleaner.swift",
+            contentsOfFile: "Sources/Orbit/Services/Cleaner/JunkCleaner.swift",
             encoding: .utf8)) ?? ""
         let cleanSelectedBody = sourceBody(of: junkCleanerSource, from: "func cleanSelected(",
                                            to: "private static func mayRemove")
@@ -1021,7 +1021,7 @@ enum AppManagementFeatureTests {
         // binary either, so pin the gate that keeps a removal that cannot claim
         // shared data from paying for the roster.
         let appUninstallerSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/Uninstall/AppUninstaller.swift",
+            contentsOfFile: "Sources/Orbit/Services/Uninstall/AppUninstaller.swift",
             encoding: .utf8)) ?? ""
         let removeSelectedBody = sourceBody(of: appUninstallerSource, from: "func removeSelected()",
                                             to: "func removeSelectedWithHomebrew(")
@@ -1194,8 +1194,8 @@ enum AppManagementFeatureTests {
             ((try? String(contentsOfFile: path, encoding: .utf8)) ?? "")
                 .split(whereSeparator: \.isWhitespace).joined()
         }
-        let schedulerCode = compact("Sources/Vorssaint/Services/Cleaner/CleanerScheduler.swift")
-        let cleanerViewCode = compact("Sources/Vorssaint/UI/Cleaner/CleanerView.swift")
+        let schedulerCode = compact("Sources/Orbit/Services/Cleaner/CleanerScheduler.swift")
+        let cleanerViewCode = compact("Sources/Orbit/UI/Cleaner/CleanerView.swift")
         suite.expect(schedulerCode.components(separatedBy: "cleanSelected(").count == 2
                && schedulerCode.contains("cleanSelected(escalate:false)")
                && schedulerCode.contains("notifyIfWanted(freed:freed,failed:failed)"),
@@ -1316,7 +1316,7 @@ enum AppManagementFeatureTests {
         suite.expect(Defaults.mandatoryAutoQuitExceptionBundleIDs.contains(Defaults.phoneBundleIdentifier),
                "Phone remains a mandatory quit exception even when hidden from the UI")
         let autoQuitSettingsSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/UI/Settings/AutoQuitSettings.swift",
+            contentsOfFile: "Sources/Orbit/UI/Settings/AutoQuitSettings.swift",
             encoding: .utf8)) ?? ""
         suite.expect(autoQuitSettingsSource.contains("AutoQuitSupport.visibleExceptions")
                 && autoQuitSettingsSource.contains("InstalledApps.url(for:"),
@@ -1549,7 +1549,7 @@ enum AppManagementFeatureTests {
         // The bridge's window query cannot run here, so its answer must go
         // through that filter, and only on macOS 26 and later.
         let minimizedBody = ((try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/Switcher/SpaceWindowBridge.swift",
+            contentsOfFile: "Sources/Orbit/Services/Switcher/SpaceWindowBridge.swift",
             encoding: .utf8)) ?? "")
             .components(separatedBy: "static func isMinimized(_ windowID: CGWindowID) -> Bool {\n")
             .dropFirst().first?
@@ -1811,7 +1811,7 @@ enum AppManagementFeatureTests {
         suite.expect(!AutoQuitSupport.isWindowNotificationRegistered(.cannotComplete),
                "a window whose registration was refused is not watched")
         let autoQuitServiceSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/AutoQuit/AutoQuitService.swift",
+            contentsOfFile: "Sources/Orbit/Services/AutoQuit/AutoQuitService.swift",
             encoding: .utf8)) ?? ""
         let autoQuitServiceLines = autoQuitServiceSource.components(separatedBy: "\n")
         func autoQuitServiceCodeLines(containing fragment: String) -> [Int] {
@@ -1930,7 +1930,7 @@ enum AppManagementFeatureTests {
         // first: the note above the probe names the attribute it avoids, and a
         // check that cannot tell prose from a call would go red for it.
         let autoQuitServiceCode = ((try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/AutoQuit/AutoQuitService.swift",
+            contentsOfFile: "Sources/Orbit/Services/AutoQuit/AutoQuitService.swift",
             encoding: .utf8)) ?? "")
             .components(separatedBy: "\n")
             .filter { !$0.trimmingCharacters(in: .whitespaces).hasPrefix("//") }
@@ -2032,7 +2032,7 @@ enum AppManagementFeatureTests {
                "dismissing answers once, ignores later clicks and releases what the alert retained")
 
         let installerSource = (try? String(
-            contentsOfFile: "Sources/Vorssaint/Services/DiskImageInstaller/DiskImageInstallerService.swift",
+            contentsOfFile: "Sources/Orbit/Services/DiskImageInstaller/DiskImageInstallerService.swift",
             encoding: .utf8)) ?? ""
         suite.expect(!installerSource.isEmpty && !installerSource.contains(".runModal()")
                && installerSource.components(separatedBy: "NonModalAlert.present(").count == 3,
