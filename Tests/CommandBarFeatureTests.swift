@@ -20,7 +20,7 @@ enum CommandBarFeatureTests {
             static let general = Pasteboard()
             var accepts = true
             func clearContents() {}
-            func declareVorssaintSource() {}
+            func declareOrbitSource() {}
             func setString(_ value: String, forType: Kind) -> Bool { accepts }
         }
         typealias NSPasteboard = Pasteboard
@@ -2021,10 +2021,10 @@ enum CommandBarFeatureTests {
         suite.expect(CommandBarLinks.expand("https://x.com/{clipboard}", kind: .link,
                                       clipboard: "a+b") == "https://x.com/a%2Bb",
                "a plus sign inside a search is escaped, not read as a space")
-        suite.expect(CommandBarLinks.trailingArgument(query: "gh vorssaint utils", name: "gh")
-                == "vorssaint utils",
+        suite.expect(CommandBarLinks.trailingArgument(query: "gh orbit utils", name: "gh")
+                == "orbit utils",
                "what comes after the name is what the saved search opens with")
-        suite.expect(CommandBarLinks.trailingArgument(query: "GH Vorssaint", name: "gh") == "Vorssaint",
+        suite.expect(CommandBarLinks.trailingArgument(query: "GH Orbit", name: "gh") == "Orbit",
                "the name is matched without case; the argument keeps its own")
         suite.expect(CommandBarLinks.trailingArgument(query: "ghost writer", name: "gh") == nil
                 && CommandBarLinks.trailingArgument(query: "gh", name: "gh") == nil,
@@ -2073,8 +2073,8 @@ enum CommandBarFeatureTests {
         suite.expect(CommandBarLinks.revealPath(for: CommandBarLink(name: "day", kind: .place,
                                                               destination: "~/Notes/{date}.md")) == nil,
                "a place still holding a placeholder is a different file every time it runs")
-        suite.expect(CommandBarLinks.rankingTitle(name: "gh", query: "gh vorssaint utils")
-                == "gh vorssaint utils",
+        suite.expect(CommandBarLinks.rankingTitle(name: "gh", query: "gh orbit utils")
+                == "gh orbit utils",
                "once an argument follows the name, the row is scored against the whole query")
         suite.expect(CommandBarLinks.rankingTitle(name: "gh", query: "gh") == "gh",
                "the name alone still scores against its own name")
@@ -2084,10 +2084,10 @@ enum CommandBarFeatureTests {
         // the list on the first word of the argument, which is the moment it
         // was about to run.
         suite.expect(CommandBarSearch.score(title: "gh", keywords: "Link",
-                                      query: "gh vorssaint utils") == nil
+                                      query: "gh orbit utils") == nil
                 && CommandBarSearch.score(
-                    title: CommandBarLinks.rankingTitle(name: "gh", query: "gh vorssaint utils"),
-                    keywords: "Link", query: "gh vorssaint utils") != nil,
+                    title: CommandBarLinks.rankingTitle(name: "gh", query: "gh orbit utils"),
+                    keywords: "Link", query: "gh orbit utils") != nil,
                "a saved search stays in the list while what to look for is typed")
 
         suite.expect(CommandBarLink.Kind.script.symbolName == "terminal",
@@ -2464,7 +2464,7 @@ enum CommandBarFeatureTests {
                 && editedCompletion == nil,
                "Tab remembers the fuzzy search unless the completed field is edited")
 
-        let learningDefaultsName = "com.vorssaint.tests.command-bar-learning"
+        let learningDefaultsName = "com.orbit.tests.command-bar-learning"
         let learningDefaults = UserDefaults(suiteName: learningDefaultsName)!
         learningDefaults.removePersistentDomain(forName: learningDefaultsName)
         let firstInstallationKey = CommandBarLearning.installationKey(in: learningDefaults)

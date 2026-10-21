@@ -93,12 +93,12 @@ enum StatusItemAnchorSupport {
         return CGRect(origin: .zero, size: lastFrame.size).contains(event.locationInWindow)
     }
 
-    /// Opening the panel activates Vorssaint so its controls take keys, which
+    /// Opening the panel activates Orbit so its controls take keys, which
     /// makes it the frontmost app for as long as nothing else claims focus.
     /// Once the panel is gone, the app that was in front before it opened gets
     /// activation back, but only when the person dismissed the panel with
     /// nothing taking over, and has not moved on meanwhile: another app is
-    /// already in front, or one of Vorssaint's own windows (Settings,
+    /// already in front, or one of Orbit's own windows (Settings,
     /// Feedback, an editor) took focus from the panel.
     static func shouldReturnActivation(to sourcePID: pid_t?,
                                        ownPID: pid_t,
@@ -129,9 +129,9 @@ enum StatusItemAnchorSupport {
     }
 
     /// The app to hand activation back to after a change seen while the panel
-    /// is open. The panel joins every desktop and stays up when Vorssaint
+    /// is open. The panel joins every desktop and stays up when Orbit
     /// deactivates, so the person can move on without closing it. Another app
-    /// becoming active replaces the remembered one; Vorssaint itself taking
+    /// becoming active replaces the remembered one; Orbit itself taking
     /// activation back (a click in the panel) keeps it. A desktop switch drops
     /// it, since activating it later would travel back to the desktop it is on.
     static func panelActivationSource<App>(after change: PanelActivationChange<App>,

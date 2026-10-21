@@ -35,7 +35,7 @@ final class PeripheralBatterySampler {
     /// Set once before sampling starts.
     var onBluetoothRefresh: (() -> Void)?
 
-    init(bluetoothQueue: DispatchQueue = DispatchQueue(label: "com.vorssaint.peripheral-battery.bluetooth", qos: .utility),
+    init(bluetoothQueue: DispatchQueue = DispatchQueue(label: "com.orbit.peripheral-battery.bluetooth", qos: .utility),
          readFast: @escaping () -> [PeripheralBatteryDevice] = PeripheralBatterySampler.readFastDevices,
          readProfiler: @escaping (BoundedProcessCancellation) -> Data = PeripheralBatterySampler.readBluetoothSystemProfilerData,
          makeBluetoothRead: @escaping (DispatchQueue, BoundedProcessCancellation, @escaping ([BluetoothBatteryReading]) -> Void) -> PeripheralBluetoothReading = {

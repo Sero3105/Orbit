@@ -91,7 +91,7 @@ final class NotchOverlaySpace {
                    [NSNumber(value: space)] as CFArray)
     }
 
-#if VORSSAINT_DEVELOPMENT
+#if ORBIT_DEVELOPMENT
     /// The window server's own answer: the window belongs to this Space and
     /// to no desktop a swipe could move.
     func probeHolds(_ window: NSWindow) -> Bool {

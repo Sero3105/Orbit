@@ -86,14 +86,14 @@ final class NotchMusicService: ObservableObject {
     }
     private var automationAction: AutomationAction?
     private var awaitingAutomationValidation = false
-    private let queue = DispatchQueue(label: "com.vorssaint.notch-music", qos: .utility)
+    private let queue = DispatchQueue(label: "com.orbit.notch-music", qos: .utility)
     private lazy var commandWriter = NotchMusicCommandWriter { [queue = self.queue] action in queue.async(execute: action) }
 
     private init() {}
 
     private static var adapter: [String]? {
         guard let script = Bundle.main.url(forResource: "now-playing", withExtension: "pl"),
-              let library = Bundle.main.privateFrameworksURL?.appendingPathComponent("libVorssaintNowPlaying.dylib"),
+              let library = Bundle.main.privateFrameworksURL?.appendingPathComponent("libOrbitNowPlaying.dylib"),
               FileManager.default.fileExists(atPath: library.path) else { return nil }
         return [script.path, library.path]
     }
@@ -727,7 +727,7 @@ final class NotchMusicService: ObservableObject {
 /// Pipe callbacks may split a UTF-8 character or join several replies. Parsing
 /// stays serial and bounded before any metadata reaches the main thread.
 private final class NotchMusicPipeReader {
-    private let queue = DispatchQueue(label: "com.vorssaint.notch-music-reader", qos: .utility)
+    private let queue = DispatchQueue(label: "com.orbit.notch-music-reader", qos: .utility)
     private var buffer = Data()
     private let receive: (Data) -> Void
     init(receive: @escaping (Data) -> Void) { self.receive = receive }

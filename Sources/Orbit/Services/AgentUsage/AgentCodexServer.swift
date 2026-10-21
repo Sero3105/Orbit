@@ -25,7 +25,7 @@ struct AgentCodexResetSummary: Equatable {
 }
 
 /// Codex's own server, started for one short conversation at a time, answers
-/// for the account. It signs in with Codex's credentials, which Vorssaint
+/// for the account. It signs in with Codex's credentials, which Orbit
 /// never reads, and hears only the questions asked here.
 enum AgentCodexServer {
     enum Failure: Error, Equatable {
@@ -200,7 +200,7 @@ final class AgentCodexConversation: AgentCLIConversation {
     /// Introduces the app, as every conversation must begin.
     func start() -> Result<Void, AgentCodexServer.Failure> {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
-        let client: [String: Any] = ["name": "vorssaint", "title": "Vorssaint", "version": version]
+        let client: [String: Any] = ["name": "orbit", "title": "Orbit", "version": version]
         return ask("initialize", ["clientInfo": client, "capabilities": NSNull()])
             .flatMap { _ -> Result<Void, AgentCodexServer.Failure> in
                 send(["method": "initialized"]) ? .success(()) : .failure(.unreachable)

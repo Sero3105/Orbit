@@ -30,7 +30,7 @@ final class AgentCodexResetService: ObservableObject {
     /// tells whether an unanswered use happened.
     static let retryWindow: TimeInterval = 10 * 60
 
-    private let queue = DispatchQueue(label: "com.vorssaint.codex-resets", qos: .userInitiated)
+    private let queue = DispatchQueue(label: "com.orbit.codex-resets", qos: .userInitiated)
     private var attempted = Date.distantPast
     /// A Terminal window's PATH, asked of the login shell only when the
     /// person looks again for a Codex that was not found: that runs their

@@ -109,10 +109,10 @@ final class ClipboardIgnoredApps: ObservableObject {
     /// have copied it, and naming none is better than naming the wrong one.
     /// An app that names itself on the pasteboard is believed over the
     /// guess, and is left out just the same when it is on the list.
-    /// Vorssaint's own writes, which never take the front, name no app at
+    /// Orbit's own writes, which never take the front, name no app at
     /// all, and neither does a copy that came from another device. The
     /// history's own panel never takes the front either: a copy made while
-    /// it held the keys is Vorssaint's own and comes back as
+    /// it held the keys is Orbit's own and comes back as
     /// `fromHistoryPanel`. Closing the panel makes one last check of its own,
     /// so the next copy belongs to the app the user went back to; only when
     /// that check could not run does the first check after it still count

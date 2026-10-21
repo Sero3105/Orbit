@@ -129,7 +129,7 @@ enum AirPlayRingBufferContract {
     }
 }
 
-/// Only Vorssaint's own AirPlay entry streams through the route picker. Every
+/// Only Orbit's own AirPlay entry streams through the route picker. Every
 /// other output, including AirPlay devices macOS exposes, follows the normal
 /// device rules: listed means usable, missing means fall back to the default.
 enum AirPlayRouteContract {
@@ -728,7 +728,7 @@ enum AirPlayIdleContract {
         // Read as source text because the mixer lives in a file the test
         // target does not compile: every reconcile reports through the check
         // above whether any routed app plays, and only while AirPlay is
-        // listed, so a Vorssaint that never offers AirPlay never creates the
+        // listed, so a Orbit that never offers AirPlay never creates the
         // manager.
         let mixerCode = (try? String(
             contentsOfFile: "Sources/Orbit/Services/Audio/AppVolumeMixer.swift",

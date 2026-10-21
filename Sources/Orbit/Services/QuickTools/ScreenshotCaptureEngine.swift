@@ -16,7 +16,7 @@ enum ScreenshotCaptureEngine {
     /// Full-resolution capture of one display.
     static func captureDisplay(_ displayID: CGDirectDisplayID,
                                includePointer: Bool,
-                               hideVorssaintWindows: Bool,
+                               hideOrbitWindows: Bool,
                                protectedWindowIDs: Set<CGWindowID>) async -> CGImage? {
         guard let content = try? await SCShareableContent.excludingDesktopWindows(
             false, onScreenWindowsOnly: true)
@@ -25,7 +25,7 @@ enum ScreenshotCaptureEngine {
         else { return nil }
 
         let ownWindows = await excludedOwnWindows(in: content,
-                                            hideVorssaintWindows: hideVorssaintWindows,
+                                            hideOrbitWindows: hideOrbitWindows,
                                             protectedWindowIDs: protectedWindowIDs)
         return await captureDisplay(display,
                                     scale: screenScale(for: displayID),
@@ -36,11 +36,11 @@ enum ScreenshotCaptureEngine {
     static func captureDisplayRegion(displayID: CGDirectDisplayID,
                                      pixelRect: CGRect,
                                      includePointer: Bool,
-                                     hideVorssaintWindows: Bool,
+                                     hideOrbitWindows: Bool,
                                      protectedWindowIDs: Set<CGWindowID>) async -> CGImage? {
         guard let capture = await prepareDisplayRegion(
             displayID: displayID, pixelRect: pixelRect, includePointer: includePointer,
-            hideVorssaintWindows: hideVorssaintWindows, protectedWindowIDs: protectedWindowIDs)
+            hideOrbitWindows: hideOrbitWindows, protectedWindowIDs: protectedWindowIDs)
         else { return nil }
         return await capture.image()
     }
@@ -67,7 +67,7 @@ enum ScreenshotCaptureEngine {
     static func prepareDisplayRegion(displayID: CGDirectDisplayID,
                                      pixelRect: CGRect,
                                      includePointer: Bool,
-                                     hideVorssaintWindows: Bool,
+                                     hideOrbitWindows: Bool,
                                      protectedWindowIDs: Set<CGWindowID>,
                                      keepsIslandOut: Bool = false) async -> RegionCapture? {
         guard let content = try? await SCShareableContent.excludingDesktopWindows(
@@ -81,7 +81,7 @@ enum ScreenshotCaptureEngine {
         let clamped = ScreenshotSupport.clamp(pixelRect, to: displayPixels).integral
         guard !clamped.isEmpty else { return nil }
         let ownWindows = await excludedOwnWindows(in: content,
-                                            hideVorssaintWindows: hideVorssaintWindows,
+                                            hideOrbitWindows: hideOrbitWindows,
                                             protectedWindowIDs: protectedWindowIDs,
                                             keepsIslandOut: keepsIslandOut)
         let filter = SCContentFilter(display: display, excludingWindows: ownWindows)
@@ -100,13 +100,13 @@ enum ScreenshotCaptureEngine {
     /// Captures every given screen, keyed by display id. Screens that fail
     /// are simply absent; the caller decides how to degrade.
     static func captureAllDisplays(includePointer: Bool,
-                                   hideVorssaintWindows: Bool,
+                                   hideOrbitWindows: Bool,
                                    protectedWindowIDs: Set<CGWindowID>) async -> [CGDirectDisplayID: CGImage] {
         guard let content = try? await SCShareableContent.excludingDesktopWindows(
             false, onScreenWindowsOnly: true)
         else { return [:] }
         let ownWindows = await excludedOwnWindows(in: content,
-                                            hideVorssaintWindows: hideVorssaintWindows,
+                                            hideOrbitWindows: hideOrbitWindows,
                                             protectedWindowIDs: protectedWindowIDs)
         var result: [CGDirectDisplayID: CGImage] = [:]
         for screen in NSScreen.screens {
@@ -128,7 +128,7 @@ enum ScreenshotCaptureEngine {
     /// against the same shareable-content snapshot the capture will use.
     @MainActor
     private static func excludedOwnWindows(in content: SCShareableContent,
-                                           hideVorssaintWindows: Bool,
+                                           hideOrbitWindows: Bool,
                                            protectedWindowIDs: Set<CGWindowID>,
                                            keepsIslandOut: Bool = false) -> [SCWindow] {
         let ownWindowIDs = Set(content.windows.compactMap { window in
@@ -141,7 +141,7 @@ enum ScreenshotCaptureEngine {
         let islandIDs = !keepsIslandOut && NotchSupport.isEnabled()
             ? NotchService.shared.captureVisibleWindowIDs : []
         let excludedIDs = ScreenshotCapturePolicy.excludedWindowIDs(
-            hideVorssaintWindows: hideVorssaintWindows,
+            hideOrbitWindows: hideOrbitWindows,
             ownWindowIDs: ownWindowIDs,
             protectedWindowIDs: protectedWindowIDs,
             islandWindowIDs: islandIDs)
@@ -486,7 +486,7 @@ enum ScreenshotCaptureEngine {
     /// On-screen windows a click can capture, front to back, in the window
     /// server's global top-left coordinates. Ordinary layer-zero windows from
     /// this process follow the visibility preference, except for capture UI.
-    static func pickableWindows(hideVorssaintWindows: Bool,
+    static func pickableWindows(hideOrbitWindows: Bool,
                                 protectedWindowIDs: Set<CGWindowID>)
         -> [(id: CGWindowID, bounds: CGRect)] {
         guard let info = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements],
@@ -504,7 +504,7 @@ enum ScreenshotCaptureEngine {
                   ScreenshotCapturePolicy.canPickWindow(
                 id,
                 isOwnWindow: pid == ownPID,
-                hideVorssaintWindows: hideVorssaintWindows,
+                hideOrbitWindows: hideOrbitWindows,
                 protectedWindowIDs: protectedWindowIDs)
             else { return nil }
             let bounds = CGRect(x: boundsDict["X"] ?? 0,

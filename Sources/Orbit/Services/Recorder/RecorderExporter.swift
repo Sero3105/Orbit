@@ -397,7 +397,7 @@ final class RecorderExporter {
                              cancelled: Cancellation,
                              next: @escaping () -> CMSampleBuffer?,
                              onAppended: @escaping () -> Void) async {
-        let queue = DispatchQueue(label: "com.vorssaint." + label, qos: .userInitiated)
+        let queue = DispatchQueue(label: "com.orbit." + label, qos: .userInitiated)
         await withCheckedContinuation { continuation in
             let finished = OnceFlag()
             // AVFoundation invokes this callback only on the serial queue above.
@@ -481,7 +481,7 @@ final class RecorderExporter {
             return nil
         }
         let directory = cache
-            .appendingPathComponent(Bundle.main.bundleIdentifier ?? "com.vorssaint.utils",
+            .appendingPathComponent(Bundle.main.bundleIdentifier ?? "com.orbit.Orbit",
                                     isDirectory: true)
             .appendingPathComponent("Temporary Recording Uploads", isDirectory: true)
         do {

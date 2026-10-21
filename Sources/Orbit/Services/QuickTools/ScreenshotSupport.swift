@@ -127,10 +127,10 @@ enum ScreenshotSupport {
     struct UnifiedCapturePolicy: Equatable {
         let freeze: Bool
         let includePointer: Bool
-        let hideVorssaintWindows: Bool
+        let hideOrbitWindows: Bool
         /// Whether editors and pinned captures stay out of the picture and the
         /// pickable windows. Recording keeps them out even while "Hide
-        /// Vorssaint windows" is off, which that flag alone cannot tell apart.
+        /// Orbit windows" is off, which that flag alone cannot tell apart.
         let keepsContentWindowsOut: Bool
         let usesGeometry: Bool
 
@@ -140,7 +140,7 @@ enum ScreenshotSupport {
         func sharesSource(with other: UnifiedCapturePolicy) -> Bool {
             freeze == other.freeze
                 && includePointer == other.includePointer
-                && hideVorssaintWindows == other.hideVorssaintWindows
+                && hideOrbitWindows == other.hideOrbitWindows
                 && keepsContentWindowsOut == other.keepsContentWindowsOut
         }
     }
@@ -148,13 +148,13 @@ enum ScreenshotSupport {
     static func unifiedCapturePolicy(for tool: ScreenCaptureTool,
                                      screenshotFreeze: Bool,
                                      screenshotIncludePointer: Bool,
-                                     screenshotHideVorssaintWindows: Bool)
+                                     screenshotHideOrbitWindows: Bool)
         -> UnifiedCapturePolicy {
         UnifiedCapturePolicy(
             freeze: tool == .screenshot ? screenshotFreeze : true,
             includePointer: tool == .screenshot && screenshotIncludePointer,
-            hideVorssaintWindows: tool != .recording && screenshotHideVorssaintWindows,
-            keepsContentWindowsOut: tool == .recording || screenshotHideVorssaintWindows,
+            hideOrbitWindows: tool != .recording && screenshotHideOrbitWindows,
+            keepsContentWindowsOut: tool == .recording || screenshotHideOrbitWindows,
             usesGeometry: tool == .recording)
     }
 

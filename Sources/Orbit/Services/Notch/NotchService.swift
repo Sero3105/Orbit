@@ -274,7 +274,7 @@ final class NotchService: ObservableObject {
     private var menuBarMeasurements = NotchMenuBarMeasurements()
     private var screenRefreshWork: DispatchWorkItem?
     private var preferenceSyncWork: DispatchWorkItem?
-    private let menuSpaceQueue = DispatchQueue(label: "com.vorssaint.notch-menu-space", qos: .utility)
+    private let menuSpaceQueue = DispatchQueue(label: "com.orbit.notch-menu-space", qos: .utility)
     /// The display the island is on. The pointer choice keeps it there until
     /// the island rests, so a preference sync never moves an open island.
     private var displayID: CGDirectDisplayID?
@@ -884,7 +884,7 @@ final class NotchService: ObservableObject {
     }
     /// A detail's title, the app panel's, or the island's own with no sections.
     var detailTitle: String {
-        if showingAppPanel { return "Vorssaint" }
+        if showingAppPanel { return "Orbit" }
         let language = L10n.shared.language
         guard let metric = selectedMetric else { return FeatureStrings.notch(language).title }
         // The fan card opens Fan Control, so its page shares that title.
@@ -1473,7 +1473,7 @@ final class NotchService: ObservableObject {
     func toggle() { expanded ? collapse() : open() }
 
     /// The island stays on screen, so only a manual resign takes its keyboard.
-    /// While Vorssaint stays the active app (its Settings window is open, for
+    /// While Orbit stays the active app (its Settings window is open, for
     /// example), that clears just the panel's own flag: AppKit keeps the island
     /// as its key window, typing still lands there, and a later makeKey()
     /// changes nothing, so a reopened Scratchpad gets no caret. The keyboard

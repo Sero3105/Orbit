@@ -56,8 +56,8 @@ final class ScreenshotService: ObservableObject {
         case scrolling
     }
 
-    private var hideVorssaintWindows: Bool {
-        UserDefaults.standard.bool(forKey: DefaultsKey.screenshotHideVorssaintWindows)
+    private var hideOrbitWindows: Bool {
+        UserDefaults.standard.bool(forKey: DefaultsKey.screenshotHideOrbitWindows)
     }
 
     /// The surfaces that make up the act of capturing. The quick preview is
@@ -78,7 +78,7 @@ final class ScreenshotService: ObservableObject {
         return ids
     }
 
-    /// Ordinary windows somebody left on screen, which the "Hide Vorssaint
+    /// Ordinary windows somebody left on screen, which the "Hide Orbit
     /// windows" preference owns.
     private var contentWindowIDs: Set<CGWindowID> {
         var ids: Set<CGWindowID> = []
@@ -297,7 +297,7 @@ final class ScreenshotService: ObservableObject {
                 : defaults.bool(forKey: DefaultsKey.screenshotFreeze),
             includePointer: defaults.bool(forKey: DefaultsKey.screenshotIncludePointer),
             showLastRegion: defaults.bool(forKey: DefaultsKey.screenshotShowLastRegion),
-            hideVorssaintWindows: hideVorssaintWindows,
+            hideOrbitWindows: hideOrbitWindows,
             protectedWindowIDs: { [weak self] in self?.protectedWindowIDs ?? [] },
             purpose: mode == .scrolling ? strings.scrollingCaptureTitle : nil,
             mode: mode == .scrolling ? .geometry : .image,
@@ -349,13 +349,13 @@ final class ScreenshotService: ObservableObject {
         let scale = screen.backingScaleFactor
         let frame = screen.frame
         let includePointer = UserDefaults.standard.bool(forKey: DefaultsKey.screenshotIncludePointer)
-        let hideWindows = hideVorssaintWindows
+        let hideWindows = hideOrbitWindows
         let protectedIDs = protectedWindowIDs
         directCaptureTask = Task { @MainActor [weak self] in
             let image = await ScreenshotCaptureEngine.captureDisplay(
                 displayID,
                 includePointer: includePointer,
-                hideVorssaintWindows: hideWindows,
+                hideOrbitWindows: hideWindows,
                 protectedWindowIDs: protectedIDs)
             guard let self, !Task.isCancelled else { return }
             self.directCaptureTask = nil
@@ -382,7 +382,7 @@ final class ScreenshotService: ObservableObject {
             onCancel: { [weak self] in self?.scrollingTask?.cancel() })
         // Read after the controls are on screen so their window is protected,
         // and once for the whole run: the picture must not change halfway.
-        let hideWindows = hideVorssaintWindows
+        let hideWindows = hideOrbitWindows
         let protectedIDs = protectedWindowIDs
         let captureID = UUID()
         scrollingCaptureID = captureID
@@ -391,7 +391,7 @@ final class ScreenshotService: ObservableObject {
             let result = await ScreenshotScrollingCapture.capture(
                 region: region,
                 includePointer: false,
-                hideVorssaintWindows: hideWindows,
+                hideOrbitWindows: hideWindows,
                 protectedWindowIDs: protectedIDs,
                 finishSignal: finishSignal,
                 onProgress: { height in
@@ -866,7 +866,7 @@ final class ScreenshotService: ObservableObject {
     }
 
     /// The shelf gets a copy of its own, not the file a Save wrote, which can
-    /// later be deleted or moved to the Trash outside Vorssaint. A saved
+    /// later be deleted or moved to the Trash outside Orbit. A saved
     /// capture lends its bytes and name, so nothing is encoded twice. Any
     /// other is encoded off the main thread. Each capture owns its task so
     /// taking another capture cannot lose one still being prepared. Quiet on
@@ -1135,7 +1135,7 @@ final class ScreenshotService: ObservableObject {
 /// without holding a full-resolution screenshot in memory while the app rests.
 enum ScreenshotLastCaptureStore {
     private static let writeQueue = DispatchQueue(
-        label: "com.vorssaint.utils.latest-screenshot",
+        label: "com.orbit.Orbit.latest-screenshot",
         qos: .utility)
     private static let stateLock = NSLock()
     private static var generation = 0

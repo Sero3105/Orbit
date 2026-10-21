@@ -173,7 +173,7 @@ final class ScreenTextService: ObservableObject {
     static func copyToPasteboard(_ value: String) {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
-        pasteboard.declareVorssaintSource()
+        pasteboard.declareOrbitSource()
         pasteboard.setString(value, forType: .string)
     }
 }

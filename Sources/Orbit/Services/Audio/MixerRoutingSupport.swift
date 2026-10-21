@@ -426,7 +426,7 @@ enum MixerRoutingSupport {
                                volumes: volumes)
     }
 
-    /// Vorssaint's own AirPlay entry, streamed through the system route picker.
+    /// Orbit's own AirPlay entry, streamed through the system route picker.
     /// Exact match only: real AirPlay devices macOS exposes are ordinary outputs
     /// and route through the normal tap, and a device name or UID that merely
     /// mentions AirPlay must never be mistaken for this entry.
@@ -444,7 +444,7 @@ enum MixerRoutingSupport {
 
     /// The item in an app's output menu that opens the system's speaker list
     /// for every app set to AirPlay, without changing this app's output.
-    static let airPlaySpeakerChoiceID = "vorssaint.output.airplay.choose"
+    static let airPlaySpeakerChoiceID = "orbit.output.airplay.choose"
 
     /// Whether a running engine's output is still there to render to. The
     /// AirPlay entry stays listed while no speaker is picked, but an engine

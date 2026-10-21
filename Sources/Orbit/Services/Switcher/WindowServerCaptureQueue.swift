@@ -48,10 +48,10 @@ final class WindowServerCaptureQueue: @unchecked Sendable {
         return { _ = preflight("kTCCServiceScreenCapture" as CFString, nil) }
     }()
 
-    private static let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "vorssaint",
+    private static let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "orbit",
                                     category: "window-capture")
 
-    private let queue = DispatchQueue(label: "com.vorssaint.window-capture", qos: .userInitiated)
+    private let queue = DispatchQueue(label: "com.orbit.window-capture", qos: .userInitiated)
     private let lock = NSLock()
     private let now: () -> TimeInterval
     private let checkPermission: () -> Void

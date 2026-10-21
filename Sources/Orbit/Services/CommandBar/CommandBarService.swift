@@ -821,7 +821,7 @@ final class CommandBarService: ObservableObject {
         refreshAfterPreferenceChange()
     }
 
-    /// Every Vorssaint-side reason to refuse a combination. Whether macOS
+    /// Every Orbit-side reason to refuse a combination. Whether macOS
     /// answers it is asked afterwards, so a row can offer to take it over.
     private func rowShortcutIssue(_ shortcut: GlobalShortcut, for entry: CommandBarEntry) -> String? {
         let strings = L10n.shared.s
@@ -2557,7 +2557,7 @@ final class CommandBarService: ObservableObject {
     private func beginCapturingShortcut(_ entry: CommandBarEntry) {
         ShortcutCapture.begin()
         // The tap sits ahead of the app's own menu. Without it, Command Q
-        // never reaches the local monitor. It quits Vorssaint instead of
+        // never reaches the local monitor. It quits Orbit instead of
         // landing on the card (issue #1193). When Accessibility cannot
         // create the tap, the monitor below still records as before.
         ShortcutRecordingTap.begin { [weak self] keyCode, modifiers, _ in
@@ -3374,7 +3374,7 @@ final class CommandBarService: ObservableObject {
                                     styleMask: [.borderless, .nonactivatingPanel],
                                     backing: .buffered,
                                     defer: false)
-        panel.title = "Vorssaint"
+        panel.title = "Orbit"
         panel.isReleasedWhenClosed = false
         panel.isMovableByWindowBackground = false
         panel.hidesOnDeactivate = false
@@ -3506,7 +3506,7 @@ final class CommandBarService: ObservableObject {
                 switch key {
                 case "q", "w", "m", "h":
                     // The app's menu owns these combinations and the panel is
-                    // key, so they would quit, close or hide Vorssaint while
+                    // key, so they would quit, close or hide Orbit while
                     // the person believes they are acting on the app the bar
                     // is floating over.
                     return nil

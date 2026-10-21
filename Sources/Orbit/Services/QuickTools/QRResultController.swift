@@ -91,7 +91,7 @@ final class QRResultController {
     private func copy(_ payload: String) {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
-        pasteboard.declareVorssaintSource()
+        pasteboard.declareOrbitSource()
         pasteboard.setString(payload, forType: .string)
         close()
         QuickToolHUD.show(icon: "qrcode", message: L10n.shared.s.ocrQRCopied)

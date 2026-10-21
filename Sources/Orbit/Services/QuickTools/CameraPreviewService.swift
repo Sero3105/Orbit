@@ -33,7 +33,7 @@ final class CameraPreviewService: ObservableObject {
     private let hotkey = QuickToolHotkey(id: 16)
     /// startRunning blocks for a moment, so every session mutation happens
     /// here and only state lands back on the main thread.
-    private let sessionQueue = DispatchQueue(label: "com.vorssaint.utils.camera-preview")
+    private let sessionQueue = DispatchQueue(label: "com.orbit.Orbit.camera-preview")
     private var panel: NSPanel?
     private var keyMonitor: Any?
     private var localClickMonitor: Any?
@@ -362,7 +362,7 @@ final class CameraPreviewService: ObservableObject {
                                         styleMask: [.borderless, .nonactivatingPanel],
                                         backing: .buffered,
                                         defer: false)
-        panel.title = "Vorssaint"
+        panel.title = "Orbit"
         panel.isReleasedWhenClosed = false
         // A mirror is something the user drags next to the meeting window.
         panel.isMovableByWindowBackground = true

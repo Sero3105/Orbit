@@ -37,7 +37,7 @@ enum RecorderGIFClipboard {
         guard item.setString(fileURL.absoluteString, forType: .fileURL) else { return false }
         pasteboard.clearContents()
         guard pasteboard.writeObjects([item]) else { return false }
-        pasteboard.declareVorssaintSource()
+        pasteboard.declareOrbitSource()
         return true
     }
 }

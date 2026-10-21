@@ -332,7 +332,7 @@ enum RecorderFeatureTests {
                "a recording being written right now has no file yet and is left alone")
 
         let directSaveRoot = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vorssaint-recorder-save-\(UUID().uuidString)",
+            .appendingPathComponent("orbit-recorder-save-\(UUID().uuidString)",
                                     isDirectory: true)
         try? FileManager.default.createDirectory(at: directSaveRoot,
                                                  withIntermediateDirectories: true)

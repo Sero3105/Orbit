@@ -210,12 +210,12 @@ extension SpacesOrderSystem {
 final class SpacesOrderHold {
     static let shared = SpacesOrderHold(defaults: .standard, system: .live)
 
-    private static let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "vorssaint",
+    private static let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "orbit",
                                     category: "spaces-order")
     private let defaults: UserDefaults
     private let system: SpacesOrderSystem
     /// Serial, so preference writes and a restart never overlap.
-    private let queue = DispatchQueue(label: "com.vorssaint.spaces-order")
+    private let queue = DispatchQueue(label: "com.orbit.spaces-order")
     private let queueKey = DispatchSpecificKey<Bool>()
     /// A newer request invalidates a reply before its queued work starts. The
     /// main-thread toggle write can notify observers that request another sync.
@@ -497,7 +497,7 @@ final class SpacesOrderHold {
                     watch(isWanted)
                 }
             }
-            Self.log.info("Space rearranging was turned back on outside Vorssaint; fixed order turned off")
+            Self.log.info("Space rearranging was turned back on outside Orbit; fixed order turned off")
         }
     }
 

@@ -277,7 +277,7 @@ enum NotchWatchTests {
     }
 
     private static func gateContracts(_ suite: TestSuite) {
-        let domain = "com.vorssaint.tests.notch-watch"
+        let domain = "com.orbit.tests.notch-watch"
         let defaults = UserDefaults(suiteName: domain)!
         defaults.removePersistentDomain(forName: domain)
         defer { defaults.removePersistentDomain(forName: domain) }

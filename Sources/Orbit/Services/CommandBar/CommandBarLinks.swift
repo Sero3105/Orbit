@@ -158,7 +158,7 @@ enum CommandBarLinks {
     /// What the person typed after the name of a link, which is what a search
     /// link opens with. Nil when the query does not name this link at all.
     ///
-    /// The name is matched whole and case-insensitively, so "gh vorssaint"
+    /// The name is matched whole and case-insensitively, so "gh orbit"
     /// finds the link called "gh" and "ghost" does not.
     static func trailingArgument(query: String, name: String) -> String? {
         let normalizedName = CommandBarSearch.normalized(name)

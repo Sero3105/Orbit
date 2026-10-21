@@ -30,7 +30,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     private var popoverForeignReopenAt = Date.distantPast
     private var popoverIsSwitchingAnchor = false
     /// The app to hand activation back to when the panel is dismissed, so
-    /// Vorssaint does not stay in front. Captured when a click opens the panel
+    /// Orbit does not stay in front. Captured when a click opens the panel
     /// and kept current by the observers below while the panel is shown.
     private var panelActivationSource: NSRunningApplication?
     private var panelActivationObservers: [NSObjectProtocol] = []
@@ -210,7 +210,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         let skipStartupWindows = startupOfPreviousRunDidNotFinish
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            #if VORSSAINT_DEVELOPMENT
+            #if ORBIT_DEVELOPMENT
             if CommandLine.arguments.contains("--preview-notch-tour") {
                 self.showUpdateHighlights(isReview: true)
                 return
@@ -396,9 +396,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
     /// Whether the menu bar icon is actually visible on a screen, rather than
     /// present in the status bar but clipped or dropped by a crowded/notched menu
     /// bar (in which case the button still has a window, just not an on-screen one).
-    private static let menuBarLog = Logger(subsystem: Bundle.main.bundleIdentifier ?? "vorssaint",
+    private static let menuBarLog = Logger(subsystem: Bundle.main.bundleIdentifier ?? "orbit",
                                            category: "menubar")
-    private static let updateLog = Logger(subsystem: Bundle.main.bundleIdentifier ?? "vorssaint",
+    private static let updateLog = Logger(subsystem: Bundle.main.bundleIdentifier ?? "orbit",
                                           category: "update")
 
     private func iconIsOnScreen() -> Bool {
@@ -1341,7 +1341,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         endPanelActivationTracking()
         let ownPID = NSRunningApplication.current.processIdentifier
         let front = NSWorkspace.shared.frontmostApplication
-        // Opened while Vorssaint was already in front (from Settings, say):
+        // Opened while Orbit was already in front (from Settings, say):
         // there is nothing to hand back when the panel closes.
         panelActivationSource = front?.processIdentifier == ownPID ? nil : front
         let center = NSWorkspace.shared.notificationCenter
@@ -1377,7 +1377,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         return source
     }
 
-    /// Closing the panel leaves Vorssaint active, and macOS keeps reporting it
+    /// Closing the panel leaves Orbit active, and macOS keeps reporting it
     /// as the frontmost app until something else is focused, which misleads
     /// window managers and anything that follows the active app.
     private func returnActivation(to source: NSRunningApplication?, after closeReason: PanelCloseReason?) {
@@ -1669,7 +1669,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         editMenu.addItem(NSMenuItem(title: strings.menuPaste, action: #selector(NSText.paste(_:)), keyEquivalent: "v"))
         editMenu.addItem(NSMenuItem(title: strings.menuSelectAll, action: #selector(NSText.selectAll(_:)), keyEquivalent: "a"))
 
-        // Drivers and other running copies of Vorssaint may translate side buttons
+        // Drivers and other running copies of Orbit may translate side buttons
         // into menu commands before this process ever receives a raw mouse event.
         let navigationMenuItem = NSMenuItem()
         navigationMenuItem.submenu = SettingsWindow.navigationMenu(language: L10n.shared.language)

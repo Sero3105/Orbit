@@ -6,10 +6,10 @@ import Foundation
 enum FanControlIdentifiers {
     static let teamID = "3D485NHW29"
 
-    #if VORSSAINT_DEVELOPMENT
-    static let appBundleID = "com.vorssaint.utils.dev"
+    #if ORBIT_DEVELOPMENT
+    static let appBundleID = "com.orbit.Orbit.dev"
     #else
-    static let appBundleID = "com.vorssaint.utils"
+    static let appBundleID = "com.orbit.Orbit"
     #endif
 
     static let helperID = "\(appBundleID).fan-control"

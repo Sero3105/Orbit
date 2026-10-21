@@ -63,7 +63,7 @@ final class BrightnessService: ObservableObject {
     /// here (issue #301 kind of reports), so the display pipeline narrates
     /// its decisions to the unified log, where a user can collect them with
     /// one `log show` command after something goes wrong.
-    private static let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "vorssaint",
+    private static let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "orbit",
                                     category: "display")
 
     @Published private(set) var displays: [BrightnessDisplay] = []
@@ -173,7 +173,7 @@ final class BrightnessService: ObservableObject {
     private var swallowedKeyCodes = Set<Int>()
     /// Serializes every I2C transaction and rebuild; DDC displays drop
     /// commands that interleave.
-    private let workQueue = DispatchQueue(label: "com.vorssaint.utils.brightness", qos: .userInitiated)
+    private let workQueue = DispatchQueue(label: "com.orbit.Orbit.brightness", qos: .userInitiated)
     private let stateLock = NSLock()
     private var routes: [CGDirectDisplayID: Route] = [:]
     private struct PendingWrite {
@@ -1307,7 +1307,7 @@ final class BrightnessService: ObservableObject {
             shouldStopFunctionKeyThread = false
             pendingFunctionKeyRestart = false
             let thread = Thread { [weak self] in self?.runFunctionKeyTap() }
-            thread.name = "Vorssaint Brightness Keys"
+            thread.name = "Orbit Brightness Keys"
             thread.qualityOfService = .userInteractive
             functionKeyThread = thread
             return thread

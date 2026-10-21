@@ -640,7 +640,7 @@ final class NotchWindowHost: NSObject, CAAnimationDelegate {
         canvas.setActivationArea(rect, title: title, willPress: willPress, activate: activate)
     }
 
-#if VORSSAINT_DEVELOPMENT
+#if ORBIT_DEVELOPMENT
     func probePresentDuringLayout(size: CGSize, geometry: NotchGeometry) -> Bool {
         guard let container = quickAccessContainer else { return false }
         var backingReady = false
@@ -911,7 +911,7 @@ private final class NotchQuickAccessContainer: NSView {
     var gutter: CGFloat = 0 { didSet { needsLayout = true } }
     var bottomInset: CGFloat = 0 { didSet { needsLayout = true } }
     private var stage = CGSize.zero
-#if VORSSAINT_DEVELOPMENT
+#if ORBIT_DEVELOPMENT
     var nextProbeLayout: (() -> Void)?
 #endif
     override var isFlipped: Bool { true }
@@ -938,7 +938,7 @@ private final class NotchQuickAccessContainer: NSView {
     override func layout() {
         super.layout()
         updateFrames()
-#if VORSSAINT_DEVELOPMENT
+#if ORBIT_DEVELOPMENT
         let probe = nextProbeLayout
         nextProbeLayout = nil
         probe?()
@@ -1206,7 +1206,7 @@ private final class NotchCanvas: NSView {
         return finishDrop(sender.draggingPasteboard)
     }
 
-#if VORSSAINT_DEVELOPMENT
+#if ORBIT_DEVELOPMENT
     var contentProbeOpacity: Float { contentVisibility.presentation()?.opacity ?? contentVisibility.opacity }
     var contentProbeAnimating: Bool { contentVisibility.animation(forKey: "notch.opacity") != nil }
     var contentProbeAlpha: CGFloat { host.alphaValue }

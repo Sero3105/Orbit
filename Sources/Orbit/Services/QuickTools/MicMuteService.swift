@@ -28,7 +28,7 @@ final class MicMuteService: ObservableObject {
     /// and that is exactly the moment the listeners fire. Sweeping every
     /// device on the main thread would hand the app one hang per reconnection,
     /// so all of it happens here, one sweep at a time.
-    private let halQueue = DispatchQueue(label: "com.vorssaint.utils.micmute.hal", qos: .userInitiated)
+    private let halQueue = DispatchQueue(label: "com.orbit.Orbit.micmute.hal", qos: .userInitiated)
     /// A sweep that finished after a newer one started must not publish what
     /// it saw.
     private var applyGeneration = 0

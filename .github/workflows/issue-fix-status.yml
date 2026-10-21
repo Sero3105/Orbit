@@ -188,7 +188,7 @@ jobs:
 
           If it only fixes part of the issue, tell us what still doesn't work. A report can include multiple problems, and we need to know which ones remain.
 
-          <!-- vorssaint-fix-status sha=$MERGE_SHA pr=$PR_NUMBER -->
+          <!-- orbit-fix-status sha=$MERGE_SHA pr=$PR_NUMBER -->
           COMMENT
             gh issue comment "$number" --body-file comment.md
             echo "#$number: labelled $PENDING_LABEL ($MERGE_SHA)"
@@ -241,7 +241,7 @@ jobs:
           # Said once. An edit to the description fires this again, and a second
           # copy of the same comment is noise on somebody else's branch.
           if gh api --paginate "repos/$GH_REPO/issues/$PR_NUMBER/comments" --jq '.[].body' \
-               | grep -q "vorssaint-fix-status hint=.*form=closing"; then
+               | grep -q "orbit-fix-status hint=.*form=closing"; then
             echo "#$PR_NUMBER has been told already"
             exit 0
           fi
@@ -291,7 +291,7 @@ jobs:
 
           The issue then stays open, gets labelled, and its reporter is asked to confirm on the release that actually carries the fix. It closes two weeks later if nobody says otherwise, so nothing stays open forever either.
 
-          <!-- vorssaint-fix-status hint=$numbers form=closing -->
+          <!-- orbit-fix-status hint=$numbers form=closing -->
           COMMENT
 
           cat head.md lines.md tail.md > comment.md
@@ -374,7 +374,7 @@ jobs:
           If nothing arrives in two weeks the issue will be closed as it stands, including
           the part that is still open. A comment reopens it at any point after that.
 
-          <!-- vorssaint-fix-status confirm=$TAG half=true -->
+          <!-- orbit-fix-status confirm=$TAG half=true -->
           COMMENT
             else
               cat > comment.md <<COMMENT
@@ -390,7 +390,7 @@ jobs:
           If nothing arrives in two weeks the issue will be closed as it stands, and a comment
           reopens it at any point after that.
 
-          <!-- vorssaint-fix-status confirm=$TAG -->
+          <!-- orbit-fix-status confirm=$TAG -->
           COMMENT
             fi
             gh issue comment "$number" --body-file comment.md
@@ -431,7 +431,7 @@ jobs:
             # put it there; the only thing the hand-applied ones lack is the
             # question, so this writes it rather than closing on a silence the
             # reporter was never told about.
-            ask=$(jq -c '[.[] | select(.body | test("vorssaint-fix-status confirm="))] | last' <<<"$comments")
+            ask=$(jq -c '[.[] | select(.body | test("orbit-fix-status confirm="))] | last' <<<"$comments")
             if [ "$ask" = null ]; then
               # Which release: the newest stable one. That is what the label
               # claims and the only build the reporter can go and get.
@@ -457,7 +457,7 @@ jobs:
           If nothing arrives in two weeks the issue will be closed as it stands, and a comment
           reopens it at any point after that.
 
-          <!-- vorssaint-fix-status confirm=$TAG -->
+          <!-- orbit-fix-status confirm=$TAG -->
           COMMENT
               gh issue comment "$number" --body-file comment.md
               echo "#$number: labelled by hand, asked about $version, two weeks start now"

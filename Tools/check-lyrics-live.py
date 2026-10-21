@@ -116,7 +116,7 @@ final class Probe {
     var lastAliasRequest: TimeInterval = 0
     func start(_ track: NotchMusicIdentity) { aliasWork?.cancel(); session?.invalidateAndCancel(); generation = UUID(); memory.select(track); load(track) }
 """ + bodies + "}\nprivate final class NotchLyricsDownload:" + downloader
-    with tempfile.TemporaryDirectory(prefix="vorssaint-lyrics-live-") as folder:
+    with tempfile.TemporaryDirectory(prefix="orbit-lyrics-live-") as folder:
         directory = Path(folder)
         for name, content in [("Stubs.swift", STUBS), ("Probe.swift", probe), ("main.swift", MAIN)]:
             (directory / name).write_text(content)

@@ -14,7 +14,7 @@ import CoreGraphics
 /// list, so Accessibility supplies a second pass for real app windows by id.
 /// The result is then ordered by how recently each window was used (see
 /// `WindowUseTracker`), so the switcher matches the system ⌘Tab toggle.
-/// Window titles require Screen Recording on modern macOS; Vorssaint's own
+/// Window titles require Screen Recording on modern macOS; Orbit's own
 /// titled windows use NSWindow metadata so Settings remains reachable even
 /// though the app is a menu-bar accessory.
 enum WindowEnumerator {

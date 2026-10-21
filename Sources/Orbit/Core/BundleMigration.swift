@@ -6,13 +6,13 @@ import AppKit
 /// Completes the on-disk rename for installs carried over from a pre-2.5 build.
 ///
 /// The in-app updater shipped in those builds installs the new version AT THE
-/// OLD PATH ("/Applications/Vorssaint Utils.app"), so right after updating the
-/// app is running from a bundle still named "Vorssaint Utils.app". We rename
-/// that bundle to "Vorssaint.app" through a detached helper that runs only after
+/// OLD PATH ("/Applications/Orbit Utils.app"), so right after updating the
+/// app is running from a bundle still named "Orbit Utils.app". We rename
+/// that bundle to "Orbit.app" through a detached helper that runs only after
 /// we quit (so a running bundle is never mutated), then relaunch. The bundle id
 /// is unchanged, so granted permissions follow the bundle to its new path.
 ///
-/// When we are already running as "Vorssaint.app", we instead retire a stray
+/// When we are already running as "Orbit.app", we instead retire a stray
 /// old-named bundle left beside us (e.g. after a manual drag-install). That path
 /// is safe by construction: the names differ, so the candidate can never be us.
 ///
@@ -22,8 +22,8 @@ import AppKit
 /// could mistake the just-updated app for a leftover; that is fixed by routing
 /// the old-name case to a rename and comparing canonical paths everywhere else.
 enum BundleMigration {
-    private static let oldName = "Vorssaint Utils.app"
-    private static let newName = "Vorssaint.app"
+    private static let oldName = "Orbit Utils.app"
+    private static let newName = "Orbit.app"
 
     /// Returns true when the app is about to quit and relaunch under the new
     /// name; the caller should then skip the rest of startup.
@@ -70,7 +70,7 @@ enum BundleMigration {
         /bin/rm -f "$0"
         """
         let scriptURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vorssaint-rename-\(pid)-\(UUID().uuidString).sh")
+            .appendingPathComponent("orbit-rename-\(pid)-\(UUID().uuidString).sh")
         do {
             try script.write(to: scriptURL, atomically: true, encoding: .utf8)
             // Its own session: the script waits for this app to exit before it

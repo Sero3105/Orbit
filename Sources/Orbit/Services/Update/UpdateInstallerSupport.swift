@@ -98,7 +98,7 @@ enum UpdateInstallerSupport {
             # app at all. The staging name is hidden: Spotlight recognizes the
             # copy as an app bundle whatever its suffix, and when the swap lands
             # while that copy is still being indexed, the installed app keeps
-            # showing up in search as "Vorssaint.app.update-new".
+            # showing up in search as "Orbit.app.update-new".
             STAGE="$DIR/.$NAME.update-new"
             # A copy an earlier build left behind under the visible name is the
             # same leftover, still indexed; it goes with this one.
@@ -120,7 +120,7 @@ enum UpdateInstallerSupport {
                     elif /usr/sbin/spctl -a -t exec "$STAGE" >/dev/null 2>&1; then
                         GATEKEEPER_OK=1
                     fi
-                    VERIFY_REQ='identifier "com.vorssaint.utils" and anchor apple generic and certificate leaf[subject.OU] = "3D485NHW29"'
+                    VERIFY_REQ='identifier "com.orbit.Orbit" and anchor apple generic and certificate leaf[subject.OU] = "3D485NHW29"'
                     note fail-verify
                     if /usr/bin/codesign -v --deep --strict -R="$VERIFY_REQ" "$STAGE" 2>/dev/null \
                         && [ "$GATEKEEPER_OK" = 1 ]; then
@@ -188,7 +188,7 @@ enum UpdateInstallerSupport {
             .map(shellSingleQuoted)
             .joined(separator: " ")
         return DetachedProcess.detachedShellCommand(
-            quotedArgv: "/bin/sh -c \(script) vorssaint-installer \(args)")
+            quotedArgv: "/bin/sh -c \(script) orbit-installer \(args)")
     }
 
     /// Whether the next install attempt should go straight through the admin

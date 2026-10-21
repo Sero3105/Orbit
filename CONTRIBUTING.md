@@ -1,6 +1,6 @@
-# Contributing to Vorssaint
+# Contributing to Orbit
 
-Vorssaint aims to stay small, native and readable. Contributions are accepted
+Orbit aims to stay small, native and readable. Contributions are accepted
 under GPL-3.0-or-later unless stated otherwise.
 
 ## Getting started
@@ -11,17 +11,17 @@ dependencies. `Package.swift` supports editor indexing; it does not assemble or
 sign the app bundle.
 
 ```sh
-git clone https://github.com/vorssaint/vorssaint-utils.git
-cd vorssaint-utils
+git clone https://github.com/Sero3105/Orbit.git
+cd orbit-utils
 ./build.sh --dev
-./build/VorssaintDeveloper --selftest
+./build/OrbitDeveloper --selftest
 ./build.sh --test
 ```
 
 To install and launch the separate Developer app, use `./build.sh --dev --install`.
 It has its own preferences and permissions and does not replace the official app.
 A plain `./build.sh` builds the optimized variant used by CI; its health check is
-`./build/Vorssaint --selftest`.
+`./build/Orbit --selftest`.
 
 ### Stable signing
 
@@ -54,7 +54,7 @@ over a new subsystem. Keep each PR focused on one independently useful change.
   permission prompts where applicable, and coverage tests.
 - New source files retain the project's SPDX license and copyright headers.
 
-Sensor changes should include a dump from `./build/Vorssaint --sensors` and the
+Sensor changes should include a dump from `./build/Orbit --sensors` and the
 Mac model. Selection logic lives in `TemperatureSensorSelector` and `SystemMonitor`.
 
 ## Validation
@@ -97,7 +97,7 @@ a stable release carries the fix, and can close the issue after two weeks withou
 a response. If the PR addresses only part of an issue, say exactly which part.
 
 For agent-assisted work, see [contributing with an agent](docs/AI-CONTRIBUTIONS.md).
-Bug reports and feature requests use the [issue forms](https://github.com/vorssaint/vorssaint-utils/issues/new/choose).
+Bug reports and feature requests use the [issue forms](https://github.com/Sero3105/Orbit/issues/new/choose).
 Report vulnerabilities through [private security reporting](SECURITY.md).
 
 ## Releases (maintainers)

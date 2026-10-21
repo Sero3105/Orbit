@@ -387,7 +387,7 @@ enum ScratchpadSupport {
         return (mark != " ", 3)
     }
 
-    static let taskScheme = "vorssaint-task"
+    static let taskScheme = "orbit-task"
 
     /// The edit that checks or unchecks the box whose `[` sits at UTF-16
     /// offset `box`, or nil when the text holds no box there any more.

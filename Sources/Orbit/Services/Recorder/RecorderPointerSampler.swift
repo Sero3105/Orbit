@@ -76,7 +76,7 @@ final class RecorderPointerSampler {
             self?.loop(generation: generation)
         }
         thread.qualityOfService = .userInteractive
-        thread.name = "com.vorssaint.recorder.pointer"
+        thread.name = "com.orbit.recorder.pointer"
         self.thread = thread
         thread.start()
     }

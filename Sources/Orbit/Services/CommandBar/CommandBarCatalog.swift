@@ -1004,7 +1004,7 @@ enum CommandBarCatalog {
     // MARK: - Running apps and their windows
 
     /// Menu commands of the app in front, each one runnable and each one
-    /// showing its own shortcut. This is how the bar reaches past Vorssaint
+    /// showing its own shortcut. This is how the bar reaches past Orbit
     /// without searching files or the internet.
     static func menuEntries(_ items: [CommandBarMenuItem],
                             appName: String,
@@ -1317,7 +1317,7 @@ enum CommandBarCatalog {
     private static func copyAnswer(_ value: String) {
         GeneralPasteboardAccess.shared.async({
             NSPasteboard.general.clearContents()
-            NSPasteboard.general.declareVorssaintSource()
+            NSPasteboard.general.declareOrbitSource()
             return NSPasteboard.general.setString(value, forType: .string)
         }, then: { copied in
             QuickToolHUD.show(icon: copied ? "doc.on.doc" : "exclamationmark.circle",
@@ -1367,7 +1367,7 @@ enum CommandBarCatalog {
 
     /// Rows for the links, folders and searches the person saved themselves.
     /// A saved search reads whatever was typed after its name at the moment it
-    /// runs, so one row serves both "gh" and "gh vorssaint".
+    /// runs, so one row serves both "gh" and "gh orbit".
     static func linkEntries(_ links: [CommandBarLink],
                             bar: CommandBarFeatureStrings) -> [CommandBarEntry] {
         links.map { link in
@@ -1632,7 +1632,7 @@ enum CommandBarCatalog {
     /// Puts the selection on the shelf without disturbing what the person has
     /// copied: a pasteboard of our own carries it across.
     private static func keepOnShelf(_ text: String) {
-        let board = NSPasteboard(name: NSPasteboard.Name("com.vorssaint.commandbar.selection"))
+        let board = NSPasteboard(name: NSPasteboard.Name("com.orbit.commandbar.selection"))
         board.clearContents()
         board.setString(text, forType: .string)
         guard ShelfService.shared.accept(pasteboard: board) else {

@@ -367,7 +367,7 @@ enum WallpaperSupport {
     // System Settings stills (Sonoma+) write Type=linked + Linked on
     // AllSpacesAndDisplays and SystemDefault, with Content.Choices Provider
     // com.apple.wallpaper.choice.image and an imageFile Configuration blob.
-    // Captured from a store that only System Settings wrote (no Vorssaint bak).
+    // Captured from a store that only System Settings wrote (no Orbit bak).
     // Index.plist has no screen saver keys; that choice lives outside this store,
     // so replacing Linked does not rewrite a screen saver slot here.
     // Desktop is the older individual/idle slot. Key off Type so a leftover

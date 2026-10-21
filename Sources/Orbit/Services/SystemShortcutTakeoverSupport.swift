@@ -69,7 +69,7 @@ enum SystemShortcutTakeoverSupport {
 }
 
 /// What the recorder does with a combination that has already passed every
-/// Vorssaint-side check. One rule for all four rows, and testable.
+/// Orbit-side check. One rule for all four rows, and testable.
 enum RecorderTakeOverDecision: Equatable {
     /// Save it. `clearTakeOver` drops a stale take-over entry once the row has
     /// moved to a key macOS does not answer.
@@ -80,7 +80,7 @@ enum RecorderTakeOverDecision: Equatable {
 }
 
 extension SystemShortcutTakeoverSupport {
-    /// Whether macOS would answer this combination if Vorssaint were not
+    /// Whether macOS would answer this combination if Orbit were not
     /// holding it. The live rule only counts entries that are enabled, so a
     /// key already taken over reads as free; the ids the service suppresses
     /// are macOS's too, and count here.

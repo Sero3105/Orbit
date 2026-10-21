@@ -276,12 +276,12 @@ enum RadialNowPlayingApplication {
         return icon
     }
 
-    /// The island and the radial card are non-activating panels, so Vorssaint
+    /// The island and the radial card are non-activating panels, so Orbit
     /// rarely holds activation when one is clicked. Since macOS 14 a bare
     /// request from an inactive app is refused, and the player stayed behind.
     static func open(_ snapshot: RadialNowPlayingSnapshot) {
         if let application = runningApplication(for: snapshot) {
-            // A helper takes no activation; the handoff would leave Vorssaint in front.
+            // A helper takes no activation; the handoff would leave Orbit in front.
             guard application.activationPolicy == .regular else { return }
             // Read before the unhide below: a hidden player's windows come back with it.
             let showsNoWindow = !application.isHidden && !hasWindowOnScreen(pid: application.processIdentifier)
@@ -324,7 +324,7 @@ enum RadialNowPlayingApplication {
 /// missing script or library, a failed run, a timeout and malformed output
 /// all read as an empty playback session.
 private final class MediaRemoteNowPlayingBridge {
-    private let queue = DispatchQueue(label: "com.vorssaint.radial-now-playing", qos: .userInitiated)
+    private let queue = DispatchQueue(label: "com.orbit.radial-now-playing", qos: .userInitiated)
     /// 2 s: a cold perl load measured 500 ms with no session playing, and a
     /// real reply adds the MediaRemote round trip plus up to 16 MB of base64
     /// artwork through the pipe. A kill reads as nothing playing, so a deadline
@@ -336,7 +336,7 @@ private final class MediaRemoteNowPlayingBridge {
     func fetch(completion: @escaping (RadialNowPlayingSnapshot?) -> Void) {
         guard let script = Bundle.main.url(forResource: "now-playing", withExtension: "pl"),
               let library = Bundle.main.privateFrameworksURL?
-                .appendingPathComponent("libVorssaintNowPlaying.dylib"),
+                .appendingPathComponent("libOrbitNowPlaying.dylib"),
               FileManager.default.fileExists(atPath: library.path) else {
             completion(nil)
             return

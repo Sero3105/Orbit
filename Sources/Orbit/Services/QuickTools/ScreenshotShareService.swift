@@ -164,7 +164,7 @@ final class ScreenshotShareService: ObservableObject {
     func copy(_ url: URL) -> Bool {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
-        pasteboard.declareVorssaintSource()
+        pasteboard.declareOrbitSource()
         return pasteboard.setString(url.absoluteString, forType: .string)
     }
 

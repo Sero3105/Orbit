@@ -693,7 +693,7 @@ enum RecorderSupport {
     /// own extension, so nothing on the way writes a file of one kind under
     /// the name of another.
     static func stagingURL(for destination: URL) -> URL {
-        let name = ".vorssaint-partial-\(UUID().uuidString)"
+        let name = ".orbit-partial-\(UUID().uuidString)"
         let staged = destination.deletingLastPathComponent().appendingPathComponent(name)
         return destination.pathExtension.isEmpty
             ? staged

@@ -20,7 +20,7 @@ final class GeneralPasteboardAccess {
     private let now: () -> TimeInterval
     private let scheduleDeadline: DeadlineScheduler
 
-    init(label: String = "Vorssaint.Pasteboard.general",
+    init(label: String = "Orbit.Pasteboard.general",
          now: @escaping () -> TimeInterval = {
              TimeInterval(DispatchTime.now().uptimeNanoseconds) / 1_000_000_000
          },

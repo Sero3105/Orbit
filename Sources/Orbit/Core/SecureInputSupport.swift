@@ -29,7 +29,7 @@ enum SecureInputSupport {
         /// cannot be named, so a new login session is the fallback.
         case unattributed
         /// On, and nothing should be pointed at: the read failed, or the app
-        /// recorded is alive but is not a regular app, or is Vorssaint itself.
+        /// recorded is alive but is not a regular app, or is Orbit itself.
         /// Nothing to reveal, and a logout is not the advice.
         case unknown
     }
@@ -69,7 +69,7 @@ enum SecureInputSupport {
         case .holder(let pid):
             guard pid > 0 else { return .unattributed }
             if let app = runningApp(pid), !app.name.isEmpty {
-                // Settings makes Vorssaint a regular, active app, and it never
+                // Settings makes Orbit a regular, active app, and it never
                 // turns secure input on, so finding it recorded only means
                 // something in the background turned it on meanwhile.
                 guard app.pid != ownPid else { return .unknown }

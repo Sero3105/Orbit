@@ -165,7 +165,7 @@ struct PortManagerRowActions: View {
     private func copy(_ value: String) {
         GeneralPasteboardAccess.shared.async({
             NSPasteboard.general.clearContents()
-            NSPasteboard.general.declareVorssaintSource()
+            NSPasteboard.general.declareOrbitSource()
             return NSPasteboard.general.setString(value, forType: .string)
         }, then: { copied in
             if !copied { NSSound.beep() }

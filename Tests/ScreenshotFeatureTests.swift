@@ -75,7 +75,7 @@ enum ScreenshotFeatureTests {
         suite.expect(copyRetry.record(for: retryCaptureID, availableRecords: [copyRecord]) == nil,
                      "successful copying clears the pending retry")
 
-        let uploadDefaultsName = "com.vorssaint.tests.screenshot-upload.\(UUID().uuidString)"
+        let uploadDefaultsName = "com.orbit.tests.screenshot-upload.\(UUID().uuidString)"
         let uploadDefaults = UserDefaults(suiteName: uploadDefaultsName)!
         defer { uploadDefaults.removePersistentDomain(forName: uploadDefaultsName) }
         suite.expect(ScreenshotShareDuration.saved(in: uploadDefaults) == .oneHour,
@@ -127,11 +127,11 @@ enum ScreenshotFeatureTests {
 
         let ownScreenshotWindows: Set<CGWindowID> = [11, 12, 13]
         let protectedScreenshotWindows: Set<CGWindowID> = [12, 99]
-        suite.expect(Defaults.registeredDefaults[DefaultsKey.screenshotHideVorssaintWindows]
+        suite.expect(Defaults.registeredDefaults[DefaultsKey.screenshotHideOrbitWindows]
                 as? Bool == true,
-               "screenshots hide Vorssaint windows by default")
+               "screenshots hide Orbit windows by default")
         suite.expect(SettingsBackupSupport.exportKeys().contains(
-            DefaultsKey.screenshotHideVorssaintWindows),
+            DefaultsKey.screenshotHideOrbitWindows),
                "the screenshot window visibility preference travels in backups")
         // An editor or a pinned capture is an ordinary window, so the
         // visibility preference has to reach it; the overlays and HUDs taking
@@ -151,57 +151,57 @@ enum ScreenshotFeatureTests {
         ) == ownScreenshotWindows,
         "a recording is exempt from the preference and protects both kinds")
         suite.expect(ScreenshotCapturePolicy.excludedWindowIDs(
-            hideVorssaintWindows: false,
+            hideOrbitWindows: false,
             ownWindowIDs: ownScreenshotWindows,
             protectedWindowIDs: ScreenshotCapturePolicy.protectedWindowIDs(
                 workflowWindowIDs: workflowWindows,
                 contentWindowIDs: contentWindows,
                 honoursVisibilityPreference: true)
         ) == workflowWindows,
-        "showing Vorssaint windows leaves an editor and a pin in the capture")
+        "showing Orbit windows leaves an editor and a pin in the capture")
         suite.expect(ScreenshotCapturePolicy.canPickWindow(
             13,
             isOwnWindow: true,
-            hideVorssaintWindows: false,
+            hideOrbitWindows: false,
             protectedWindowIDs: ScreenshotCapturePolicy.protectedWindowIDs(
                 workflowWindowIDs: workflowWindows,
                 contentWindowIDs: contentWindows,
                 honoursVisibilityPreference: true)
-        ), "a pinned capture can be picked while Vorssaint windows are shown")
+        ), "a pinned capture can be picked while Orbit windows are shown")
         suite.expect(ScreenshotCapturePolicy.excludedWindowIDs(
-            hideVorssaintWindows: true,
+            hideOrbitWindows: true,
             ownWindowIDs: ownScreenshotWindows,
             protectedWindowIDs: protectedScreenshotWindows
         ) == ownScreenshotWindows,
-        "screenshot hiding Vorssaint excludes every own window")
+        "screenshot hiding Orbit excludes every own window")
         suite.expect(ScreenshotCapturePolicy.excludedWindowIDs(
-            hideVorssaintWindows: false,
+            hideOrbitWindows: false,
             ownWindowIDs: ownScreenshotWindows,
             protectedWindowIDs: protectedScreenshotWindows
         ) == [12],
-        "screenshot keeps protected windows excluded while Vorssaint is visible")
+        "screenshot keeps protected windows excluded while Orbit is visible")
         suite.expect(ScreenshotCapturePolicy.canPickWindow(
             7,
             isOwnWindow: false,
-            hideVorssaintWindows: true,
+            hideOrbitWindows: true,
             protectedWindowIDs: protectedScreenshotWindows
         ), "screenshot can always pick an ordinary external window")
         suite.expect(!ScreenshotCapturePolicy.canPickWindow(
             11,
             isOwnWindow: true,
-            hideVorssaintWindows: true,
+            hideOrbitWindows: true,
             protectedWindowIDs: protectedScreenshotWindows
-        ), "screenshot cannot pick a Vorssaint window while hiding them")
+        ), "screenshot cannot pick a Orbit window while hiding them")
         suite.expect(ScreenshotCapturePolicy.canPickWindow(
             11,
             isOwnWindow: true,
-            hideVorssaintWindows: false,
+            hideOrbitWindows: false,
             protectedWindowIDs: protectedScreenshotWindows
-        ), "screenshot can pick an ordinary Vorssaint window when visible")
+        ), "screenshot can pick an ordinary Orbit window when visible")
         suite.expect(!ScreenshotCapturePolicy.canPickWindow(
             12,
             isOwnWindow: true,
-            hideVorssaintWindows: false,
+            hideOrbitWindows: false,
             protectedWindowIDs: protectedScreenshotWindows
         ), "screenshot cannot pick its own protected capture UI")
         islandCaptureChecks(suite)
@@ -905,7 +905,7 @@ enum ScreenshotFeatureTests {
                 && !persistentPolicy.takesFocus && persistentPolicy.closesOnCollapse
                 && persistentPolicy.showsDismissButton,
                "preview presentation keeps timed focus behavior while persistent confirmations stay dismissible without taking focus")
-        let focusDefaultsDomain = "com.vorssaint.tests.screenshot-preview-focus.\(UUID().uuidString)"
+        let focusDefaultsDomain = "com.orbit.tests.screenshot-preview-focus.\(UUID().uuidString)"
         let focusDefaults = UserDefaults(suiteName: focusDefaultsDomain)!
         defer { focusDefaults.removePersistentDomain(forName: focusDefaultsDomain) }
         focusDefaults.set(true, forKey: DefaultsKey.screenshotPreviewTakesFocus)
@@ -954,7 +954,7 @@ enum ScreenshotFeatureTests {
                                                               confirmationEnabled: false),
                "automatic actions honor confirmation preferences while failed or partial actions still expose recovery controls")
         // The decision route makes after the action ran, read from settings.
-        let routeDefaultsDomain = "com.vorssaint.tests.screenshot-preview-route.\(UUID().uuidString)"
+        let routeDefaultsDomain = "com.orbit.tests.screenshot-preview-route.\(UUID().uuidString)"
         let routeDefaults = UserDefaults(suiteName: routeDefaultsDomain)!
         defer { routeDefaults.removePersistentDomain(forName: routeDefaultsDomain) }
         func routePreview(_ action: ScreenshotDefaultAction, saved: Bool = false,
@@ -1010,7 +1010,7 @@ enum ScreenshotFeatureTests {
         suite.expect(!ScreenshotSupport.selectionAcceptsPointerInput(sessionIsOver: true,
                                                                capturePending: true),
                "both at once still ignores the pointer")
-        let captureMenuSuite = "com.vorssaint.tests.capture-menu.\(UUID().uuidString)"
+        let captureMenuSuite = "com.orbit.tests.capture-menu.\(UUID().uuidString)"
         let captureMenuDefaults = UserDefaults(suiteName: captureMenuSuite)!
         defer { captureMenuDefaults.removePersistentDomain(forName: captureMenuSuite) }
         for tool in ScreenCaptureTool.allCases {
@@ -1108,27 +1108,27 @@ enum ScreenshotFeatureTests {
             for: .screenshot,
             screenshotFreeze: false,
             screenshotIncludePointer: true,
-            screenshotHideVorssaintWindows: true)
+            screenshotHideOrbitWindows: true)
         let recorderPolicy = ScreenshotSupport.unifiedCapturePolicy(
             for: .recording,
             screenshotFreeze: false,
             screenshotIncludePointer: true,
-            screenshotHideVorssaintWindows: true)
+            screenshotHideOrbitWindows: true)
         let textPolicy = ScreenshotSupport.unifiedCapturePolicy(
             for: .text,
             screenshotFreeze: false,
             screenshotIncludePointer: true,
-            screenshotHideVorssaintWindows: true)
+            screenshotHideOrbitWindows: true)
         suite.expect(liveScreenshotPolicy == .init(freeze: false, includePointer: true,
-                                             hideVorssaintWindows: true,
+                                             hideOrbitWindows: true,
                                              keepsContentWindowsOut: true,
                                              usesGeometry: false)
                 && recorderPolicy == .init(freeze: true, includePointer: false,
-                                           hideVorssaintWindows: false,
+                                           hideOrbitWindows: false,
                                            keepsContentWindowsOut: true,
                                            usesGeometry: true)
                 && textPolicy == .init(freeze: true, includePointer: false,
-                                       hideVorssaintWindows: true,
+                                       hideOrbitWindows: true,
                                        keepsContentWindowsOut: true,
                                        usesGeometry: false),
                "switching capture mode rebuilds the frozen frame, pointer and window policy")
@@ -1136,12 +1136,12 @@ enum ScreenshotFeatureTests {
             for: .color,
             screenshotFreeze: false,
             screenshotIncludePointer: true,
-            screenshotHideVorssaintWindows: true)
+            screenshotHideOrbitWindows: true)
         suite.expect(textPolicy.sharesSource(with: colorPolicy)
                 && !textPolicy.sharesSource(with: recorderPolicy)
                 && !textPolicy.sharesSource(with: liveScreenshotPolicy),
                "only freeze, pointer and window policy decide whether a mode needs its own photograph")
-        // With "Hide Vorssaint windows" off, freeze on and the pointer off,
+        // With "Hide Orbit windows" off, freeze on and the pointer off,
         // every tool wants the same pixels except for the editors and pins
         // recording keeps out, so switching to or from recording has to
         // re-photograph and re-list the pickable windows (issue #780).
@@ -1150,13 +1150,13 @@ enum ScreenshotFeatureTests {
                 for: $0,
                 screenshotFreeze: true,
                 screenshotIncludePointer: false,
-                screenshotHideVorssaintWindows: false))
+                screenshotHideOrbitWindows: false))
         })
         suite.expect(shownWindowPolicies[.recording]?.keepsContentWindowsOut == true
                 && shownWindowPolicies[.screenshot]?.keepsContentWindowsOut == false
                 && shownWindowPolicies[.text]?.keepsContentWindowsOut == false
                 && shownWindowPolicies[.color]?.keepsContentWindowsOut == false,
-               "only recording keeps editors and pins out while Vorssaint windows are shown")
+               "only recording keeps editors and pins out while Orbit windows are shown")
         suite.expect(shownWindowPolicies[.recording].map { recording in
             [ScreenCaptureTool.screenshot, .text, .color].allSatisfy { tool in
                 guard let other = shownWindowPolicies[tool] else { return false }
@@ -1175,10 +1175,10 @@ enum ScreenshotFeatureTests {
                 for: $0,
                 screenshotFreeze: true,
                 screenshotIncludePointer: false,
-                screenshotHideVorssaintWindows: true)
+                screenshotHideOrbitWindows: true)
         }
         suite.expect(hiddenWindowPolicies.allSatisfy(\.keepsContentWindowsOut),
-               "hiding Vorssaint windows keeps editors and pins out of every tool")
+               "hiding Orbit windows keeps editors and pins out of every tool")
         suite.expect(ScreenshotSupport.captureGuideIsVisible(pointerOnDisplay: true,
                                                        selectionInProgress: false,
                                                        capturePending: false)
@@ -2938,11 +2938,11 @@ enum ScreenshotFeatureTests {
                "backdrop style and presets register empty")
 
         // Watermark: the mark of your own that rides along every capture.
-        let textMark = ScreenshotSupport.WatermarkStyle(kind: .text, text: "  Vorssaint  ",
+        let textMark = ScreenshotSupport.WatermarkStyle(kind: .text, text: "  Orbit  ",
                                                         color: "blue", anchor: .topLeading,
                                                         size: 0.5, opacity: 0.3, rotation: 30)
         let markRoundTrip = ScreenshotSupport.WatermarkStyle.decoded(textMark.encoded())
-        suite.expect(markRoundTrip == textMark.sanitized() && markRoundTrip.text == "Vorssaint"
+        suite.expect(markRoundTrip == textMark.sanitized() && markRoundTrip.text == "Orbit"
                 && markRoundTrip.anchor == .topLeading && markRoundTrip.rotation == 30,
                "a watermark style round-trips through JSON, trimmed")
         suite.expect(ScreenshotSupport.WatermarkStyle.decoded(nil).kind == .none
@@ -3352,7 +3352,7 @@ enum ScreenshotFeatureTests {
                 }
             }
             GlobalShortcut.refreshLayoutLabels()
-            let suiteName = "com.vorssaint.tests.editor-bindings.\(UUID().uuidString)"
+            let suiteName = "com.orbit.tests.editor-bindings.\(UUID().uuidString)"
             let prefs = UserDefaults(suiteName: suiteName)!
             defer { prefs.removePersistentDomain(forName: suiteName) }
             prefs.set(false, forKey: DefaultsKey.screenshotToolShortcutsEnabled)
@@ -3614,7 +3614,7 @@ enum ScreenshotFeatureTests {
         suite.expect(Defaults.registeredDefaults[DefaultsKey.screenshotAddToShelf] as? Bool == false
                 && SettingsBackupSupport.exportKeys().contains(DefaultsKey.screenshotAddToShelf),
                "adding captures to the shelf ships off and travels in settings backups")
-        let captureShelfSuite = "com.vorssaint.tests.capture-shelf.\(UUID().uuidString)"
+        let captureShelfSuite = "com.orbit.tests.capture-shelf.\(UUID().uuidString)"
         let captureShelfDefaults = UserDefaults(suiteName: captureShelfSuite)!
         defer { captureShelfDefaults.removePersistentDomain(forName: captureShelfSuite) }
         func capturesGoToShelf(option: Bool, installed: Bool, on: Bool) -> Bool {
@@ -3682,7 +3682,7 @@ enum ScreenshotFeatureTests {
             developerOverride: "https://test.example/")
         suite.expect(testShareEndpoint.absoluteString == "https://test.example"
                 && ScreenshotSharingSupport.endpoint(
-                    bundleIdentifier: "com.vorssaint.utils",
+                    bundleIdentifier: "com.orbit.Orbit",
                     developerOverride: "https://test.example").absoluteString
                     == ScreenshotSharingSupport.productionEndpoint.absoluteString
                 && ScreenshotSharingSupport.endpoint(
@@ -4007,10 +4007,10 @@ enum ScreenshotFeatureTests {
 
         // Muting every microphone, not just the one the Mac is set to: an app
         // pointed at a device of its own has to go silent too.
-        suite.expect(MicMuteSupport.isOwnDevice(name: "Vorssaint Mixer")
-                && MicMuteSupport.isOwnDevice(name: "Vorssaint AirPlay")
-                && MicMuteSupport.isOwnDevice(name: "Vorssaint Island Levels")
-                && MicMuteSupport.isOwnDevice(name: "Vorssaint Recorder")
+        suite.expect(MicMuteSupport.isOwnDevice(name: "Orbit Mixer")
+                && MicMuteSupport.isOwnDevice(name: "Orbit AirPlay")
+                && MicMuteSupport.isOwnDevice(name: "Orbit Island Levels")
+                && MicMuteSupport.isOwnDevice(name: "Orbit Recorder")
                 && !MicMuteSupport.isOwnDevice(name: "MacBook Air Microphone"),
                "the mute skips the app's own aggregate devices and no other")
         suite.expect(!MicMuteSupport.shouldSaveVolume(nil)
@@ -4144,7 +4144,7 @@ enum ScreenshotFeatureTests {
         GlobalShortcut.refreshLayoutLabels()
     }
 
-    /// The island follows "Show in screenshots and videos" in Vorssaint's own
+    /// The island follows "Show in screenshots and videos" in Orbit's own
     /// captures too, area selections included, except while it is the tool
     /// taking the picture.
     private static func islandCaptureChecks(_ suite: TestSuite) {
@@ -4168,19 +4168,19 @@ enum ScreenshotFeatureTests {
             // What NotchService protects: the island windows not shown.
             let protected = islandWindows.subtracting(visible).union([overlay])
             let hidden = ScreenshotCapturePolicy.excludedWindowIDs(
-                hideVorssaintWindows: true, ownWindowIDs: ownWindows,
+                hideOrbitWindows: true, ownWindowIDs: ownWindows,
                 protectedWindowIDs: protected, islandWindowIDs: visible)
             suite.expect(hidden == ownWindows.subtracting(visible),
-                         "hiding Vorssaint windows leaves the shown island in (capture tool: \(tool))")
+                         "hiding Orbit windows leaves the shown island in (capture tool: \(tool))")
             let kept = ScreenshotCapturePolicy.excludedWindowIDs(
-                hideVorssaintWindows: false, ownWindowIDs: ownWindows,
+                hideOrbitWindows: false, ownWindowIDs: ownWindows,
                 protectedWindowIDs: protected, islandWindowIDs: visible)
             suite.expect(kept == protected,
-                         "showing Vorssaint windows still keeps the capture interface out (capture tool: \(tool))")
+                         "showing Orbit windows still keeps the capture interface out (capture tool: \(tool))")
         }
         // Watch reads an area and must never see the island, whatever the preference says.
         suite.expect(ScreenshotCapturePolicy.excludedWindowIDs(
-            hideVorssaintWindows: true, ownWindowIDs: ownWindows,
+            hideOrbitWindows: true, ownWindowIDs: ownWindows,
             protectedWindowIDs: islandWindows.union([overlay]),
             islandWindowIDs: shown(preference: true, tool: false)) == ownWindows,
                      "a caller that protects the island keeps it out even when it shows in captures")

@@ -60,7 +60,7 @@ enum CleanerPolicy {
     /// loss, blank Settings panels, service sign outs, plugin licensing),
     /// each learned the hard way by the cleaners that came before.
     private static let hiddenCachePrefixes = [
-        "com.vorssaint",
+        "com.orbit",
         "CloudKit", "com.apple.bird",
         "com.apple.coreaudio", "com.apple.audio.", "coreaudiod",
         "com.apple.systempreferences", "com.apple.controlcenter",

@@ -14,7 +14,7 @@ final class NotchNotificationService: ObservableObject {
     @Published private(set) var monitoring = false
     @Published private(set) var openingID: UUID?
     let received = PassthroughSubject<NotchSystemNotification, Never>()
-    private let queue = DispatchQueue(label: "com.vorssaint.notch-notifications", qos: .utility)
+    private let queue = DispatchQueue(label: "com.orbit.notch-notifications", qos: .utility)
     private var appIcons: [String: NSImage] = [:]
     private var sourceApplications: [UUID: String] = [:]
     @Published private(set) var unavailableID: UUID?

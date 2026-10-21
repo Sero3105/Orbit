@@ -233,7 +233,7 @@ enum MenuBarSpacingSupport {
     /// hide: the tinted or swapped glyph is the session's only mark there.
     /// Untinted, the app's own mark looks the same idle and active.
     static func keepAwakeSignals(active: Bool, tint: KeepAwakeIconTint, style: KeepAwakeActiveIcon) -> Bool {
-        active && (tint != .none || style != .vorssaint)
+        active && (tint != .none || style != .orbit)
     }
 
     /// Whether the whole main status item may hide in the separate-items
@@ -289,7 +289,7 @@ enum MenuBarSpacingSupport {
 }
 
 enum StatusItemPlacementSupport {
-    static let mainAutosaveName = "VorssaintMenuBarItem"
+    static let mainAutosaveName = "OrbitMenuBarItem"
     static let maxPlacementGeneration = 10_000
 
     static func placementGeneration(in defaults: UserDefaults) -> Int {

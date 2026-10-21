@@ -15,7 +15,7 @@ struct MixerInputDevice: Identifiable, Equatable {
     fileprivate let audioObjectID: AudioObjectID
 }
 
-/// Keeps Vorssaint's preferred microphone in sync with macOS' global input.
+/// Keeps Orbit's preferred microphone in sync with macOS' global input.
 /// This is intentionally separate from the per-app output mixer: selecting a
 /// microphone changes the system default input, without taps or audio capture.
 final class AudioInputDeviceManager: ObservableObject {
@@ -49,7 +49,7 @@ final class AudioInputDeviceManager: ObservableObject {
     /// is delivered here. A device being reconfigured can hold a property read
     /// for as long as the audio daemon holds the device, and that is exactly
     /// the moment the listeners fire.
-    private let halQueue = DispatchQueue(label: "com.vorssaint.utils.audioinput.hal", qos: .userInitiated)
+    private let halQueue = DispatchQueue(label: "com.orbit.Orbit.audioinput.hal", qos: .userInitiated)
     /// The system input before the singular preferred-microphone behavior
     /// changed it, and the device that behavior applied. Priority selections
     /// clear this pair and become the new system choice instead of a temporary

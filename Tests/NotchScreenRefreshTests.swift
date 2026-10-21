@@ -46,7 +46,7 @@ enum NotchScreenRefreshContract {
         final class Workspace { var frontmostApplication: RunningApplication? }
     }
     enum Bundle {
-        static let main = RunningApplication(bundleIdentifier: "com.vorssaint.tests.notch")
+        static let main = RunningApplication(bundleIdentifier: "com.orbit.tests.notch")
     }
     enum ClipboardHistoryService {
         static let shared = History()

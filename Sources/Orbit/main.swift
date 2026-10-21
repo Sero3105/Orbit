@@ -19,7 +19,7 @@ if CommandLine.arguments.contains("--uninstall") {
     Uninstaller.runAndExit()
 }
 
-#if VORSSAINT_DEVELOPMENT
+#if ORBIT_DEVELOPMENT
 // A probe mode on its own would otherwise launch the whole app, and TCC kills
 // that from a shell whose host app lacks a Bluetooth usage description. The
 // commands above come first, so `--selftest` beside a probe mode runs the

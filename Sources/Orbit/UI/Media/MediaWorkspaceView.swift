@@ -1720,7 +1720,7 @@ struct MediaWorkspaceView: View {
     private func copy(_ text: String) {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
-        pasteboard.declareVorssaintSource()
+        pasteboard.declareOrbitSource()
         pasteboard.setString(text, forType: .string)
     }
 

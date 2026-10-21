@@ -33,7 +33,7 @@ final class HomebrewManager: ObservableObject {
     @Published private(set) var didOpenShellConfig = false
     @Published private(set) var outdatedPackagesByID: [String: HomebrewPackageUpdate] = [:]
 
-    private let workQueue = DispatchQueue(label: "com.vorssaint.homebrew", qos: .userInitiated)
+    private let workQueue = DispatchQueue(label: "com.orbit.homebrew", qos: .userInitiated)
     private var searchGeneration = 0
     private var detailsGeneration = 0
     private var outdatedGeneration = 0

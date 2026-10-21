@@ -16,7 +16,7 @@ import Foundation
 final class MaxCapacityProbe {
     static let shared = MaxCapacityProbe()
 
-    private let queue = DispatchQueue(label: "com.vorssaint.maxcapacity", qos: .utility)
+    private let queue = DispatchQueue(label: "com.orbit.maxcapacity", qos: .utility)
     private let lock = NSLock()
     private var cached: Int?
     private var lastRefresh: TimeInterval = -.greatestFiniteMagnitude

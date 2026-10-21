@@ -14,18 +14,18 @@ struct VMStatisticsSnapshot: Equatable {
 }
 
 enum VMStatisticsDecoder {
-    static let rev1Count = mach_msg_type_number_t(VORSSAINT_HOST_VM_INFO64_REV1_COUNT)
-    static let rev2Count = mach_msg_type_number_t(VORSSAINT_HOST_VM_INFO64_REV2_COUNT)
-    static let rev3Count = mach_msg_type_number_t(VORSSAINT_HOST_VM_INFO64_REV3_COUNT)
+    static let rev1Count = mach_msg_type_number_t(ORBIT_HOST_VM_INFO64_REV1_COUNT)
+    static let rev2Count = mach_msg_type_number_t(ORBIT_HOST_VM_INFO64_REV2_COUNT)
+    static let rev3Count = mach_msg_type_number_t(ORBIT_HOST_VM_INFO64_REV3_COUNT)
 
     static func read() -> VMStatisticsSnapshot? {
-        var raw = vorssaint_vm_statistics64_rev3_t()
+        var raw = orbit_vm_statistics64_rev3_t()
         var returnedCount = mach_msg_type_number_t()
-        guard vorssaint_read_vm_statistics64(&raw, &returnedCount) == KERN_SUCCESS else { return nil }
+        guard orbit_read_vm_statistics64(&raw, &returnedCount) == KERN_SUCCESS else { return nil }
         return decode(raw, returnedCount: returnedCount)
     }
 
-    static func decode(_ raw: vorssaint_vm_statistics64_rev3_t,
+    static func decode(_ raw: orbit_vm_statistics64_rev3_t,
                        returnedCount: mach_msg_type_number_t) -> VMStatisticsSnapshot? {
         guard returnedCount >= rev1Count else { return nil }
         let returnedTaggedStorageFields = returnedCount >= rev3Count

@@ -429,7 +429,7 @@ enum AppManagementFeatureTests {
         suite.expect(CleanerSupport.isProtectedBundleID("com.apple.Music")
                && CleanerSupport.isProtectedBundleID("com.apple")
                && CleanerSupport.isProtectedBundleID("group.com.apple.notes")
-               && CleanerSupport.isProtectedBundleID("com.vorssaint.utils"),
+               && CleanerSupport.isProtectedBundleID("com.orbit.Orbit"),
                "system domains and this app can never be junk owners")
         suite.expect(!CleanerSupport.isProtectedBundleID("com.vendor.editor"),
                "third party identifiers are eligible for the leftover check")
@@ -442,11 +442,11 @@ enum AppManagementFeatureTests {
                && UninstallerSupport.verifiedBundleID("") == nil
                && UninstallerSupport.verifiedBundleID("plain-name") == nil
                && UninstallerSupport.verifiedBundleID("com.vendor../escape") == nil
-               && UninstallerSupport.verifiedBundleID("com.vorssaint.utils") == nil
+               && UninstallerSupport.verifiedBundleID("com.orbit.Orbit") == nil
                && UninstallerSupport.verifiedBundleID("com.apple.system") == nil,
                "malformed, protected and current app identifiers never enter uninstall paths")
         let selectionFixture = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vorssaint-uninstaller-selection-\(UUID().uuidString)",
+            .appendingPathComponent("orbit-uninstaller-selection-\(UUID().uuidString)",
                                     isDirectory: true)
         try? FileManager.default.createDirectory(at: selectionFixture, withIntermediateDirectories: true)
         func selectionBundle(_ name: String, bundleID: String) -> URL {
@@ -591,7 +591,7 @@ enum AppManagementFeatureTests {
             if case let .failure(reason) = UninstallerSupport.evaluate(url) { return reason }
             return nil
         }
-        let ownApp = selectionBundle("Copy.app", bundleID: "com.vorssaint.utils.dev")
+        let ownApp = selectionBundle("Copy.app", bundleID: "com.orbit.Orbit.dev")
         let plainFolder = selectionFixture.appendingPathComponent("Folder", isDirectory: true)
         try? FileManager.default.createDirectory(at: plainFolder, withIntermediateDirectories: true)
         let document = selectionFixture.appendingPathComponent("Notes.txt")
@@ -908,7 +908,7 @@ enum AppManagementFeatureTests {
                && spotlightLaunchIdentity.nameTokens.isEmpty,
                "Spotlight preserves signed-group and technical-only rules for sensitive roots")
         let safetyFixture = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vorssaint-uninstaller-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("orbit-uninstaller-\(UUID().uuidString)", isDirectory: true)
         let safetyRoot = safetyFixture.appendingPathComponent("root", isDirectory: true)
         let outsideRoot = safetyFixture.appendingPathComponent("outside", isDirectory: true)
         let safeFile = safetyRoot.appendingPathComponent("safe.plist")
@@ -934,7 +934,7 @@ enum AppManagementFeatureTests {
         // A failed lookup is not necessarily absence, and links can remain
         // even after their destination has disappeared.
         let absentFixture = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vorssaint-absent-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("orbit-absent-\(UUID().uuidString)", isDirectory: true)
         try? FileManager.default.createDirectory(at: absentFixture, withIntermediateDirectories: true)
         let presentChild = absentFixture.appendingPathComponent("StillHere.app")
         try? "bundle".write(to: presentChild, atomically: true, encoding: .utf8)
@@ -944,7 +944,7 @@ enum AppManagementFeatureTests {
         suite.expect(UninstallerSupport.isConfirmedAbsent(at: presentChild),
                "a missing child under a readable parent is confirmed absent")
         let danglingLink = absentFixture.appendingPathComponent("Dangling.app")
-        let danglingMade = symlink("/tmp/vorssaint-missing-target-\(UUID().uuidString)",
+        let danglingMade = symlink("/tmp/orbit-missing-target-\(UUID().uuidString)",
                                    danglingLink.path) == 0
         suite.expect(danglingMade
                && !UninstallerSupport.isConfirmedAbsent(at: danglingLink),
@@ -1380,7 +1380,7 @@ enum AppManagementFeatureTests {
             exceptions: ["com.example.unrelated"]
         ), "AutoQuit does not protect a generated guest app without its host exception")
         let outerApp = FileManager.default.temporaryDirectory
-            .appendingPathComponent("VorssaintAutoQuitTests-\(UUID().uuidString)")
+            .appendingPathComponent("OrbitAutoQuitTests-\(UUID().uuidString)")
             .appendingPathComponent("Container.app")
         let nestedApp = outerApp.appendingPathComponent("Contents/MacOS/WindowHost.app")
         try? FileManager.default.createDirectory(at: nestedApp.appendingPathComponent("Contents"),

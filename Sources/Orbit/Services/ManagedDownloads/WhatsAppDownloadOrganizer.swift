@@ -81,7 +81,7 @@ final class WhatsAppDownloadOrganizer: ObservableObject {
         Self.validUndoTransactions().last != nil
     }
 
-    private let queue = DispatchQueue(label: "com.vorssaint.whatsapp-organizer",
+    private let queue = DispatchQueue(label: "com.orbit.whatsapp-organizer",
                                       qos: .utility)
     private var directorySource: DispatchSourceFileSystemObject?
     private var timer: Timer?
@@ -530,7 +530,7 @@ final class WhatsAppDownloadOrganizer: ObservableObject {
         }
 
         let temporary = destination.deletingLastPathComponent().appendingPathComponent(
-            ".vorssaint-\(UUID().uuidString).partial")
+            ".orbit-\(UUID().uuidString).partial")
         do {
             try fm.copyItem(at: source, to: temporary)
             guard try sha256(of: temporary) == digest else {
@@ -556,7 +556,7 @@ final class WhatsAppDownloadOrganizer: ObservableObject {
                                         digest: String) throws -> [UndoTransaction.Action] {
         let fm = FileManager.default
         let staging = existing.deletingLastPathComponent().appendingPathComponent(
-            ".vorssaint-replaced-\(UUID().uuidString).partial")
+            ".orbit-replaced-\(UUID().uuidString).partial")
         try fm.moveItem(at: existing, to: staging)
         do {
             let newActions = try moveVerified(source: source,

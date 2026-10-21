@@ -16,7 +16,7 @@ import VideoToolbox
 /// and awaited, so no buffer can still be in flight.
 final class RecorderWriter {
 
-    private static let preparationQueue = DispatchQueue(label: "com.vorssaint.recorder.prepare",
+    private static let preparationQueue = DispatchQueue(label: "com.orbit.recorder.prepare",
                                                          qos: .userInitiated)
 
     /// Encoder discovery can wait for VideoToolbox. Keep it off the UI thread

@@ -27,17 +27,17 @@ enum WallpaperStore {
     // lives with the app, not in the system wallpaper store
     static var backupURL: URL {
         let fallback = URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true)
-            .appendingPathComponent("Library/Application Support/com.vorssaint.utils",
+            .appendingPathComponent("Library/Application Support/com.orbit.Orbit",
                                     isDirectory: true)
         let container = PrivateFileStore.containerURL ?? fallback
-        return container.appendingPathComponent("WallpaperIndex.vorssaint-bak",
+        return container.appendingPathComponent("WallpaperIndex.orbit-bak",
                                                 isDirectory: false)
     }
 
     // leftover from when the bak lived next to Index.plist
     private static var legacySystemBackupURL: URL {
         indexURL.deletingLastPathComponent()
-            .appendingPathComponent("Index.plist.vorssaint-bak", isDirectory: false)
+            .appendingPathComponent("Index.plist.orbit-bak", isDirectory: false)
     }
 
     // move a pristine system-side bak into App Support once (older builds)

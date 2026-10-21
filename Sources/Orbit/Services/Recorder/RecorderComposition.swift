@@ -10,7 +10,7 @@ enum RecorderAudioSource: String, CaseIterable, Hashable {
     case microphone
 
     private var contentIdentifier: String {
-        "com.vorssaint.recorder.audio." + rawValue
+        "com.orbit.recorder.audio." + rawValue
     }
 
     var trackMetadata: [AVMetadataItem] {

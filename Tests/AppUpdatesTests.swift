@@ -119,7 +119,7 @@ enum AppUpdatesContract {
             ("companion identity", [entry(name: "Other.app", ids: ["com.example.other", app.bundleID])], false, 0),
             ("incompatible", [entry(minimum: ["99"])], false, 0),
             ("unknown compatibility", [entry(unsupported: true)], false, 0),
-            ("ignored", [entry(token: "vorssaint")], false, 0),
+            ("ignored", [entry(token: "orbit")], false, 0),
             ("current", [entry(version: "1.0")], true, 0),
             ("installed newer", [entry(version: "0.9")], true, 0),
             ("available update", [entry()], true, 1),

@@ -16,7 +16,7 @@ final class NotchShuffleService: ObservableObject {
     @Published private(set) var allowed = true
     @Published private(set) var pending = false
     @Published private(set) var requestingAccess = false
-    private let queue = DispatchQueue(label: "com.vorssaint.notch-shuffle", qos: .utility)
+    private let queue = DispatchQueue(label: "com.orbit.notch-shuffle", qos: .utility)
     private var generation = UUID()
     /// The latest switch; a later one, another player or a closed page
     /// makes an earlier reply and check stale.

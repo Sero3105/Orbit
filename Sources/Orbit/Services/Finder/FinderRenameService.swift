@@ -62,7 +62,7 @@ final class FinderRenameService {
             shouldStopTapThread = false
             pendingStartAfterStop = false
             let thread = Thread { [weak self] in self?.runEventTap() }
-            thread.name = "Vorssaint Finder Rename"
+            thread.name = "Orbit Finder Rename"
             thread.qualityOfService = .userInteractive
             tapThread = thread
             return thread

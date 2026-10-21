@@ -34,7 +34,7 @@ enum AgentUsageArchive {
     /// its build stamp tells two of them apart.
     static func build(info: [String: Any]?) -> String {
         let version = "\(info?["CFBundleShortVersionString"] as? String ?? "")-\(info?["CFBundleVersion"] as? String ?? "")"
-        guard let stamp = info?["VorssaintBuildCommit"] as? String else { return version }
+        guard let stamp = info?["OrbitBuildCommit"] as? String else { return version }
         return "\(version) \(stamp)"
     }
 

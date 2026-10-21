@@ -4,7 +4,7 @@
 import AppKit
 import Foundation
 
-/// Switches WindowServer symbolic hotkeys off for as long as a Vorssaint
+/// Switches WindowServer symbolic hotkeys off for as long as a Orbit
 /// feature wants a key macOS would otherwise answer, and gives them back on
 /// every exit path. Only ids that are enabled right now are ever touched, and
 /// the marker is written before each change so a crash can be repaired at the

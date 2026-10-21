@@ -44,7 +44,7 @@ final class AgentUsageService: ObservableObject {
     /// pause; a launch after a crash reads again only what came after.
     private static let saveInterval: TimeInterval = 5 * 60
 
-    private let queue = DispatchQueue(label: "com.vorssaint.agent-usage", qos: .utility, autoreleaseFrequency: .workItem)
+    private let queue = DispatchQueue(label: "com.orbit.agent-usage", qos: .utility, autoreleaseFrequency: .workItem)
     private let home = FileManager.default.homeDirectoryForCurrentUser
 
     /// Lets a stop end a first read that is still going on the queue.
@@ -68,7 +68,7 @@ final class AgentUsageService: ObservableObject {
     private var pricesFailed = false
     /// When the list on disk was downloaded; nil until the queue has looked.
     private var pricesSaved: Date?
-    private let claudeAccountQueue = DispatchQueue(label: "com.vorssaint.claude-limits", qos: .utility)
+    private let claudeAccountQueue = DispatchQueue(label: "com.orbit.claude-limits", qos: .utility)
     private var claudeAccountRequest: AgentClaudeServer.Request?
     private var claudeAccountAttempted = Date.distantPast
     /// Checks in a row that Claude Code did not answer, counted again from

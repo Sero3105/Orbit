@@ -14,7 +14,7 @@ enum LaunchAtLogin {
     /// change runs here, off the main thread. The queue is serial, so a change
     /// made in Settings always runs after the startup repair.
     private static let operationQueue = DispatchQueue(
-        label: "com.vorssaint.utils.launch-at-login", qos: .userInitiated)
+        label: "com.orbit.Orbit.launch-at-login", qos: .userInitiated)
 
     /// What the system holds for this app right now.
     static var registration: LaunchAtLoginSupport.Registration {

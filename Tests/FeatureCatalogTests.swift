@@ -520,7 +520,7 @@ enum FeatureCatalogTests {
         suite.expect(AppFeature.switcher.availabilityKey == "featureAvailable.switcher",
                "availability key derives from the raw value")
 
-        let installSuiteName = "com.vorssaint.tests.feature-install.\(UUID().uuidString)"
+        let installSuiteName = "com.orbit.tests.feature-install.\(UUID().uuidString)"
         if let installDefaults = UserDefaults(suiteName: installSuiteName) {
             func savedValues() -> [String: Any] {
                 installDefaults.persistentDomain(forName: installSuiteName) ?? [:]
@@ -590,7 +590,7 @@ enum FeatureCatalogTests {
                 && (AppFeature.availabilityDefaults[AppFeature.fanControl.availabilityKey] as? Bool) == false
                 && (AppFeature.availabilityDefaults[AppFeature.notchMascot.availabilityKey] as? Bool) == false,
                "features added after the list was frozen wait on the Features page instead of installing themselves")
-        let linearScrollSuiteName = "com.vorssaint.tests.linear-scroll-availability.\(UUID().uuidString)"
+        let linearScrollSuiteName = "com.orbit.tests.linear-scroll-availability.\(UUID().uuidString)"
         if let linearDefaults = UserDefaults(suiteName: linearScrollSuiteName) {
             Defaults.migrateLinearScrollAvailability(in: linearDefaults)
             suite.expect(linearDefaults.object(forKey: AppFeature.linearScroll.availabilityKey) == nil,
@@ -608,7 +608,7 @@ enum FeatureCatalogTests {
             suite.expect(false, "linear scrolling availability suite can be created")
         }
 
-        let watchSuiteName = "com.vorssaint.tests.notch-watch-availability.\(UUID().uuidString)"
+        let watchSuiteName = "com.orbit.tests.notch-watch-availability.\(UUID().uuidString)"
         if let watchDefaults = UserDefaults(suiteName: watchSuiteName) {
             Defaults.migrateNotchWatchAvailability(in: watchDefaults)
             suite.expect(watchDefaults.object(forKey: AppFeature.notchWatch.availabilityKey) == nil,
@@ -663,7 +663,7 @@ enum FeatureCatalogTests {
                "an uninstalled feature is never offered")
         // The scroll axes migration saves the horizontal switch on every Mac
         // at launch, before any registered default exists.
-        let migratedAxesSuiteName = "com.vorssaint.tests.never-switched-on.\(UUID().uuidString)"
+        let migratedAxesSuiteName = "com.orbit.tests.never-switched-on.\(UUID().uuidString)"
         if let migratedAxesDefaults = UserDefaults(suiteName: migratedAxesSuiteName) {
             Defaults.migrateScrollInverterAxes(in: migratedAxesDefaults)
             let migrated = migratedAxesDefaults.persistentDomain(forName: migratedAxesSuiteName) ?? [:]
@@ -1257,7 +1257,7 @@ enum FeatureCatalogTests {
                 && decodedLegacyFanSnapshot?.temperatures == nil,
                "fan snapshots remain compatible with an older installed helper")
 
-        let fanMigrationSuite = "com.vorssaint.tests.fan-migration.\(UUID().uuidString)"
+        let fanMigrationSuite = "com.orbit.tests.fan-migration.\(UUID().uuidString)"
         if let fanMigration = UserDefaults(suiteName: fanMigrationSuite) {
             fanMigration.set(true, forKey: DefaultsKey.monitorShowFanControlBeta)
             Defaults.migrateFanControlVisibility(in: fanMigration)
@@ -1680,7 +1680,7 @@ enum FeatureCatalogTests {
                "WindowServer is protected")
         suite.expect(KillProcessSupport.isProtected(pid: 9999, name: "loginwindow", path: "/System/Library/CoreServices/loginwindow.app/Contents/MacOS/loginwindow"),
                "loginwindow is protected")
-        suite.expect(KillProcessSupport.isProtected(pid: ProcessInfo.processInfo.processIdentifier, name: "Vorssaint"),
+        suite.expect(KillProcessSupport.isProtected(pid: ProcessInfo.processInfo.processIdentifier, name: "Orbit"),
                "current app PID is protected")
         suite.expect(!KillProcessSupport.isProtected(pid: 12345, name: "Safari", path: "/Applications/Safari.app/Contents/MacOS/Safari"),
                "ordinary user app is not protected")
@@ -1816,7 +1816,7 @@ enum FeatureCatalogTests {
                    !$0.permissions.contains(.accessibility)
                },
                "battery and quiet needs no accessibility permission at all")
-        let firstRunSuiteName = "com.vorssaint.tests.first-run.\(UUID().uuidString)"
+        let firstRunSuiteName = "com.orbit.tests.first-run.\(UUID().uuidString)"
         if let firstRunDefaults = UserDefaults(suiteName: firstRunSuiteName) {
             firstRunDefaults.register(defaults: AppFeature.availabilityDefaults)
             FeaturePreset.prepareFirstRunAvailability(in: firstRunDefaults)

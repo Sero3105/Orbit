@@ -955,12 +955,12 @@ enum RepositoryFeatureTests {
                 && plainLogin.arguments.last == loginShell.arguments.last,
                "Homebrew's fallback asks for the same dump from a plain login shell")
         let resolvingEnvironment = HomebrewEnvironment.loginShellEnvironment(base: ["HOME": "/Users/test"])
-        suite.expect(HomebrewEnvironment.resolvingVariable == "VORSSAINT_RESOLVING_ENVIRONMENT"
-                && resolvingEnvironment == ["HOME": "/Users/test", "VORSSAINT_RESOLVING_ENVIRONMENT": "1"],
-               "Homebrew runs the login shell with VORSSAINT_RESOLVING_ENVIRONMENT=1 on top of the app's environment")
+        suite.expect(HomebrewEnvironment.resolvingVariable == "ORBIT_RESOLVING_ENVIRONMENT"
+                && resolvingEnvironment == ["HOME": "/Users/test", "ORBIT_RESOLVING_ENVIRONMENT": "1"],
+               "Homebrew runs the login shell with ORBIT_RESOLVING_ENVIRONMENT=1 on top of the app's environment")
         // A real zsh reading startup files from a scratch ZDOTDIR, so the user's own are never touched.
         let zdotdir = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vorssaint-login-shell-\(UUID().uuidString)")
+            .appendingPathComponent("orbit-login-shell-\(UUID().uuidString)")
         try? FileManager.default.createDirectory(at: zdotdir, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: zdotdir) }
         func startupExports(zshrc: String) -> [String: String] {
@@ -972,12 +972,12 @@ enum RepositoryFeatureTests {
                 baseEnvironment: ["HOME": zdotdir.path, "ZDOTDIR": zdotdir.path, "PATH": "/usr/bin:/bin"])
         }
         let zshrcExports = startupExports(zshrc: "export https_proxy=http://127.0.0.1:7890\n"
-                                          + "export HOMEBREW_SEEN_RESOLVING=$VORSSAINT_RESOLVING_ENVIRONMENT\n")
+                                          + "export HOMEBREW_SEEN_RESOLVING=$ORBIT_RESOLVING_ENVIRONMENT\n")
         suite.expect(zshrcExports["HOMEBREW_API_DOMAIN"] == "https://mirror.example/api"
                 && zshrcExports["https_proxy"] == "http://127.0.0.1:7890",
                "Homebrew reads exports from both ~/.zprofile and ~/.zshrc, found \(zshrcExports.keys.sorted())")
         expectEqual(zshrcExports["HOMEBREW_SEEN_RESOLVING"] ?? "", "1",
-                    "Homebrew's login shell exposes VORSSAINT_RESOLVING_ENVIRONMENT to startup files")
+                    "Homebrew's login shell exposes ORBIT_RESOLVING_ENVIRONMENT to startup files")
         // A multiplexer autostart that fails without a terminal and exits, or an exec into another shell.
         for takeover in ["multiplexer_autostart_failed_without_a_terminal=1; exit 0", "exec /bin/sh -c true"] {
             let fallbackExports = startupExports(zshrc: takeover + "\n")
@@ -1941,7 +1941,7 @@ enum RepositoryFeatureTests {
 
         // The session records the app that was active when secure input
         // turned on, not the process holding it, and Settings makes
-        // Vorssaint that app.
+        // Orbit that app.
         let secureInputOwnPid: pid_t = 77
         suite.expect(SecureInputSupport.holder(isEnabled: false,
                                          read: .noHolder,
@@ -2014,32 +2014,32 @@ enum RepositoryFeatureTests {
         suite.expect(SecureInputSupport.holder(isEnabled: true,
                                          read: .holder(secureInputOwnPid),
                                          ownPid: secureInputOwnPid,
-                                         runningApp: { pid in ("Vorssaint", pid) },
+                                         runningApp: { pid in ("Orbit", pid) },
                                          isProcessAlive: { _ in
                                              secureInputOwnLivenessChecks += 1
                                              return true
                                          }) == .unknown,
-               "Vorssaint recorded as the active app is never named as holding secure input")
+               "Orbit recorded as the active app is never named as holding secure input")
         suite.expect(secureInputOwnLivenessChecks == 0,
-               "naming Vorssaint is refused before any liveness check")
+               "naming Orbit is refused before any liveness check")
         suite.expect(SecureInputSupport.holder(isEnabled: true,
                                          read: .holder(5555),
                                          ownPid: secureInputOwnPid,
-                                         runningApp: { _ in ("Vorssaint", secureInputOwnPid) },
+                                         runningApp: { _ in ("Orbit", secureInputOwnPid) },
                                          isProcessAlive: { _ in true }) == .unknown,
-               "a recorded helper owned by Vorssaint is not named either")
+               "a recorded helper owned by Orbit is not named either")
         suite.expect(SecureInputSupport.holder(isEnabled: true,
                                          read: .holder(secureInputOwnPid),
                                          ownPid: secureInputOwnPid,
                                          runningApp: { _ in nil },
                                          isProcessAlive: { _ in true }) == .unknown,
-               "Vorssaint recorded while it is not a regular app is never sent to log out")
+               "Orbit recorded while it is not a regular app is never sent to log out")
         suite.expect(SecureInputSupport.holder(isEnabled: true,
                                          read: .holder(4242),
                                          ownPid: secureInputOwnPid,
-                                         runningApp: { pid in ("Vorssaint", pid) },
+                                         runningApp: { pid in ("Orbit", pid) },
                                          isProcessAlive: { _ in true })
-                   == .app(name: "Vorssaint", pid: 4242),
+                   == .app(name: "Orbit", pid: 4242),
                "another copy of the app is told apart from this one by pid, not by name")
         // The rule above protects the row only if the monitor passes this
         // process, and the harness does not compile `SecureInputMonitor`.
@@ -2049,7 +2049,7 @@ enum RepositoryFeatureTests {
             .filter { !$0.trimmingCharacters(in: .whitespaces).hasPrefix("//") }
             .joined(separator: "\n")
         suite.expect(secureInputMonitorCode.contains("ownPid: getpid(),"),
-               "the secure input monitor passes its own pid, so the row never names Vorssaint")
+               "the secure input monitor passes its own pid, so the row never names Orbit")
 
         var secureInputUnavailableLookups = 0
         var secureInputUnavailableLivenessChecks = 0

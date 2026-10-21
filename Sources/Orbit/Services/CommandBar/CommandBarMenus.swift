@@ -17,7 +17,7 @@ struct CommandBarMenuItem {
 }
 
 /// Reads the menu bar of whichever app is in front and lets the command bar
-/// run any of its commands. This is what makes the bar reach past Vorssaint:
+/// run any of its commands. This is what makes the bar reach past Orbit:
 /// every menu of every app becomes searchable by name.
 ///
 /// The whole walk happens away from the main thread and behind a per-app

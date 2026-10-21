@@ -815,7 +815,7 @@ def main():
     write("AppUpdates.swift", "import Foundation\nimport Darwin\nextension AppUpdatesContract {\n"
           + declaration(loader, "final class AppUpdateFeedLoader:")
           + "final class Service {\nlet workQueue = DispatchQueue(label: \"app-updates.contract\")\n"
-          + "let clock = Clock()\nstatic let ownPackageTokens: Set<String> = [\"vorssaint\", \"vorssaint@beta\", \"vorssaint-beta\"]\n"
+          + "let clock = Clock()\nstatic let ownPackageTokens: Set<String> = [\"orbit\", \"orbit@beta\", \"orbit-beta\"]\n"
           + "static let onlineCatalogCacheLifetime: TimeInterval = 60 * 60\n"
           + "var onlineCatalogCache: (loadedAt: Foundation.Date, entries: [AppUpdatesSupport.CatalogEntry])?\n"
           + "lazy var catalogSession = URLSession(configuration: URLSessionConfiguration.ephemeral)\n"
@@ -1869,7 +1869,7 @@ def main():
           # the fixture's own class instead of leaving it undefined.
           + "typealias KeepAwakeManager = Service\n"
           + "final class Service {\n"
-          + "static let log = Logger(subsystem: \"vorssaint.tests\", category: \"keep-awake\")\n"
+          + "static let log = Logger(subsystem: \"orbit.tests\", category: \"keep-awake\")\n"
           + "var isActive = false\nvar sessionPausedForScreenLock = false\n"
           + "var isTerminating = false\nvar clamshellEnablePending = false\nvar clamshellRestorePending = false\n"
           + "var clamshellOperationGeneration = 0\nvar clamshellSetupID: UUID?\n"

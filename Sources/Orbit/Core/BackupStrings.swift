@@ -52,9 +52,9 @@ extension BackupFeatureStrings {
         exportFailed: "백업을 저장하지 못했습니다.",
         importConfirmTitle: "이 설정을 가져올까요?",
         importConfirmBody: "현재 설정이 파일의 설정으로 바뀌고 앱이 다시 시작됩니다. 이 Mac의 다른 항목은 변경되지 않습니다.",
-        importMissingIslandBody: "이 백업에는 Dynamic Island 설정이 없습니다. 이 Mac의 해당 설정은 유지됩니다. 다른 Mac의 설정을 복사하려면 Vorssaint 3.4 이상에서 다시 내보내세요. 나머지 설정을 가져온 뒤 앱이 다시 시작됩니다.",
+        importMissingIslandBody: "이 백업에는 Dynamic Island 설정이 없습니다. 이 Mac의 해당 설정은 유지됩니다. 다른 Mac의 설정을 복사하려면 Orbit 3.4 이상에서 다시 내보내세요. 나머지 설정을 가져온 뒤 앱이 다시 시작됩니다.",
         importAction: "가져오고 다시 시작",
-        invalidFile: "이 파일은 유효한 Vorssaint 백업이 아닙니다."
+        invalidFile: "이 파일은 유효한 Orbit 백업이 아닙니다."
     )
     static let uk = BackupFeatureStrings(
         title: "Резервна копія",
@@ -65,9 +65,9 @@ extension BackupFeatureStrings {
         exportFailed: "Не вдалося зберегти резервну копію.",
         importConfirmTitle: "Імпортувати ці налаштування?",
         importConfirmBody: "Ваші поточні налаштування замінюються файлом, і програма перезапускається. Нічого іншого на цьому Mac не зачіпається.",
-        importMissingIslandBody: "У цій резервній копії немає налаштувань Dynamic Island. Налаштування на цьому Mac залишаться без змін. Щоб перенести їх з іншого Mac, експортуйте копію з Vorssaint 3.4 або новішої версії. Решту налаштувань буде імпортовано, а програму перезапущено.",
+        importMissingIslandBody: "У цій резервній копії немає налаштувань Dynamic Island. Налаштування на цьому Mac залишаться без змін. Щоб перенести їх з іншого Mac, експортуйте копію з Orbit 3.4 або новішої версії. Решту налаштувань буде імпортовано, а програму перезапущено.",
         importAction: "Імпортувати та перезапустити",
-        invalidFile: "Цей файл не є коректною резервною копією Vorssaint."
+        invalidFile: "Цей файл не є коректною резервною копією Orbit."
     )
 }
 
@@ -81,9 +81,9 @@ extension BackupFeatureStrings {
         exportFailed: "Could not save the backup.",
         importConfirmTitle: "Import these settings?",
         importConfirmBody: "Your current settings are replaced by the file’s and the app restarts. Nothing else on this Mac is touched.",
-        importMissingIslandBody: "This backup has no Dynamic Island settings. This Mac’s island settings will be kept. Re-export with Vorssaint 3.4 or newer on the other Mac to copy them. Other settings will be imported and the app will restart.",
+        importMissingIslandBody: "This backup has no Dynamic Island settings. This Mac’s island settings will be kept. Re-export with Orbit 3.4 or newer on the other Mac to copy them. Other settings will be imported and the app will restart.",
         importAction: "Import and restart",
-        invalidFile: "This file is not a valid Vorssaint backup."
+        invalidFile: "This file is not a valid Orbit backup."
     )
 
     static let ptBR = BackupFeatureStrings(
@@ -95,9 +95,9 @@ extension BackupFeatureStrings {
         exportFailed: "Não foi possível salvar o backup.",
         importConfirmTitle: "Importar estas configurações?",
         importConfirmBody: "As configurações atuais são substituídas pelas do arquivo e o app reinicia. Nada mais neste Mac é alterado.",
-        importMissingIslandBody: "Este backup não contém configurações da Dynamic Island. As configurações dela neste Mac serão mantidas. Para copiá-las do outro Mac, exporte novamente com o Vorssaint 3.4 ou mais recente. As demais configurações serão importadas e o app reiniciará.",
+        importMissingIslandBody: "Este backup não contém configurações da Dynamic Island. As configurações dela neste Mac serão mantidas. Para copiá-las do outro Mac, exporte novamente com o Orbit 3.4 ou mais recente. As demais configurações serão importadas e o app reiniciará.",
         importAction: "Importar e reiniciar",
-        invalidFile: "Este arquivo não é um backup válido do Vorssaint."
+        invalidFile: "Este arquivo não é um backup válido do Orbit."
     )
 
     static let tr = BackupFeatureStrings(
@@ -109,9 +109,9 @@ extension BackupFeatureStrings {
         exportFailed: "Yedek kaydedilemedi.",
         importConfirmTitle: "Bu ayarlar içe aktarılsın mı?",
         importConfirmBody: "Mevcut ayarlar dosyadakilerle değiştirilir ve uygulama yeniden başlar. Bu Mac’te başka hiçbir şeye dokunulmaz.",
-        importMissingIslandBody: "Bu yedekte Dynamic Island ayarları yok. Bu Mac’teki ada ayarları korunacak. Diğer Mac’ten kopyalamak için Vorssaint 3.4 veya daha yeni bir sürümle yeniden dışa aktarın. Diğer ayarlar içe aktarılacak ve uygulama yeniden başlayacak.",
+        importMissingIslandBody: "Bu yedekte Dynamic Island ayarları yok. Bu Mac’teki ada ayarları korunacak. Diğer Mac’ten kopyalamak için Orbit 3.4 veya daha yeni bir sürümle yeniden dışa aktarın. Diğer ayarlar içe aktarılacak ve uygulama yeniden başlayacak.",
         importAction: "İçe aktar ve yeniden başlat",
-        invalidFile: "Bu dosya geçerli bir Vorssaint yedeği değil."
+        invalidFile: "Bu dosya geçerli bir Orbit yedeği değil."
     )
 
     static let ru = BackupFeatureStrings(
@@ -123,9 +123,9 @@ extension BackupFeatureStrings {
         exportFailed: "Не удалось сохранить копию.",
         importConfirmTitle: "Импортировать эти настройки?",
         importConfirmBody: "Текущие настройки заменяются настройками из файла, и приложение перезапускается. Больше ничего на этом Mac не меняется.",
-        importMissingIslandBody: "В этой копии нет настроек Dynamic Island. Настройки на этом Mac сохранятся. Чтобы перенести их с другого Mac, экспортируйте копию из Vorssaint 3.4 или новее. Остальные настройки будут импортированы, затем приложение перезапустится.",
+        importMissingIslandBody: "В этой копии нет настроек Dynamic Island. Настройки на этом Mac сохранятся. Чтобы перенести их с другого Mac, экспортируйте копию из Orbit 3.4 или новее. Остальные настройки будут импортированы, затем приложение перезапустится.",
         importAction: "Импортировать и перезапустить",
-        invalidFile: "Этот файл не является корректной резервной копией Vorssaint."
+        invalidFile: "Этот файл не является корректной резервной копией Orbit."
     )
 
     static let es = BackupFeatureStrings(
@@ -137,9 +137,9 @@ extension BackupFeatureStrings {
         exportFailed: "No se pudo guardar la copia.",
         importConfirmTitle: "¿Importar estos ajustes?",
         importConfirmBody: "Los ajustes actuales se sustituyen por los del archivo y la app se reinicia. Nada más cambia en este Mac.",
-        importMissingIslandBody: "Esta copia no contiene ajustes de Dynamic Island. Se conservarán los ajustes de esta Mac. Para copiarlos desde la otra Mac, exporta de nuevo con Vorssaint 3.4 o posterior. Se importarán los demás ajustes y la app se reiniciará.",
+        importMissingIslandBody: "Esta copia no contiene ajustes de Dynamic Island. Se conservarán los ajustes de esta Mac. Para copiarlos desde la otra Mac, exporta de nuevo con Orbit 3.4 o posterior. Se importarán los demás ajustes y la app se reiniciará.",
         importAction: "Importar y reiniciar",
-        invalidFile: "Este archivo no es una copia de seguridad válida de Vorssaint."
+        invalidFile: "Este archivo no es una copia de seguridad válida de Orbit."
     )
 
     static let sk = BackupFeatureStrings(
@@ -151,9 +151,9 @@ extension BackupFeatureStrings {
         exportFailed: "Zálohu sa nepodarilo uložiť.",
         importConfirmTitle: "Importovať tieto nastavenia?",
         importConfirmBody: "Vaše aktuálne nastavenia sa nahradia nastaveniami zo súboru a aplikácia sa reštartuje. Nič iné na tomto Macu sa nezmení.",
-        importMissingIslandBody: "Táto záloha neobsahuje nastavenia Dynamic Island. Nastavenia na tomto Macu zostanú zachované. Ak ich chcete preniesť z druhého Macu, exportujte zálohu znova vo Vorssaint 3.4 alebo novšom. Ostatné nastavenia sa importujú a aplikácia sa reštartuje.",
+        importMissingIslandBody: "Táto záloha neobsahuje nastavenia Dynamic Island. Nastavenia na tomto Macu zostanú zachované. Ak ich chcete preniesť z druhého Macu, exportujte zálohu znova vo Orbit 3.4 alebo novšom. Ostatné nastavenia sa importujú a aplikácia sa reštartuje.",
         importAction: "Importovať a reštartovať",
-        invalidFile: "Tento súbor nie je platná záloha Vorssaint."
+        invalidFile: "Tento súbor nie je platná záloha Orbit."
     )
 
     static let de = BackupFeatureStrings(
@@ -165,9 +165,9 @@ extension BackupFeatureStrings {
         exportFailed: "Backup konnte nicht gesichert werden.",
         importConfirmTitle: "Diese Einstellungen importieren?",
         importConfirmBody: "Die aktuellen Einstellungen werden durch die der Datei ersetzt und die App startet neu. Sonst ändert sich auf diesem Mac nichts.",
-        importMissingIslandBody: "Dieses Backup enthält keine Dynamic-Island-Einstellungen. Die Einstellungen auf diesem Mac bleiben erhalten. Um sie vom anderen Mac zu übernehmen, exportiere erneut mit Vorssaint 3.4 oder neuer. Die übrigen Einstellungen werden importiert und die App startet neu.",
+        importMissingIslandBody: "Dieses Backup enthält keine Dynamic-Island-Einstellungen. Die Einstellungen auf diesem Mac bleiben erhalten. Um sie vom anderen Mac zu übernehmen, exportiere erneut mit Orbit 3.4 oder neuer. Die übrigen Einstellungen werden importiert und die App startet neu.",
         importAction: "Importieren und neu starten",
-        invalidFile: "Diese Datei ist kein gültiges Vorssaint-Backup."
+        invalidFile: "Diese Datei ist kein gültiges Orbit-Backup."
     )
 
     static let fr = BackupFeatureStrings(
@@ -179,9 +179,9 @@ extension BackupFeatureStrings {
         exportFailed: "Impossible d’enregistrer la sauvegarde.",
         importConfirmTitle: "Importer ces réglages\u{00A0}?",
         importConfirmBody: "Les réglages actuels sont remplacés par ceux du fichier et l’app redémarre. Rien d’autre ne change sur ce Mac.",
-        importMissingIslandBody: "Cette sauvegarde ne contient aucun réglage de Dynamic Island. Les réglages de ce Mac seront conservés. Pour les copier depuis l’autre Mac, exportez à nouveau avec Vorssaint 3.4 ou une version ultérieure. Les autres réglages seront importés, puis l’app redémarrera.",
+        importMissingIslandBody: "Cette sauvegarde ne contient aucun réglage de Dynamic Island. Les réglages de ce Mac seront conservés. Pour les copier depuis l’autre Mac, exportez à nouveau avec Orbit 3.4 ou une version ultérieure. Les autres réglages seront importés, puis l’app redémarrera.",
         importAction: "Importer et redémarrer",
-        invalidFile: "Ce fichier n’est pas une sauvegarde Vorssaint valide."
+        invalidFile: "Ce fichier n’est pas une sauvegarde Orbit valide."
     )
 
     static let it = BackupFeatureStrings(
@@ -193,9 +193,9 @@ extension BackupFeatureStrings {
         exportFailed: "Impossibile salvare il backup.",
         importConfirmTitle: "Importare queste impostazioni?",
         importConfirmBody: "Le impostazioni attuali vengono sostituite da quelle del file e l’app si riavvia. Nient’altro cambia su questo Mac.",
-        importMissingIslandBody: "Questo backup non contiene le impostazioni di Dynamic Island. Quelle su questo Mac verranno mantenute. Per copiarle dall’altro Mac, esporta di nuovo con Vorssaint 3.4 o successivo. Le altre impostazioni verranno importate e l’app si riavvierà.",
+        importMissingIslandBody: "Questo backup non contiene le impostazioni di Dynamic Island. Quelle su questo Mac verranno mantenute. Per copiarle dall’altro Mac, esporta di nuovo con Orbit 3.4 o successivo. Le altre impostazioni verranno importate e l’app si riavvierà.",
         importAction: "Importa e riavvia",
-        invalidFile: "Questo file non è un backup Vorssaint valido."
+        invalidFile: "Questo file non è un backup Orbit valido."
     )
 
     static let ja = BackupFeatureStrings(
@@ -207,9 +207,9 @@ extension BackupFeatureStrings {
         exportFailed: "バックアップを保存できませんでした。",
         importConfirmTitle: "この設定を読み込みますか?",
         importConfirmBody: "現在の設定はファイルの内容に置き換えられ、アプリが再起動します。このMacのほかの部分は変わりません。",
-        importMissingIslandBody: "このバックアップにはDynamic Islandの設定がありません。このMacの設定は維持されます。別のMacからコピーするには、Vorssaint 3.4以降で再度書き出してください。その他の設定を読み込んだ後、アプリが再起動します。",
+        importMissingIslandBody: "このバックアップにはDynamic Islandの設定がありません。このMacの設定は維持されます。別のMacからコピーするには、Orbit 3.4以降で再度書き出してください。その他の設定を読み込んだ後、アプリが再起動します。",
         importAction: "読み込んで再起動",
-        invalidFile: "このファイルは有効なVorssaintのバックアップではありません。"
+        invalidFile: "このファイルは有効なOrbitのバックアップではありません。"
     )
 
     static let zhHans = BackupFeatureStrings(
@@ -221,9 +221,9 @@ extension BackupFeatureStrings {
         exportFailed: "无法存储备份。",
         importConfirmTitle: "导入这些设置？",
         importConfirmBody: "当前设置将被文件中的设置替换，App 会重启。这台 Mac 上的其他内容不受影响。",
-        importMissingIslandBody: "此备份不包含 Dynamic Island 设置。这台 Mac 上的相关设置将保留。要从另一台 Mac 复制这些设置，请使用 Vorssaint 3.4 或更新版本重新导出。其他设置将被导入，然后 App 会重启。",
+        importMissingIslandBody: "此备份不包含 Dynamic Island 设置。这台 Mac 上的相关设置将保留。要从另一台 Mac 复制这些设置，请使用 Orbit 3.4 或更新版本重新导出。其他设置将被导入，然后 App 会重启。",
         importAction: "导入并重启",
-        invalidFile: "该文件不是有效的 Vorssaint 备份。"
+        invalidFile: "该文件不是有效的 Orbit 备份。"
     )
 
     static let zhTW = BackupFeatureStrings(
@@ -235,9 +235,9 @@ extension BackupFeatureStrings {
         exportFailed: "無法儲存備份。",
         importConfirmTitle: "匯入這些設定?",
         importConfirmBody: "目前設定將被檔案中的設定取代,App 會重新啟動。這台 Mac 上的其他內容不受影響。",
-        importMissingIslandBody: "此備份不包含 Dynamic Island 設定。這台 Mac 上的相關設定會保留。若要從另一台 Mac 複製這些設定,請使用 Vorssaint 3.4 或較新版本重新匯出。其他設定會匯入,然後 App 會重新啟動。",
+        importMissingIslandBody: "此備份不包含 Dynamic Island 設定。這台 Mac 上的相關設定會保留。若要從另一台 Mac 複製這些設定,請使用 Orbit 3.4 或較新版本重新匯出。其他設定會匯入,然後 App 會重新啟動。",
         importAction: "匯入並重新啟動",
-        invalidFile: "此檔案不是有效的 Vorssaint 備份。"
+        invalidFile: "此檔案不是有效的 Orbit 備份。"
     )
 
     static let zhHK = BackupFeatureStrings(
@@ -249,8 +249,8 @@ extension BackupFeatureStrings {
         exportFailed: "儲存唔到備份。",
         importConfirmTitle: "匯入這些設定?",
         importConfirmBody: "目前設定將被檔案中的設定取代,App 會重新啟動。這台 Mac 上的其他內容不受影響。",
-        importMissingIslandBody: "呢份備份冇 Dynamic Island 設定。呢部 Mac 上嘅相關設定會保留。想從另一部 Mac 複製呢啲設定,請用 Vorssaint 3.4 或更新版本重新匯出。其他設定會匯入,之後 App 會重新啟動。",
+        importMissingIslandBody: "呢份備份冇 Dynamic Island 設定。呢部 Mac 上嘅相關設定會保留。想從另一部 Mac 複製呢啲設定,請用 Orbit 3.4 或更新版本重新匯出。其他設定會匯入,之後 App 會重新啟動。",
         importAction: "匯入並重新啟動",
-        invalidFile: "此檔案不是有效嘅 Vorssaint 備份。"
+        invalidFile: "此檔案不是有效嘅 Orbit 備份。"
     )
 }

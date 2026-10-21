@@ -4,7 +4,7 @@
 import Foundation
 import ServiceManagement
 
-/// `Vorssaint --uninstall`: cleanly detaches the app from the system
+/// `Orbit --uninstall`: cleanly detaches the app from the system
 /// before its bundle is removed. It unregisters the fan helper daemon and the
 /// login item — so no dead entry lingers in System Settings › General › Login
 /// Items — restores normal sleep if a closed-lid session left it disabled, and

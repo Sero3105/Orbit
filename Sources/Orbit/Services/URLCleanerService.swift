@@ -66,7 +66,7 @@ final class URLCleanerService: ObservableObject {
         GeneralPasteboardAccess.shared.async({
             let changeCount = Self.writeToPasteboard(urlString)
             // Unlike a rewrite of what another app copied, this link is ours.
-            NSPasteboard.general.declareVorssaintSource()
+            NSPasteboard.general.declareOrbitSource()
             return changeCount
         }, then: { [weak self] changeCount in
             guard let self else { return }

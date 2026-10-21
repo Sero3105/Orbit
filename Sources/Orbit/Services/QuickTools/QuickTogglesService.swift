@@ -33,7 +33,7 @@ final class QuickTogglesService: ObservableObject {
 
     @Published private(set) var states: [QuickToggleAction: RunState] = [:]
 
-    private let workQueue = DispatchQueue(label: "com.vorssaint.utils.quick-toggles", qos: .userInitiated)
+    private let workQueue = DispatchQueue(label: "com.orbit.Orbit.quick-toggles", qos: .userInitiated)
 
     private init() {}
 

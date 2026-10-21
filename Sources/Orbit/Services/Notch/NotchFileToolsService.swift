@@ -26,7 +26,7 @@ final class NotchFileToolsService: ObservableObject {
     @Published private(set) var failure: String?
     @Published private(set) var wasCancelled = false
     private var operation: NotchArchiveOperation?
-    private let queue = DispatchQueue(label: "com.vorssaint.notch.archive", qos: .userInitiated)
+    private let queue = DispatchQueue(label: "com.orbit.notch.archive", qos: .userInitiated)
     private var generation = UUID()
 
     private init() {}

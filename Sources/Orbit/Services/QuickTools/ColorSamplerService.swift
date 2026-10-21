@@ -58,7 +58,7 @@ final class ColorSamplerService: ObservableObject {
         guard let value = formattedValue(color) else { return nil }
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
-        pasteboard.declareVorssaintSource()
+        pasteboard.declareOrbitSource()
         pasteboard.setString(value, forType: .string)
         return value
     }

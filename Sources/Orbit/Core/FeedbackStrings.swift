@@ -60,7 +60,7 @@ extension FeatureStrings {
 extension FeedbackStrings {
     static let enUS = FeedbackStrings(
         sectionTitle: "Feedback",
-        sectionCaption: "Send a bug report or feature idea directly to the person who maintains Vorssaint.",
+        sectionCaption: "Send a bug report or feature idea directly to the person who maintains Orbit.",
         openButton: "Send feedback",
         windowTitle: "Send feedback",
         bugTitle: "Bug",
@@ -92,7 +92,7 @@ extension FeedbackStrings {
 
     static let ptBR = FeedbackStrings(
         sectionTitle: "Feedback",
-        sectionCaption: "Envie um relato de bug ou uma ideia de recurso diretamente para quem mantém o Vorssaint.",
+        sectionCaption: "Envie um relato de bug ou uma ideia de recurso diretamente para quem mantém o Orbit.",
         openButton: "Enviar feedback",
         windowTitle: "Enviar feedback",
         bugTitle: "Bug",
@@ -124,7 +124,7 @@ extension FeedbackStrings {
 
     static let tr = FeedbackStrings(
         sectionTitle: "Geri bildirim",
-        sectionCaption: "Bir hata bildirimini veya özellik fikrini doğrudan Vorssaint bakımcısına gönderin.",
+        sectionCaption: "Bir hata bildirimini veya özellik fikrini doğrudan Orbit bakımcısına gönderin.",
         openButton: "Geri bildirim gönder",
         windowTitle: "Geri bildirim gönder",
         bugTitle: "Hata",
@@ -156,7 +156,7 @@ extension FeedbackStrings {
 
     static let ru = FeedbackStrings(
         sectionTitle: "Обратная связь",
-        sectionCaption: "Отправьте сообщение об ошибке или идею функции напрямую разработчику Vorssaint.",
+        sectionCaption: "Отправьте сообщение об ошибке или идею функции напрямую разработчику Orbit.",
         openButton: "Отправить отзыв",
         windowTitle: "Отправить отзыв",
         bugTitle: "Ошибка",
@@ -188,7 +188,7 @@ extension FeedbackStrings {
 
     static let es = FeedbackStrings(
         sectionTitle: "Comentarios",
-        sectionCaption: "Envía un informe de error o una idea directamente a quien mantiene Vorssaint.",
+        sectionCaption: "Envía un informe de error o una idea directamente a quien mantiene Orbit.",
         openButton: "Enviar comentarios",
         windowTitle: "Enviar comentarios",
         bugTitle: "Error",
@@ -220,7 +220,7 @@ extension FeedbackStrings {
 
     static let sk = FeedbackStrings(
         sectionTitle: "Spätná väzba",
-        sectionCaption: "Pošlite hlásenie o chybe alebo nápad na funkciu priamo osobe, ktorá udržiava Vorssaint.",
+        sectionCaption: "Pošlite hlásenie o chybe alebo nápad na funkciu priamo osobe, ktorá udržiava Orbit.",
         openButton: "Poslať spätnú väzbu",
         windowTitle: "Poslať spätnú väzbu",
         bugTitle: "Chyba",
@@ -252,7 +252,7 @@ extension FeedbackStrings {
 
     static let de = FeedbackStrings(
         sectionTitle: "Feedback",
-        sectionCaption: "Sende einen Fehlerbericht oder eine Funktionsidee direkt an den Vorssaint-Entwickler.",
+        sectionCaption: "Sende einen Fehlerbericht oder eine Funktionsidee direkt an den Orbit-Entwickler.",
         openButton: "Feedback senden",
         windowTitle: "Feedback senden",
         bugTitle: "Fehler",
@@ -284,7 +284,7 @@ extension FeedbackStrings {
 
     static let fr = FeedbackStrings(
         sectionTitle: "Avis",
-        sectionCaption: "Envoyez un rapport de bug ou une idée directement à la personne qui maintient Vorssaint.",
+        sectionCaption: "Envoyez un rapport de bug ou une idée directement à la personne qui maintient Orbit.",
         openButton: "Envoyer un avis",
         windowTitle: "Envoyer un avis",
         bugTitle: "Bug",
@@ -316,7 +316,7 @@ extension FeedbackStrings {
 
     static let it = FeedbackStrings(
         sectionTitle: "Feedback",
-        sectionCaption: "Invia una segnalazione o un’idea direttamente a chi mantiene Vorssaint.",
+        sectionCaption: "Invia una segnalazione o un’idea direttamente a chi mantiene Orbit.",
         openButton: "Invia feedback",
         windowTitle: "Invia feedback",
         bugTitle: "Bug",
@@ -348,7 +348,7 @@ extension FeedbackStrings {
 
     static let ja = FeedbackStrings(
         sectionTitle: "フィードバック",
-        sectionCaption: "不具合の報告や機能のアイデアを Vorssaint の開発者へ直接送信します。",
+        sectionCaption: "不具合の報告や機能のアイデアを Orbit の開発者へ直接送信します。",
         openButton: "フィードバックを送信",
         windowTitle: "フィードバックを送信",
         bugTitle: "不具合",
@@ -380,7 +380,7 @@ extension FeedbackStrings {
 
     static let ko = FeedbackStrings(
         sectionTitle: "피드백",
-        sectionCaption: "버그 신고나 기능 아이디어를 Vorssaint 관리자에게 직접 보냅니다.",
+        sectionCaption: "버그 신고나 기능 아이디어를 Orbit 관리자에게 직접 보냅니다.",
         openButton: "피드백 보내기",
         windowTitle: "피드백 보내기",
         bugTitle: "버그",
@@ -412,7 +412,7 @@ extension FeedbackStrings {
 
     static let zhHans = FeedbackStrings(
         sectionTitle: "反馈",
-        sectionCaption: "将错误报告或功能建议直接发送给 Vorssaint 的维护者。",
+        sectionCaption: "将错误报告或功能建议直接发送给 Orbit 的维护者。",
         openButton: "发送反馈",
         windowTitle: "发送反馈",
         bugTitle: "错误",
@@ -444,7 +444,7 @@ extension FeedbackStrings {
 
     static let zhTW = FeedbackStrings(
         sectionTitle: "意見回饋",
-        sectionCaption: "將錯誤回報或功能建議直接傳送給 Vorssaint 的維護者。",
+        sectionCaption: "將錯誤回報或功能建議直接傳送給 Orbit 的維護者。",
         openButton: "傳送意見",
         windowTitle: "傳送意見",
         bugTitle: "錯誤",
@@ -476,7 +476,7 @@ extension FeedbackStrings {
 
     static let zhHK = FeedbackStrings(
         sectionTitle: "意見回饋",
-        sectionCaption: "將錯誤報告或功能建議直接傳送給 Vorssaint 的維護者。",
+        sectionCaption: "將錯誤報告或功能建議直接傳送給 Orbit 的維護者。",
         openButton: "傳送意見",
         windowTitle: "傳送意見",
         bugTitle: "錯誤",
@@ -507,7 +507,7 @@ extension FeedbackStrings {
     )
     static let uk = FeedbackStrings(
         sectionTitle: "Відгук",
-        sectionCaption: "Надішліть звіт про помилку або ідею функції безпосередньо розробнику Vorssaint.",
+        sectionCaption: "Надішліть звіт про помилку або ідею функції безпосередньо розробнику Orbit.",
         openButton: "Надіслати відгук",
         windowTitle: "Надіслати відгук",
         bugTitle: "Помилка",

@@ -21,7 +21,7 @@ final class NotchBrowserArtwork {
     private static let failureCooldown: TimeInterval = 60
     private static let rememberedCovers = 8
 
-    private let queue = DispatchQueue(label: "com.vorssaint.notch-browser-artwork", qos: .utility)
+    private let queue = DispatchQueue(label: "com.orbit.notch-browser-artwork", qos: .utility)
     private let lock = NSLock()
     private var covers: [String: Data] = [:]
     private var coverOrder: [String] = []
@@ -231,7 +231,7 @@ private final class NotchBrowserArtworkDownload: NSObject, URLSessionDataDelegat
         configuration.urlCredentialStorage = nil
         configuration.httpCookieStorage = nil
         configuration.httpShouldSetCookies = false
-        configuration.httpAdditionalHeaders = ["User-Agent": "Vorssaint", "Accept": accept]
+        configuration.httpAdditionalHeaders = ["User-Agent": "Orbit", "Accept": accept]
         let delegate = NotchBrowserArtworkDownload(completion: completion)
         let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
         session.dataTask(with: url).resume()

@@ -446,7 +446,7 @@ final class WindowPreviewProvider {
     /// The activated app's windows are listed here, off the main thread. A
     /// slow app can hold that Accessibility walk for seconds, which must not
     /// tie up a thread Swift's tasks share.
-    private static let warmEnumerationQueue = DispatchQueue(label: "com.vorssaint.preview.warm-enumeration",
+    private static let warmEnumerationQueue = DispatchQueue(label: "com.orbit.preview.warm-enumeration",
                                                             qos: .utility)
 
     /// Waits for the stage/space transition to settle, then captures the

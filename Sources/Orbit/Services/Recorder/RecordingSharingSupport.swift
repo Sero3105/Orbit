@@ -45,8 +45,8 @@ enum RecordingSharingSupport {
         let audioBitRate: Int
     }
 
-    static let productionEndpoint = URL(string: "https://screenshots.vorssaint.com")!
-    static let developerBundleIdentifier = "com.vorssaint.utils.dev"
+    static let productionEndpoint = URL(string: "https://screenshots.orbit.com")!
+    static let developerBundleIdentifier = "com.orbit.Orbit.dev"
     /// Leaves transport headroom below the public 100 MB request ceiling.
     static let maximumUploadBytes = 96_000_000
     static let targetUploadBytes = 90_000_000

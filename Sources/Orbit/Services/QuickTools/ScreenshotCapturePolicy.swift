@@ -8,7 +8,7 @@ import CoreGraphics
 /// shareable-content snapshot, so stale window numbers cannot affect another app.
 enum ScreenshotCapturePolicy {
     /// The app's own windows one capture has to keep out before the "Hide
-    /// Vorssaint windows" preference narrows what is left.
+    /// Orbit windows" preference narrows what is left.
     ///
     /// Workflow surfaces — the selection overlays, the countdown and scrolling
     /// HUDs and the quick preview — are the tool taking the capture and can
@@ -28,13 +28,13 @@ enum ScreenshotCapturePolicy {
     }
 
     /// `islandWindowIDs` are the Dynamic Island windows that show in captures.
-    /// The island has its own preference for that, so "Hide Vorssaint windows"
+    /// The island has its own preference for that, so "Hide Orbit windows"
     /// leaves them in, but a caller that protects them keeps them out.
-    static func excludedWindowIDs(hideVorssaintWindows: Bool,
+    static func excludedWindowIDs(hideOrbitWindows: Bool,
                                   ownWindowIDs: Set<CGWindowID>,
                                   protectedWindowIDs: Set<CGWindowID>,
                                   islandWindowIDs: Set<CGWindowID> = []) -> Set<CGWindowID> {
-        let excluded = hideVorssaintWindows ? ownWindowIDs : ownWindowIDs.intersection(protectedWindowIDs)
+        let excluded = hideOrbitWindows ? ownWindowIDs : ownWindowIDs.intersection(protectedWindowIDs)
         return excluded.subtracting(islandWindowIDs.subtracting(protectedWindowIDs))
     }
 
@@ -54,10 +54,10 @@ enum ScreenshotCapturePolicy {
 
     static func canPickWindow(_ windowID: CGWindowID,
                               isOwnWindow: Bool,
-                              hideVorssaintWindows: Bool,
+                              hideOrbitWindows: Bool,
                               protectedWindowIDs: Set<CGWindowID>) -> Bool {
         !isOwnWindow
-            || (!hideVorssaintWindows && !protectedWindowIDs.contains(windowID))
+            || (!hideOrbitWindows && !protectedWindowIDs.contains(windowID))
     }
 
     /// One on-screen window as the capture decision needs it.

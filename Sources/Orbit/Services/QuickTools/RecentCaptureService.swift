@@ -18,7 +18,7 @@ final class RecentCaptureService: ObservableObject {
 
     private let manager = FileManager.default
     private let hotkey = QuickToolHotkey(id: 21)
-    private let queue = DispatchQueue(label: "com.vorssaint.utils.recent-captures",
+    private let queue = DispatchQueue(label: "com.orbit.Orbit.recent-captures",
                                       qos: .utility)
     private let generationLock = NSLock()
     private let thumbnailCache = NSCache<NSString, NSImage>()

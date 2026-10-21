@@ -488,7 +488,7 @@ enum PointerInputFeatureTests {
                "launch, termination and mounted-volume changes refresh registered web handlers")
         suite.expect(MouseNavigationSupport.shouldRefreshWebHandlers(
             isApplicationActivation: true, activatedPID: 41, ownPID: 41),
-               "activating Vorssaint refreshes registered web handlers")
+               "activating Orbit refreshes registered web handlers")
         suite.expect(!MouseNavigationSupport.shouldRefreshWebHandlers(
             isApplicationActivation: true, activatedPID: 42, ownPID: 41),
                "activating another app does not repeat the handler lookup")
@@ -769,7 +769,7 @@ enum PointerInputFeatureTests {
                                                              stringFor: { _ in nil })
         suite.expect(!uninstalledInverter.invertVertical && !uninstalledInverter.invertHorizontal,
                "an uninstalled inverter flips nothing even with its switches left on")
-        let linearName = "com.vorssaint.tests.linear-lines.\(UUID().uuidString)"
+        let linearName = "com.orbit.tests.linear-lines.\(UUID().uuidString)"
         let linearDefaults = UserDefaults(suiteName: linearName)!
         defer { linearDefaults.removePersistentDomain(forName: linearName) }
         var exceptionChecks = 0
@@ -2589,13 +2589,13 @@ enum PointerInputFeatureTests {
                 ),
                "a stop or replaced event tap invalidates a queued Super key mapping")
         suite.expect(SuperKeyMappingGuard.cleanupSource(in: [
-            "Vorssaint", SuperKeyMappingGuard.cleanupArgument, "capsLock",
+            "Orbit", SuperKeyMappingGuard.cleanupArgument, "capsLock",
         ]) == .capsLock
                 && SuperKeyMappingGuard.cleanupSource(in: [
-                    "Vorssaint", SuperKeyMappingGuard.cleanupArgument, "rightCommand",
+                    "Orbit", SuperKeyMappingGuard.cleanupArgument, "rightCommand",
                 ]) == .rightCommand
                 && SuperKeyMappingGuard.cleanupSource(in: [
-                    "Vorssaint", SuperKeyMappingGuard.cleanupArgument, "invalid",
+                    "Orbit", SuperKeyMappingGuard.cleanupArgument, "invalid",
                 ]) == nil,
                "the crash guard accepts only a real Super key source")
 
@@ -2957,7 +2957,7 @@ enum PointerInputFeatureTests {
         // answers /private/tmp/… for a file the running program answers
         // /tmp/… for. Both ends resolve, so they meet.
         let identityRoot = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vorssaint-identity-\(getpid())", isDirectory: true)
+            .appendingPathComponent("orbit-identity-\(getpid())", isDirectory: true)
         let runtimeBinary = identityRoot.appendingPathComponent("runtime/bin/launcher")
         try? FileManager.default.createDirectory(at: runtimeBinary.deletingLastPathComponent(),
                                                  withIntermediateDirectories: true)
@@ -3040,7 +3040,7 @@ enum PointerInputFeatureTests {
         // has no bundle identifier, while an ordinary .app bundle keeps its
         // bundle row and background/accessory processes stay excluded.
         let runningTestRoot = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vorssaint-running-\(getpid())", isDirectory: true)
+            .appendingPathComponent("orbit-running-\(getpid())", isDirectory: true)
         let runningTargetBinary = runningTestRoot.appendingPathComponent("bin/java")
         let runningSymlinkBinary = runningTestRoot.appendingPathComponent("bin/java_link")
         try? FileManager.default.createDirectory(at: runningTargetBinary.deletingLastPathComponent(),
@@ -3521,7 +3521,7 @@ enum PointerInputFeatureTests {
             // Process 13 stands for the window server, which is no app. This
             // app has an identity, so only the own-window rule keeps it out.
             var owners: [Int32: String] = [11: "com.apple.dock", 5: "com.example.modeler"]
-            owners[ownProcessID] = "com.example.vorssaint"
+            owners[ownProcessID] = "com.example.orbit"
             let identities = owners
             let launchpad = MouseAppExceptionSupport.Window(frame: screen, layer: 27, processID: 11, number: 40)
             let app = MouseAppExceptionSupport.Window(frame: screen, layer: 0, processID: 5, number: 41)

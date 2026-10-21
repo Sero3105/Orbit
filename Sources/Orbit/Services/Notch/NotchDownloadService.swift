@@ -58,7 +58,7 @@ final class NotchDownloadService: ObservableObject {
     private var chooserID = UUID()
     /// The pending chooser was begun from the island's Downloads page.
     private var chooserInNotch = false
-    private let queue = DispatchQueue(label: "com.vorssaint.notch.downloads", qos: .utility)
+    private let queue = DispatchQueue(label: "com.orbit.notch.downloads", qos: .utility)
 
     private init() {}
 

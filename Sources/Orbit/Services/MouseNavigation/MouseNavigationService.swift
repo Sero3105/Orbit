@@ -355,7 +355,7 @@ final class MouseNavigationService: ObservableObject {
                                in app: NSRunningApplication?) -> MenuPressOutcome {
         guard let app else { return .missed(.unanswered) }
         let application = AXUIElementCreateApplication(app.processIdentifier)
-        // A busy target must not hold Vorssaint's main thread for AX's
+        // A busy target must not hold Orbit's main thread for AX's
         // multi-second default timeout. Child menu elements get the same
         // bound as they are traversed below.
         AXUIElementSetMessagingTimeout(application, 0.35)

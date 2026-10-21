@@ -812,7 +812,7 @@ enum SwitcherModelFeatureTests {
                && windowlessEntry.windowLabel(noOpenWindow: "No open window") == "No open window",
                "App Switcher preview labels name a window or explain that there is none")
         let dockIconBundle = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vorssaint-dock-icon-\(UUID().uuidString).app")
+            .appendingPathComponent("orbit-dock-icon-\(UUID().uuidString).app")
         let dockIconResources = dockIconBundle.appendingPathComponent("Contents/Resources")
         try? FileManager.default.createDirectory(at: dockIconResources,
                                                  withIntermediateDirectories: true)
@@ -1748,7 +1748,7 @@ enum SwitcherModelFeatureTests {
                                                                   DefaultsKey.monitorPwrTemperature,
                                                                   DefaultsKey.monitorSysBattery]),
                "preview appearance and moved battery visibility travel in settings backups")
-        let batteryVisibilitySuite = "com.vorssaint.tests.batteryVisibility.\(UUID().uuidString)"
+        let batteryVisibilitySuite = "com.orbit.tests.batteryVisibility.\(UUID().uuidString)"
         if let batteryVisibilityDefaults = UserDefaults(suiteName: batteryVisibilitySuite) {
             batteryVisibilityDefaults.removePersistentDomain(forName: batteryVisibilitySuite)
             batteryVisibilityDefaults.set(false, forKey: DefaultsKey.monitorSysTemps)
@@ -2080,9 +2080,9 @@ enum SwitcherModelFeatureTests {
                "support prompt never leaks into another release or a beta")
         suite.expect(AppInfo.discordURL.absoluteString == "https://discord.gg/M6BwWH4BJp",
                "the community action uses the permanent Discord invitation")
-        suite.expect(AppInfo.coffeeURL.absoluteString == "https://buymeacoffee.com/vorssaint",
+        suite.expect(AppInfo.coffeeURL.absoluteString == "https://buymeacoffee.com/orbit",
                "financial support uses Buy Me a Coffee")
-        suite.expect(AppInfo.socialURL.absoluteString == "https://x.com/vorssaint",
+        suite.expect(AppInfo.socialURL.absoluteString == "https://x.com/orbit",
                "social previews keep the official X profile")
         // AppInfo.version falls back to "dev" in this bare harness, so read
         // the plist the shipped app will actually carry. The pin is a
@@ -2396,13 +2396,13 @@ enum SwitcherModelFeatureTests {
                "an app the person switched to while the panel was open keeps activation")
         suite.expect(!StatusItemAnchorSupport.shouldReturnActivation(to: 501, ownPID: 900, frontmostPID: 900,
                                                                      ownWindowIsKey: true, closeReason: .escape),
-               "a Vorssaint window that took focus from the panel keeps Vorssaint active")
+               "a Orbit window that took focus from the panel keeps Orbit active")
         suite.expect(!StatusItemAnchorSupport.shouldReturnActivation(to: nil, ownPID: 900, frontmostPID: 900,
                                                                      ownWindowIsKey: false, closeReason: .escape),
-               "a panel opened while Vorssaint was already in front has nothing to hand back")
+               "a panel opened while Orbit was already in front has nothing to hand back")
         suite.expect(!StatusItemAnchorSupport.shouldReturnActivation(to: 900, ownPID: 900, frontmostPID: 900,
                                                                      ownWindowIsKey: false, closeReason: .escape),
-               "Vorssaint never hands activation back to itself")
+               "Orbit never hands activation back to itself")
         suite.expect(!StatusItemAnchorSupport.shouldReturnActivation(to: 501, ownPID: 900, frontmostPID: nil,
                                                                      ownWindowIsKey: false, closeReason: .escape),
                "no known frontmost app means nothing is taken from anyone")
@@ -2416,7 +2416,7 @@ enum SwitcherModelFeatureTests {
         }
         suite.expect(!StatusItemAnchorSupport.shouldReturnActivation(to: 501, ownPID: 900, frontmostPID: 900,
                                                                      ownWindowIsKey: false, closeReason: nil),
-               "a close Vorssaint did not ask for leaves activation alone")
+               "a close Orbit did not ask for leaves activation alone")
 
         let showing: Set<UInt64> = [3, 7]
         suite.expect(StatusItemAnchorSupport.handbackWouldSwitchDesktop(windowSpaces: [[1], [2]],
@@ -2444,7 +2444,7 @@ enum SwitcherModelFeatureTests {
                "another app becoming active while the panel is open replaces the remembered app")
         suite.expect(StatusItemAnchorSupport.panelActivationSource(after: .appActivated(900), current: 501,
                                                                    isOwnApp: ownApp) == 501,
-               "Vorssaint taking activation back from the panel keeps the remembered app")
+               "Orbit taking activation back from the panel keeps the remembered app")
         suite.expect(StatusItemAnchorSupport.panelActivationSource(after: .appActivated(777), current: nil,
                                                                    isOwnApp: ownApp) == 777,
                "an app activated after the remembered one was dropped becomes the one to return to")
@@ -2619,11 +2619,11 @@ enum SwitcherModelFeatureTests {
                "a screen too short for the panel still shows its top")
         suite.expect(registeredDefaults[DefaultsKey.menuBarHideIconWithMetrics] as? Bool == false,
                "the menu bar icon stays visible by default")
-        suite.expect(MenuBarSpacingSupport.keepAwakeSignals(active: true, tint: .orange, style: .vorssaint)
+        suite.expect(MenuBarSpacingSupport.keepAwakeSignals(active: true, tint: .orange, style: .orbit)
                      && MenuBarSpacingSupport.keepAwakeSignals(active: true, tint: .none, style: .coffee),
                "an active Keep Awake brings back the glyph that shows it")
         suite.expect(!MenuBarSpacingSupport.keepAwakeSignals(active: false, tint: .orange, style: .coffee)
-                     && !MenuBarSpacingSupport.keepAwakeSignals(active: true, tint: .none, style: .vorssaint),
+                     && !MenuBarSpacingSupport.keepAwakeSignals(active: true, tint: .none, style: .orbit),
                "nothing returns while Keep Awake is off, or when its active glyph looks the same as the idle one")
         // Both hide decisions and the title's leading space ask it, and an open
         // panel holds it: the returning glyph widens the item, and a separate
@@ -2706,7 +2706,7 @@ enum SwitcherModelFeatureTests {
         // back to the app.
         suite.expect(registeredDefaults[DefaultsKey.notchHidesMenuBarIcon] as? Bool == false,
                "Dynamic Island only takes the icon's place when asked")
-        let islandIconSuite = "com.vorssaint.tests.islandMenuBarIcon"
+        let islandIconSuite = "com.orbit.tests.islandMenuBarIcon"
         if let islandDefaults = UserDefaults(suiteName: islandIconSuite) {
             islandDefaults.removePersistentDomain(forName: islandIconSuite)
             defer { islandDefaults.removePersistentDomain(forName: islandIconSuite) }
@@ -2770,19 +2770,19 @@ enum SwitcherModelFeatureTests {
                                                                   showsCountdown: true,
                                                                   hasEndDate: false),
                "idle, hidden and indefinite Keep Awake titles need no timer")
-        let statusPlacementSuite = "com.vorssaint.tests.statusItemPlacement"
+        let statusPlacementSuite = "com.orbit.tests.statusItemPlacement"
         if let statusDefaults = UserDefaults(suiteName: statusPlacementSuite) {
             statusDefaults.removePersistentDomain(forName: statusPlacementSuite)
             suite.expect(StatusItemPlacementSupport.placementGeneration(in: statusDefaults) == 0,
                    "initial placement generation is 0")
-            suite.expect(StatusItemPlacementSupport.mainAutosaveName(in: statusDefaults) == "VorssaintMenuBarItem",
+            suite.expect(StatusItemPlacementSupport.mainAutosaveName(in: statusDefaults) == "OrbitMenuBarItem",
                    "generation 0 uses base autosave name")
 
             // The coordinate macOS saves for the icon is what puts it back in
             // the same spot on the next launch. 3.3.3 deleted the one written
             // by the older recovery on every launch, which moved the icon to
             // where a first-time item goes and, on a full bar, out of sight.
-            let legacyKey = "NSStatusItem Preferred Position VorssaintMenuBarItem"
+            let legacyKey = "NSStatusItem Preferred Position OrbitMenuBarItem"
             statusDefaults.set(64.0, forKey: legacyKey)
             StatusItemPlacementSupport.clearRememberedVisibility(in: statusDefaults)
             suite.expect(statusDefaults.double(forKey: legacyKey) == 64.0,
@@ -2795,29 +2795,29 @@ enum SwitcherModelFeatureTests {
 
             StatusItemPlacementSupport.bumpPlacementGeneration(in: statusDefaults)
             let gen1Name = StatusItemPlacementSupport.mainAutosaveName(in: statusDefaults)
-            suite.expect(gen1Name == "VorssaintMenuBarItem.1",
+            suite.expect(gen1Name == "OrbitMenuBarItem.1",
                    "bumped generation produces numbered autosave name")
-            suite.expect(statusDefaults.object(forKey: "NSStatusItem Preferred Position VorssaintMenuBarItem.1") == nil,
+            suite.expect(statusDefaults.object(forKey: "NSStatusItem Preferred Position OrbitMenuBarItem.1") == nil,
                    "a reset lets macOS place the full item without a machine-specific position")
-            suite.expect(statusDefaults.object(forKey: "NSStatusItem Preferred Position VorssaintMenuBarItem") == nil,
+            suite.expect(statusDefaults.object(forKey: "NSStatusItem Preferred Position OrbitMenuBarItem") == nil,
                    "bumping drops the previous identity's preferred position")
 
             // Recovery keeps the spot the person arranged and only drops the
             // hidden state macOS remembered: an item that starts over with no
             // saved position is born against the notch, the first place a
             // crowded bar hides.
-            let gen1Position = "NSStatusItem Preferred Position VorssaintMenuBarItem.1"
+            let gen1Position = "NSStatusItem Preferred Position OrbitMenuBarItem.1"
             statusDefaults.set(280.0, forKey: gen1Position)
-            statusDefaults.set(false, forKey: "NSStatusItem Visible VorssaintMenuBarItem.1")
-            statusDefaults.set(false, forKey: "NSStatusItem VisibleCC VorssaintMenuBarItem.1")
+            statusDefaults.set(false, forKey: "NSStatusItem Visible OrbitMenuBarItem.1")
+            statusDefaults.set(false, forKey: "NSStatusItem VisibleCC OrbitMenuBarItem.1")
             StatusItemPlacementSupport.clearRememberedVisibility(in: statusDefaults)
             suite.expect(statusDefaults.double(forKey: gen1Position) == 280.0,
                    "clearing the remembered visibility keeps the arranged position")
             suite.expect(StatusItemPlacementSupport.placementGeneration(in: statusDefaults) == 1
                     && StatusItemPlacementSupport.mainAutosaveName(in: statusDefaults) == gen1Name,
                    "recovery leaves the item's identity alone, so reopening cannot churn it")
-            suite.expect(statusDefaults.object(forKey: "NSStatusItem Visible VorssaintMenuBarItem.1") == nil
-                    && statusDefaults.object(forKey: "NSStatusItem VisibleCC VorssaintMenuBarItem.1") == nil,
+            suite.expect(statusDefaults.object(forKey: "NSStatusItem Visible OrbitMenuBarItem.1") == nil
+                    && statusDefaults.object(forKey: "NSStatusItem VisibleCC OrbitMenuBarItem.1") == nil,
                    "clearing the remembered visibility drops both spellings macOS has used")
 
             // Giving the spot up is what an explicit recovery escalates to,
@@ -2827,28 +2827,28 @@ enum SwitcherModelFeatureTests {
                    "only the identity reset gives up a saved position")
             // Leave orphan keys for older generations the way a long-running
             // install accumulates them, then confirm a bump sweeps them.
-            statusDefaults.set(11.0, forKey: "NSStatusItem Preferred Position VorssaintMenuBarItem")
-            statusDefaults.set(false, forKey: "NSStatusItem Visible VorssaintMenuBarItem")
-            statusDefaults.set(false, forKey: "NSStatusItem VisibleCC VorssaintMenuBarItem.1")
-            let metricPosition = "NSStatusItem Preferred Position VorssaintMetric.cpu"
+            statusDefaults.set(11.0, forKey: "NSStatusItem Preferred Position OrbitMenuBarItem")
+            statusDefaults.set(false, forKey: "NSStatusItem Visible OrbitMenuBarItem")
+            statusDefaults.set(false, forKey: "NSStatusItem VisibleCC OrbitMenuBarItem.1")
+            let metricPosition = "NSStatusItem Preferred Position OrbitMetric.cpu"
             statusDefaults.set(42.0, forKey: metricPosition)
             StatusItemPlacementSupport.bumpPlacementGeneration(in: statusDefaults)
             suite.expect(statusDefaults.object(forKey: gen1Position) == nil
-                    && statusDefaults.object(forKey: "NSStatusItem Preferred Position VorssaintMenuBarItem") == nil
-                    && statusDefaults.object(forKey: "NSStatusItem Visible VorssaintMenuBarItem") == nil
-                    && statusDefaults.object(forKey: "NSStatusItem VisibleCC VorssaintMenuBarItem.1") == nil
+                    && statusDefaults.object(forKey: "NSStatusItem Preferred Position OrbitMenuBarItem") == nil
+                    && statusDefaults.object(forKey: "NSStatusItem Visible OrbitMenuBarItem") == nil
+                    && statusDefaults.object(forKey: "NSStatusItem VisibleCC OrbitMenuBarItem.1") == nil
                     && StatusItemPlacementSupport.mainAutosaveName(in: statusDefaults)
-                        == "VorssaintMenuBarItem.2"
-                    && statusDefaults.object(forKey: "NSStatusItem Preferred Position VorssaintMenuBarItem.2") == nil,
+                        == "OrbitMenuBarItem.2"
+                    && statusDefaults.object(forKey: "NSStatusItem Preferred Position OrbitMenuBarItem.2") == nil,
                    "the identity reset gives the saved position up and sweeps orphaned identities")
             suite.expect(statusDefaults.double(forKey: metricPosition) == 42.0,
                    "recovering the main item leaves metric-item positions alone")
             statusDefaults.set(StatusItemPlacementSupport.maxPlacementGeneration,
                                forKey: DefaultsKey.statusItemPlacementGeneration)
-            statusDefaults.set(false, forKey: "NSStatusItem Visible VorssaintMenuBarItem.9999")
+            statusDefaults.set(false, forKey: "NSStatusItem Visible OrbitMenuBarItem.9999")
             StatusItemPlacementSupport.bumpPlacementGeneration(in: statusDefaults)
-            suite.expect(StatusItemPlacementSupport.mainAutosaveName(in: statusDefaults) == "VorssaintMenuBarItem.1"
-                    && statusDefaults.object(forKey: "NSStatusItem Visible VorssaintMenuBarItem.9999") == nil
+            suite.expect(StatusItemPlacementSupport.mainAutosaveName(in: statusDefaults) == "OrbitMenuBarItem.1"
+                    && statusDefaults.object(forKey: "NSStatusItem Visible OrbitMenuBarItem.9999") == nil
                     && statusDefaults.double(forKey: metricPosition) == 42.0,
                    "generation wrap clears old main-item state without touching metric placements")
             suite.expect(StatusItemAnchorSupport.isSettlingStatusFrame(CGRect(x: 0, y: 0, width: 36, height: 0)),
@@ -3001,13 +3001,13 @@ enum SwitcherModelFeatureTests {
             return [["bundle": ["_0": bundleID]], entry]
         }
         let trackedApplications: [Any] = tracked("com.lowtechguys.Clop", allowed: true)
-            + tracked("com.vorssaint.utils", allowed: false)
-            + tracked("com.vorssaint.utils.dev", allowed: true)
+            + tracked("com.orbit.Orbit", allowed: false)
+            + tracked("com.orbit.Orbit.dev", allowed: true)
             + tracked("com.example.legacy", allowed: nil)
-        suite.expect(MenuBarAllowanceSupport.allowance(forBundleID: "com.vorssaint.utils",
+        suite.expect(MenuBarAllowanceSupport.allowance(forBundleID: "com.orbit.Orbit",
                                                        trackedApplications: trackedApplications) == .disallowed,
                "an app switched off under Allow in the Menu Bar reads as disallowed")
-        suite.expect(MenuBarAllowanceSupport.allowance(forBundleID: "com.vorssaint.utils.dev",
+        suite.expect(MenuBarAllowanceSupport.allowance(forBundleID: "com.orbit.Orbit.dev",
                                                        trackedApplications: trackedApplications) == .allowed,
                "a sibling bundle id with its own entry does not bleed over")
         suite.expect(MenuBarAllowanceSupport.allowance(forBundleID: "com.example.legacy",
@@ -3016,7 +3016,7 @@ enum SwitcherModelFeatureTests {
         suite.expect(MenuBarAllowanceSupport.allowance(forBundleID: "com.example.absent",
                                                        trackedApplications: trackedApplications) == .unknown,
                "an app Control Center has never tracked is unknown")
-        suite.expect(MenuBarAllowanceSupport.allowance(forBundleID: "com.vorssaint.utils",
+        suite.expect(MenuBarAllowanceSupport.allowance(forBundleID: "com.orbit.Orbit",
                                                        trackedApplications: ["garbage", 3]) == .unknown,
                "a malformed store is unknown rather than a crash or a verdict")
         // The on-disk shape: an outer plist whose trackedApplications value is
@@ -3029,10 +3029,10 @@ enum SwitcherModelFeatureTests {
                                                 format: .binary, options: 0)
         }
         suite.expect(outerData.map {
-                MenuBarAllowanceSupport.allowance(forBundleID: "com.vorssaint.utils", groupContainerPlist: $0)
+                MenuBarAllowanceSupport.allowance(forBundleID: "com.orbit.Orbit", groupContainerPlist: $0)
             } == .disallowed,
                "the nested Control Center store decodes down to the per-app verdict")
-        suite.expect(MenuBarAllowanceSupport.allowance(forBundleID: "com.vorssaint.utils",
+        suite.expect(MenuBarAllowanceSupport.allowance(forBundleID: "com.orbit.Orbit",
                                                        groupContainerPlist: Data([0x00, 0x01])) == .unknown,
                "an unreadable store is unknown")
         let verifyIconCode = stripCommentLines((statusAnchorAppDelegateSource
@@ -3201,7 +3201,7 @@ enum SwitcherModelFeatureTests {
                "battery time is shown in the Power panel by default")
         suite.expect(registeredDefaults[DefaultsKey.monitorPwrPeripherals] as? Bool == false,
                "peripheral batteries stay out of the Power card until turned on")
-        let peripheralsSuite = "com.vorssaint.tests.powerPeripherals.\(UUID().uuidString)"
+        let peripheralsSuite = "com.orbit.tests.powerPeripherals.\(UUID().uuidString)"
         if let peripheralsDefaults = UserDefaults(suiteName: peripheralsSuite) {
             peripheralsDefaults.removePersistentDomain(forName: peripheralsSuite)
             peripheralsDefaults.set(false, forKey: DefaultsKey.menuBarPeripheralBattery)
@@ -3879,7 +3879,7 @@ enum SwitcherModelFeatureTests {
         } else {
             UserDefaults.standard.removeObject(forKey: DefaultsKey.switcherPreviewSize)
         }
-        let previewSizeSuite = "com.vorssaint.tests.switcher-preview-size.\(UUID().uuidString)"
+        let previewSizeSuite = "com.orbit.tests.switcher-preview-size.\(UUID().uuidString)"
         if let previewSizeDefaults = UserDefaults(suiteName: previewSizeSuite) {
             previewSizeDefaults.set("large", forKey: DefaultsKey.previewSize)
             Defaults.migrateSwitcherPreviewSize(in: previewSizeDefaults)
@@ -3898,7 +3898,7 @@ enum SwitcherModelFeatureTests {
                    "a Dock Preview size chosen after the first launch leaves the switcher at its default size")
             previewSizeDefaults.removePersistentDomain(forName: previewSizeSuite)
         }
-        let excludedAppsSuite = "com.vorssaint.tests.switcher-preview-excluded-apps.\(UUID().uuidString)"
+        let excludedAppsSuite = "com.orbit.tests.switcher-preview-excluded-apps.\(UUID().uuidString)"
         if let excludedAppsDefaults = UserDefaults(suiteName: excludedAppsSuite) {
             excludedAppsDefaults.set(["com.example.vault"], forKey: DefaultsKey.windowPreviewExcludedApps)
             Defaults.migrateSwitcherPreviewExcludedApps(in: excludedAppsDefaults)
@@ -4172,7 +4172,7 @@ enum SwitcherModelFeatureTests {
                 && handoffStamp!.lowerBound < selfActivation!.lowerBound,
                "the activation handoff stamps the self-activation before asking for it")
         // Only the activation the handoff caused stays out of the history; the
-        // Dock icon, Settings and Vorssaint's own windows are real uses.
+        // Dock icon, Settings and Orbit's own windows are real uses.
         let useTrackerSource = (try? String(
             contentsOfFile: "Sources/Orbit/Services/Switcher/WindowUseTracker.swift",
             encoding: .utf8)) ?? ""
@@ -4394,8 +4394,8 @@ enum SwitcherModelFeatureTests {
                "a click after hiding lets the Dock bring the app back")
         suite.expect(DockClickSupport.repeatDecision(lastAction: .hide, elapsed: 0.1) == .swallow,
                "an accidental double-click never hides and immediately reopens the app")
-        suite.expect(DockClickSupport.isOwnBundleIdentifier("com.vorssaint.utils")
-                && DockClickSupport.isOwnBundleIdentifier("com.vorssaint.utils.dev")
+        suite.expect(DockClickSupport.isOwnBundleIdentifier("com.orbit.Orbit")
+                && DockClickSupport.isOwnBundleIdentifier("com.orbit.Orbit.dev")
                 && !DockClickSupport.isOwnBundleIdentifier("com.example.editor")
                 && !DockClickSupport.isOwnBundleIdentifier(nil),
                "Dock clicks never target either build of this app")
@@ -6651,7 +6651,7 @@ enum SwitcherModelFeatureTests {
                "App Switcher leaves unrelated middle-mouse-up events alone")
         let searchRecords = [
             SwitcherSearchRecord(id: "alpha", title: "Inbox", appName: "Alpha"),
-            SwitcherSearchRecord(id: "beta", title: "Vorssaint Roadmap", appName: "Beta"),
+            SwitcherSearchRecord(id: "beta", title: "Orbit Roadmap", appName: "Beta"),
             SwitcherSearchRecord(id: "gamma", title: "Café notes", appName: "Gamma"),
         ]
         suite.expect(SwitcherSupport.filteredSearchIDs(records: searchRecords, query: "") == ["alpha", "beta", "gamma"],

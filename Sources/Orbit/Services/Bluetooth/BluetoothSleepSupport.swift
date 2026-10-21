@@ -6,7 +6,7 @@ import Foundation
 /// The decisions behind Bluetooth on sleep, kept free of AppKit and IOKit so
 /// they can be tested directly.
 ///
-/// The rule the whole feature turns on: Vorssaint only ever puts back what it
+/// The rule the whole feature turns on: Orbit only ever puts back what it
 /// took away. Bluetooth already off when the Mac went to sleep is never
 /// switched on for the user, which is the part a plain sleep-and-wake toggle
 /// gets wrong.

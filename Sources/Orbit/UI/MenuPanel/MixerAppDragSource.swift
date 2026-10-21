@@ -7,7 +7,7 @@ import SwiftUI
 /// Only Command-clicks belong to this overlay. All ordinary input passes to
 /// the existing sliders, fields and menus underneath it.
 struct MixerAppDragSource: NSViewRepresentable {
-    static let pasteboardType = NSPasteboard.PasteboardType("com.vorssaint.mixer-app")
+    static let pasteboardType = NSPasteboard.PasteboardType("com.orbit.mixer-app")
     let id: String?
     let icon: NSImage
     let onBegin: (String) -> Void

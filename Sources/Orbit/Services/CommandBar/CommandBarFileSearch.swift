@@ -33,7 +33,7 @@ final class CommandBarFileSearch {
     private var pendingWorkItem: DispatchWorkItem?
     private var generation = 0
     private var currentQuery: String?
-    private let searchQueue = DispatchQueue(label: "com.vorssaint.commandbar.files",
+    private let searchQueue = DispatchQueue(label: "com.orbit.commandbar.files",
                                             qos: .userInitiated)
     private let activeQueryLock = NSLock()
     private var cancellationGeneration = 0

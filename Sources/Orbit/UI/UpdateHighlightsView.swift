@@ -20,7 +20,7 @@ struct UpdateHighlightsView: View {
         VStack(spacing: 16) {
             VStack(spacing: 4) {
                 Text(FeatureStrings.notch(l10n.language).title).font(.title2.weight(.semibold))
-                Text(AppInfo.isDeveloperBuild ? text.preview : "Vorssaint \(AppInfo.version)")
+                Text(AppInfo.isDeveloperBuild ? text.preview : "Orbit \(AppInfo.version)")
                     .font(.caption).foregroundStyle(.secondary)
             }
             .frame(height: 42)

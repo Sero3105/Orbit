@@ -47,7 +47,7 @@ final class CodexProfileLimitsService: ObservableObject {
     /// Asks the due homes again while the page shows any; nil otherwise.
     private(set) var timer: Timer?
 
-    private let queue = DispatchQueue(label: "com.vorssaint.codex-profile-limits", qos: .utility)
+    private let queue = DispatchQueue(label: "com.orbit.codex-profile-limits", qos: .utility)
     private let defaults: UserDefaults
     private let reader: Reader?
     private let loginShellPath: () -> String?

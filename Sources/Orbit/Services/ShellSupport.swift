@@ -26,7 +26,7 @@ enum Shell {
 
 /// Runs a command with administrator privileges (system password prompt).
 enum AdminShell {
-    // Vorssaint is a menu-bar agent (LSUIElement), so it is rarely the active
+    // Orbit is a menu-bar agent (LSUIElement), so it is rarely the active
     // app. SecurityAgent attaches its password dialog to the requesting process;
     // when that process is an inactive agent the dialog can open behind the
     // frontmost app and read as "no prompt appeared". Bringing the app forward
@@ -124,19 +124,19 @@ enum AdminShell {
 /// toggle without asking for the administrator password every time.
 /// The password is asked once, when installing (or removing) the rule.
 enum Sudoers {
-    static let rulePath = "/etc/sudoers.d/vorssaint-clamshell"
+    static let rulePath = "/etc/sudoers.d/orbit-clamshell"
     // Rule files written under earlier names; removed whenever the rule is
     // (re)installed or removed, so the closed-lid permission migrates without an
     // extra password prompt.
     private static let legacyRulePaths = [
-        "/etc/sudoers.d/vorssaint-utils-clamshell",
+        "/etc/sudoers.d/orbit-utils-clamshell",
         "/etc/sudoers.d/vorss-clamshell",
     ]
 
     /// Serializes native writes and read/reapply probes. Authorization runs
     /// separately with probes suspended, so a probe cannot resurrect a stale
     /// "1" after a restore cleared it and leave lid sleep off without a marker.
-    private static let sleepStateQueue = DispatchQueue(label: "com.vorssaint.utils.pmset-state")
+    private static let sleepStateQueue = DispatchQueue(label: "com.orbit.Orbit.pmset-state")
     // Authorization runs outside this queue so quitting never waits for a
     // password prompt. Probes must not reapply a stale state during that off.
     private static var sleepStateProbeSuspensions = 0

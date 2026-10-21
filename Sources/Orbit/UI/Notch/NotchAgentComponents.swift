@@ -332,7 +332,7 @@ struct NotchAgentHeatmap: View {
 
 /// Each agent's own mark, taken from its maker's app on this Mac: the
 /// monochrome image the app shows in the menu bar, or else the app's icon.
-/// None of that artwork ships with Vorssaint, so a Mac without the app
+/// None of that artwork ships with Orbit, so a Mac without the app
 /// keeps a symbol. Looked up once; the strip redraws every second.
 enum AgentMarks {
     enum Mark {

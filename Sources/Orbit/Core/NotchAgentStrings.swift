@@ -259,7 +259,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "The Claude app last checked them %@.",
         claudeLimitsMenuBar: "Claude checks your limits only while its icon is in the menu bar. Turn the icon on in the Claude app settings, and your limits appear here within minutes.",
         claudeLimitsNoApp: "Plan limits come from Claude Code or from the Claude app, which is not on this Mac. Until then, the 5-hour session is estimated from Claude Code activity.",
-        claudeLimitsPrivacy: "Claude Code checks your account’s limits, including use on other machines, with its own sign-in, which Vorssaint never reads. No prompt is sent. When it cannot check, the percentages the Claude app saves on this Mac are used.",
+        claudeLimitsPrivacy: "Claude Code checks your account’s limits, including use on other machines, with its own sign-in, which Orbit never reads. No prompt is sent. When it cannot check, the percentages the Claude app saves on this Mac are used.",
         claudeCodeMissing: "Claude Code was not found on this Mac.",
         claudeCodeSignedOut: "Sign in to Claude Code so it can check your account’s limits.",
         claudeCodeOutdated: "Update Claude Code so it can check your account’s limits.",
@@ -285,7 +285,7 @@ extension NotchAgentStrings {
         resetsSignIn: "Sign in to Codex with a plan to see resets",
         resetsUpdate: "Update Codex to use resets here",
         resetsCheckFailed: "Couldn’t check resets",
-        resetsHelp: "A reset renews the Codex session and weekly limits at once. Codex checks your resets with its own sign-in, which Vorssaint never reads.")
+        resetsHelp: "A reset renews the Codex session and weekly limits at once. Codex checks your resets with its own sign-in, which Orbit never reads.")
 
     static let uk = NotchAgentStrings(
         title: "ШІ-агенти",
@@ -358,7 +358,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "Програма Claude востаннє перевіряла їх %@.",
         claudeLimitsMenuBar: "Claude перевіряє ліміти, лише коли його значок є на смузі меню. Увімкніть значок у налаштуваннях програми Claude, і ліміти з’являться тут протягом кількох хвилин.",
         claudeLimitsNoApp: "Ліміти плану надходять із Claude Code або з програми Claude, якої немає на цьому Mac. Поки що п’ятигодинний сеанс оцінюється за активністю Claude Code.",
-        claudeLimitsPrivacy: "Claude Code перевіряє ліміти облікового запису, включно з використанням на інших комп’ютерах, через власний вхід, який Vorssaint ніколи не читає. Жодних запитів до моделі не надсилається. Якщо перевірити не вдається, використовуються відсотки, які програма Claude зберігає на цьому Mac.",
+        claudeLimitsPrivacy: "Claude Code перевіряє ліміти облікового запису, включно з використанням на інших комп’ютерах, через власний вхід, який Orbit ніколи не читає. Жодних запитів до моделі не надсилається. Якщо перевірити не вдається, використовуються відсотки, які програма Claude зберігає на цьому Mac.",
         claudeCodeMissing: "Claude Code не знайдено на цьому Mac.",
         claudeCodeSignedOut: "Увійдіть у Claude Code, щоб він міг перевіряти ліміти облікового запису.",
         claudeCodeOutdated: "Оновіть Claude Code, щоб він міг перевіряти ліміти облікового запису.",
@@ -384,7 +384,7 @@ extension NotchAgentStrings {
         resetsSignIn: "Увійдіть у Codex із планом, щоб бачити скидання",
         resetsUpdate: "Оновіть Codex, щоб використовувати скидання тут",
         resetsCheckFailed: "Не вдалося перевірити скидання",
-        resetsHelp: "Скидання одразу поновлює ліміти сеансу й тижня Codex. Codex перевіряє ваші скидання через власний вхід, який Vorssaint ніколи не читає.")
+        resetsHelp: "Скидання одразу поновлює ліміти сеансу й тижня Codex. Codex перевіряє ваші скидання через власний вхід, який Orbit ніколи не читає.")
 
     static let ptBR = NotchAgentStrings(
         title: "Agentes de IA",
@@ -457,7 +457,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "O app Claude verificou os limites pela última vez %@.",
         claudeLimitsMenuBar: "O Claude só verifica os limites enquanto o ícone dele está na barra de menus. Ative o ícone nos ajustes do app Claude, e os limites aparecem aqui em poucos minutos.",
         claudeLimitsNoApp: "Os limites do plano vêm do Claude Code ou do app Claude, que não está neste Mac. Até lá, a sessão de 5 horas é estimada pela atividade do Claude Code.",
-        claudeLimitsPrivacy: "O Claude Code verifica os limites da sua conta, incluindo o uso em outras máquinas, com o próprio login, que o Vorssaint nunca lê. Nenhum prompt é enviado. Quando ele não consegue verificar, são usados os percentuais que o app Claude salva neste Mac.",
+        claudeLimitsPrivacy: "O Claude Code verifica os limites da sua conta, incluindo o uso em outras máquinas, com o próprio login, que o Orbit nunca lê. Nenhum prompt é enviado. Quando ele não consegue verificar, são usados os percentuais que o app Claude salva neste Mac.",
         claudeCodeMissing: "O Claude Code não foi encontrado neste Mac.",
         claudeCodeSignedOut: "Entre no Claude Code para que ele possa verificar os limites da sua conta.",
         claudeCodeOutdated: "Atualize o Claude Code para que ele possa verificar os limites da sua conta.",
@@ -483,7 +483,7 @@ extension NotchAgentStrings {
         resetsSignIn: "Entre no Codex com um plano para ver as redefinições",
         resetsUpdate: "Atualize o Codex para usar as redefinições aqui",
         resetsCheckFailed: "Não foi possível verificar as redefinições",
-        resetsHelp: "Uma redefinição renova de uma vez os limites da sessão e da semana do Codex. O Codex verifica suas redefinições com o próprio login, que o Vorssaint nunca lê.")
+        resetsHelp: "Uma redefinição renova de uma vez os limites da sessão e da semana do Codex. O Codex verifica suas redefinições com o próprio login, que o Orbit nunca lê.")
 
     static let es = NotchAgentStrings(
         title: "Agentes de IA",
@@ -556,7 +556,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "La app de Claude los revisó por última vez %@.",
         claudeLimitsMenuBar: "Claude solo revisa los límites mientras su icono está en la barra de menús. Activa el icono en los ajustes de la app de Claude, y los límites aparecerán aquí en pocos minutos.",
         claudeLimitsNoApp: "Los límites del plan vienen de Claude Code o de la app de Claude, que no está en este Mac. Mientras tanto, la sesión de 5 horas se estima a partir de la actividad de Claude Code.",
-        claudeLimitsPrivacy: "Claude Code comprueba los límites de tu cuenta, incluido el uso en otros equipos, con su propio inicio de sesión, que Vorssaint nunca lee. No se envía ninguna instrucción al modelo. Si no puede comprobarlos, se usan los porcentajes que la app de Claude guarda en este Mac.",
+        claudeLimitsPrivacy: "Claude Code comprueba los límites de tu cuenta, incluido el uso en otros equipos, con su propio inicio de sesión, que Orbit nunca lee. No se envía ninguna instrucción al modelo. Si no puede comprobarlos, se usan los porcentajes que la app de Claude guarda en este Mac.",
         claudeCodeMissing: "No se encontró Claude Code en este Mac.",
         claudeCodeSignedOut: "Inicia sesión en Claude Code para que pueda comprobar los límites de tu cuenta.",
         claudeCodeOutdated: "Actualiza Claude Code para que pueda comprobar los límites de tu cuenta.",
@@ -582,7 +582,7 @@ extension NotchAgentStrings {
         resetsSignIn: "Inicia sesión en Codex con un plan para ver los reinicios",
         resetsUpdate: "Actualiza Codex para usar los reinicios aquí",
         resetsCheckFailed: "No se pudieron comprobar los reinicios",
-        resetsHelp: "Un reinicio renueva a la vez los límites de la sesión y de la semana de Codex. Codex comprueba tus reinicios con su propio inicio de sesión, que Vorssaint nunca lee.")
+        resetsHelp: "Un reinicio renueva a la vez los límites de la sesión y de la semana de Codex. Codex comprueba tus reinicios con su propio inicio de sesión, que Orbit nunca lee.")
 
     static let sk = NotchAgentStrings(
         title: "AI agenti",
@@ -655,7 +655,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "Aplikácia Claude ich naposledy skontrolovala %@.",
         claudeLimitsMenuBar: "Claude kontroluje vaše limity, len kým je jeho ikona v lište. Zapnite ikonu v nastaveniach aplikácie Claude a limity sa tu zobrazia do niekoľkých minút.",
         claudeLimitsNoApp: "Limity plánu pochádzajú z Claude Code alebo z aplikácie Claude, ktorá na tomto Macu nie je. Dovtedy sa 5-hodinová relácia odhaduje z aktivity Claude Code.",
-        claudeLimitsPrivacy: "Claude Code kontroluje limity vášho účtu vrátane používania na iných počítačoch, a to vlastným prihlásením, ktoré Vorssaint nikdy nečíta. Neodosiela sa žiadny prompt. Ak kontrola nie je možná, použijú sa percentá, ktoré aplikácia Claude ukladá na tomto Macu.",
+        claudeLimitsPrivacy: "Claude Code kontroluje limity vášho účtu vrátane používania na iných počítačoch, a to vlastným prihlásením, ktoré Orbit nikdy nečíta. Neodosiela sa žiadny prompt. Ak kontrola nie je možná, použijú sa percentá, ktoré aplikácia Claude ukladá na tomto Macu.",
         claudeCodeMissing: "Claude Code sa na tomto Macu nenašiel.",
         claudeCodeSignedOut: "Prihláste sa do Claude Code, aby mohol kontrolovať limity vášho účtu.",
         claudeCodeOutdated: "Aktualizujte Claude Code, aby mohol kontrolovať limity vášho účtu.",
@@ -681,7 +681,7 @@ extension NotchAgentStrings {
         resetsSignIn: "Prihláste sa do Codexu s plánom, aby ste videli obnovenia",
         resetsUpdate: "Aktualizujte Codex, aby ste tu mohli používať obnovenia",
         resetsCheckFailed: "Obnovenia sa nepodarilo skontrolovať",
-        resetsHelp: "Obnovenie naraz obnoví limity relácie aj týždňa v Codexe. Codex kontroluje vaše obnovenia vlastným prihlásením, ktoré Vorssaint nikdy nečíta.")
+        resetsHelp: "Obnovenie naraz obnoví limity relácie aj týždňa v Codexe. Codex kontroluje vaše obnovenia vlastným prihlásením, ktoré Orbit nikdy nečíta.")
 
     static let de = NotchAgentStrings(
         title: "KI-Agenten",
@@ -754,7 +754,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "Die Claude-App hat sie zuletzt %@ geprüft.",
         claudeLimitsMenuBar: "Claude prüft die Limits nur, solange sein Symbol in der Menüleiste ist. Schalte das Symbol in den Einstellungen der Claude-App ein, dann erscheinen die Limits hier innerhalb weniger Minuten.",
         claudeLimitsNoApp: "Die Planlimits kommen aus Claude Code oder aus der Claude-App, die nicht auf diesem Mac ist. Bis dahin wird die 5-Stunden-Sitzung aus der Aktivität von Claude Code geschätzt.",
-        claudeLimitsPrivacy: "Claude Code prüft die Limits deines Kontos, einschließlich der Nutzung auf anderen Geräten, mit seiner eigenen Anmeldung, die Vorssaint nie liest. Es wird kein Prompt gesendet. Kann es nicht prüfen, werden die Prozentwerte verwendet, die die Claude-App auf diesem Mac speichert.",
+        claudeLimitsPrivacy: "Claude Code prüft die Limits deines Kontos, einschließlich der Nutzung auf anderen Geräten, mit seiner eigenen Anmeldung, die Orbit nie liest. Es wird kein Prompt gesendet. Kann es nicht prüfen, werden die Prozentwerte verwendet, die die Claude-App auf diesem Mac speichert.",
         claudeCodeMissing: "Claude Code wurde auf diesem Mac nicht gefunden.",
         claudeCodeSignedOut: "Melde dich in Claude Code an, damit es die Limits deines Kontos prüfen kann.",
         claudeCodeOutdated: "Aktualisiere Claude Code, damit es die Limits deines Kontos prüfen kann.",
@@ -780,7 +780,7 @@ extension NotchAgentStrings {
         resetsSignIn: "Melde dich in Codex mit einem Plan an, um Zurücksetzungen zu sehen",
         resetsUpdate: "Aktualisiere Codex, um Zurücksetzungen hier zu nutzen",
         resetsCheckFailed: "Zurücksetzungen konnten nicht geprüft werden",
-        resetsHelp: "Eine Zurücksetzung erneuert das Sitzungs- und das Wochenlimit von Codex auf einmal. Codex prüft deine Zurücksetzungen mit seiner eigenen Anmeldung, die Vorssaint nie liest.")
+        resetsHelp: "Eine Zurücksetzung erneuert das Sitzungs- und das Wochenlimit von Codex auf einmal. Codex prüft deine Zurücksetzungen mit seiner eigenen Anmeldung, die Orbit nie liest.")
 
     static let fr = NotchAgentStrings(
         title: "Agents IA",
@@ -853,7 +853,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "L’app Claude les a vérifiées pour la dernière fois %@.",
         claudeLimitsMenuBar: "Claude ne vérifie les limites que lorsque son icône est dans la barre des menus. Activez l’icône dans les réglages de l’app Claude, et les limites apparaîtront ici en quelques minutes.",
         claudeLimitsNoApp: "Les limites du forfait viennent de Claude Code ou de l’app Claude, absente de ce Mac. En attendant, la session de 5 heures est estimée d’après l’activité de Claude Code.",
-        claudeLimitsPrivacy: "Claude Code vérifie les limites de votre compte, y compris l’utilisation sur d’autres machines, avec sa propre connexion, que Vorssaint ne lit jamais. Aucune requête n’est envoyée au modèle. S’il ne peut pas vérifier, les pourcentages que l’app Claude enregistre sur ce Mac sont utilisés.",
+        claudeLimitsPrivacy: "Claude Code vérifie les limites de votre compte, y compris l’utilisation sur d’autres machines, avec sa propre connexion, que Orbit ne lit jamais. Aucune requête n’est envoyée au modèle. S’il ne peut pas vérifier, les pourcentages que l’app Claude enregistre sur ce Mac sont utilisés.",
         claudeCodeMissing: "Claude Code est introuvable sur ce Mac.",
         claudeCodeSignedOut: "Connectez-vous à Claude Code pour qu’il puisse vérifier les limites de votre compte.",
         claudeCodeOutdated: "Mettez à jour Claude Code pour qu’il puisse vérifier les limites de votre compte.",
@@ -879,7 +879,7 @@ extension NotchAgentStrings {
         resetsSignIn: "Connectez-vous à Codex avec un forfait pour voir les réinitialisations",
         resetsUpdate: "Mettez à jour Codex pour utiliser les réinitialisations ici",
         resetsCheckFailed: "Impossible de vérifier les réinitialisations",
-        resetsHelp: "Une réinitialisation renouvelle d’un coup les limites de la session et de la semaine de Codex. Codex vérifie vos réinitialisations avec sa propre connexion, que Vorssaint ne lit jamais.")
+        resetsHelp: "Une réinitialisation renouvelle d’un coup les limites de la session et de la semaine de Codex. Codex vérifie vos réinitialisations avec sa propre connexion, que Orbit ne lit jamais.")
 
     static let it = NotchAgentStrings(
         title: "Agenti IA",
@@ -952,7 +952,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "L’app Claude li ha controllati l’ultima volta %@.",
         claudeLimitsMenuBar: "Claude controlla i limiti solo mentre la sua icona è nella barra dei menu. Attiva l’icona nelle impostazioni dell’app Claude, e i limiti compariranno qui in pochi minuti.",
         claudeLimitsNoApp: "I limiti del piano arrivano da Claude Code o dall’app Claude, che non è su questo Mac. Nel frattempo, la sessione di 5 ore è stimata dall’attività di Claude Code.",
-        claudeLimitsPrivacy: "Claude Code controlla i limiti del tuo account, incluso l’uso su altri computer, con il proprio accesso, che Vorssaint non legge mai. Non viene inviato alcun prompt. Se non può controllare, vengono usate le percentuali che l’app Claude salva su questo Mac.",
+        claudeLimitsPrivacy: "Claude Code controlla i limiti del tuo account, incluso l’uso su altri computer, con il proprio accesso, che Orbit non legge mai. Non viene inviato alcun prompt. Se non può controllare, vengono usate le percentuali che l’app Claude salva su questo Mac.",
         claudeCodeMissing: "Claude Code non è stato trovato su questo Mac.",
         claudeCodeSignedOut: "Accedi a Claude Code perché possa controllare i limiti del tuo account.",
         claudeCodeOutdated: "Aggiorna Claude Code perché possa controllare i limiti del tuo account.",
@@ -978,7 +978,7 @@ extension NotchAgentStrings {
         resetsSignIn: "Accedi a Codex con un piano per vedere i ripristini",
         resetsUpdate: "Aggiorna Codex per usare i ripristini qui",
         resetsCheckFailed: "Impossibile controllare i ripristini",
-        resetsHelp: "Un ripristino rinnova insieme i limiti della sessione e della settimana di Codex. Codex controlla i tuoi ripristini con il proprio accesso, che Vorssaint non legge mai.")
+        resetsHelp: "Un ripristino rinnova insieme i limiti della sessione e della settimana di Codex. Codex controlla i tuoi ripristini con il proprio accesso, che Orbit non legge mai.")
 
     static let ru = NotchAgentStrings(
         title: "ИИ-агенты",
@@ -1051,7 +1051,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "Приложение Claude в последний раз проверяло их %@.",
         claudeLimitsMenuBar: "Claude проверяет лимиты, только пока его значок есть в строке меню. Включите значок в настройках приложения Claude, и лимиты появятся здесь через несколько минут.",
         claudeLimitsNoApp: "Лимиты тарифа берутся из Claude Code или из приложения Claude, которого нет на этом Mac. Пока лимитов нет, 5-часовая сессия оценивается по активности Claude Code.",
-        claudeLimitsPrivacy: "Claude Code проверяет лимиты аккаунта, включая использование на других компьютерах, через собственный вход, который Vorssaint никогда не читает. Никакие запросы к модели не отправляются. Если проверить не удаётся, используются проценты, которые приложение Claude сохраняет на этом Mac.",
+        claudeLimitsPrivacy: "Claude Code проверяет лимиты аккаунта, включая использование на других компьютерах, через собственный вход, который Orbit никогда не читает. Никакие запросы к модели не отправляются. Если проверить не удаётся, используются проценты, которые приложение Claude сохраняет на этом Mac.",
         claudeCodeMissing: "Claude Code не найден на этом Mac.",
         claudeCodeSignedOut: "Войдите в Claude Code, чтобы он мог проверять лимиты аккаунта.",
         claudeCodeOutdated: "Обновите Claude Code, чтобы он мог проверять лимиты аккаунта.",
@@ -1077,7 +1077,7 @@ extension NotchAgentStrings {
         resetsSignIn: "Войдите в Codex с тарифом, чтобы видеть сбросы",
         resetsUpdate: "Обновите Codex, чтобы использовать сбросы здесь",
         resetsCheckFailed: "Не удалось проверить сбросы",
-        resetsHelp: "Сброс сразу обновляет лимиты сессии и недели Codex. Codex проверяет ваши сбросы через собственный вход, который Vorssaint никогда не читает.")
+        resetsHelp: "Сброс сразу обновляет лимиты сессии и недели Codex. Codex проверяет ваши сбросы через собственный вход, который Orbit никогда не читает.")
 
     static let tr = NotchAgentStrings(
         title: "YZ Ajanları",
@@ -1150,7 +1150,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "Claude uygulaması bunları en son %@ kontrol etti.",
         claudeLimitsMenuBar: "Claude, sınırları yalnızca simgesi menü çubuğundayken kontrol eder. Simgeyi Claude uygulamasının ayarlarından açtığınızda sınırlar birkaç dakika içinde burada görünür.",
         claudeLimitsNoApp: "Plan sınırları Claude Code’dan ya da bu Mac’te olmayan Claude uygulamasından gelir. O zamana kadar 5 saatlik oturum, Claude Code etkinliğinden tahmin edilir.",
-        claudeLimitsPrivacy: "Claude Code, diğer makinelerdeki kullanım dahil hesap sınırlarınızı Vorssaint’in hiçbir zaman okumadığı kendi oturumuyla kontrol eder. Hiçbir istem gönderilmez. Kontrol edemezse Claude uygulamasının bu Mac’e kaydettiği yüzdeler kullanılır.",
+        claudeLimitsPrivacy: "Claude Code, diğer makinelerdeki kullanım dahil hesap sınırlarınızı Orbit’in hiçbir zaman okumadığı kendi oturumuyla kontrol eder. Hiçbir istem gönderilmez. Kontrol edemezse Claude uygulamasının bu Mac’e kaydettiği yüzdeler kullanılır.",
         claudeCodeMissing: "Claude Code bu Mac’te bulunamadı.",
         claudeCodeSignedOut: "Hesap sınırlarınızı kontrol edebilmesi için Claude Code’da oturum açın.",
         claudeCodeOutdated: "Hesap sınırlarınızı kontrol edebilmesi için Claude Code’u güncelleyin.",
@@ -1176,7 +1176,7 @@ extension NotchAgentStrings {
         resetsSignIn: "Sıfırlamaları görmek için Codex’te bir planla oturum açın",
         resetsUpdate: "Sıfırlamaları burada kullanmak için Codex’i güncelleyin",
         resetsCheckFailed: "Sıfırlamalar denetlenemedi",
-        resetsHelp: "Bir sıfırlama, Codex’in oturum ve haftalık sınırlarını tek seferde yeniler. Codex sıfırlamalarınızı kendi oturum açma bilgisiyle denetler. Vorssaint bunu hiçbir zaman okumaz.")
+        resetsHelp: "Bir sıfırlama, Codex’in oturum ve haftalık sınırlarını tek seferde yeniler. Codex sıfırlamalarınızı kendi oturum açma bilgisiyle denetler. Orbit bunu hiçbir zaman okumaz.")
 
     static let ja = NotchAgentStrings(
         title: "AIエージェント",
@@ -1249,7 +1249,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "Claudeアプリが最後に確認したのは%@です。",
         claudeLimitsMenuBar: "Claudeは、アイコンがメニューバーにあるあいだだけ上限を確認します。Claudeアプリの設定でアイコンをオンにすると、数分で上限がここに表示されます。",
         claudeLimitsNoApp: "プラン上限はClaude CodeかClaudeアプリから取得しますが、ClaudeアプリはこのMacにありません。それまでは、5時間のセッションをClaude Codeのアクティビティから推定します。",
-        claudeLimitsPrivacy: "Claude Codeが、ほかのマシンでの使用分も含めたアカウントの上限を、Vorssaintが読み取ることのない自身のサインインで確認します。プロンプトは送信しません。確認できない場合は、ClaudeアプリがこのMacに保存する割合を使います。",
+        claudeLimitsPrivacy: "Claude Codeが、ほかのマシンでの使用分も含めたアカウントの上限を、Orbitが読み取ることのない自身のサインインで確認します。プロンプトは送信しません。確認できない場合は、ClaudeアプリがこのMacに保存する割合を使います。",
         claudeCodeMissing: "このMacにClaude Codeが見つかりません。",
         claudeCodeSignedOut: "アカウントの上限を確認できるよう、Claude Codeにサインインしてください。",
         claudeCodeOutdated: "アカウントの上限を確認できるよう、Claude Codeをアップデートしてください。",
@@ -1275,7 +1275,7 @@ extension NotchAgentStrings {
         resetsSignIn: "リセットを見るには、プランでCodexにサインインしてください",
         resetsUpdate: "ここでリセットを使うにはCodexをアップデートしてください",
         resetsCheckFailed: "リセットを確認できませんでした",
-        resetsHelp: "リセットを使うと、Codexのセッションと週の上限が同時に回復します。Codexは独自のサインイン情報でリセットを確認し、Vorssaintがそれを読み取ることはありません。")
+        resetsHelp: "リセットを使うと、Codexのセッションと週の上限が同時に回復します。Codexは独自のサインイン情報でリセットを確認し、Orbitがそれを読み取ることはありません。")
 
     static let ko = NotchAgentStrings(
         title: "AI 에이전트",
@@ -1348,7 +1348,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "Claude 앱이 %@ 마지막으로 확인했습니다.",
         claudeLimitsMenuBar: "Claude는 아이콘이 메뉴 막대에 있을 때만 한도를 확인합니다. Claude 앱 설정에서 아이콘을 켜면 몇 분 안에 한도가 여기에 표시됩니다.",
         claudeLimitsNoApp: "플랜 한도는 Claude Code나 Claude 앱에서 가져오지만 이 Mac에는 Claude 앱이 없습니다. 그동안에는 5시간 세션을 Claude Code 활동으로 추정합니다.",
-        claudeLimitsPrivacy: "Claude Code가 Vorssaint가 읽지 않는 자체 로그인으로 다른 기기의 사용량을 포함한 계정 한도를 확인합니다. 프롬프트는 전송하지 않습니다. 확인할 수 없으면 Claude 앱이 이 Mac에 저장하는 비율을 사용합니다.",
+        claudeLimitsPrivacy: "Claude Code가 Orbit가 읽지 않는 자체 로그인으로 다른 기기의 사용량을 포함한 계정 한도를 확인합니다. 프롬프트는 전송하지 않습니다. 확인할 수 없으면 Claude 앱이 이 Mac에 저장하는 비율을 사용합니다.",
         claudeCodeMissing: "이 Mac에서 Claude Code를 찾을 수 없습니다.",
         claudeCodeSignedOut: "계정 한도를 확인할 수 있도록 Claude Code에 로그인하세요.",
         claudeCodeOutdated: "계정 한도를 확인할 수 있도록 Claude Code를 업데이트하세요.",
@@ -1374,7 +1374,7 @@ extension NotchAgentStrings {
         resetsSignIn: "초기화를 보려면 플랜으로 Codex에 로그인하세요",
         resetsUpdate: "여기서 초기화를 사용하려면 Codex를 업데이트하세요",
         resetsCheckFailed: "초기화를 확인할 수 없습니다",
-        resetsHelp: "초기화를 사용하면 Codex의 세션 및 주간 한도가 한 번에 갱신됩니다. Codex는 자체 로그인으로 초기화를 확인하며, Vorssaint는 이를 읽지 않습니다.")
+        resetsHelp: "초기화를 사용하면 Codex의 세션 및 주간 한도가 한 번에 갱신됩니다. Codex는 자체 로그인으로 초기화를 확인하며, Orbit는 이를 읽지 않습니다.")
 
     static let zhHans = NotchAgentStrings(
         title: "AI 智能体",
@@ -1447,7 +1447,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "Claude App 上次检查是%@。",
         claudeLimitsMenuBar: "只有当 Claude 的图标在菜单栏中时，它才会检查额度。在 Claude App 的设置中打开图标，几分钟内额度就会显示在这里。",
         claudeLimitsNoApp: "套餐额度来自 Claude Code 或 Claude App，但这台 Mac 上没有安装 Claude App。在此之前，5 小时会话根据 Claude Code 的活动估算。",
-        claudeLimitsPrivacy: "Claude Code 使用自己的登录信息检查账户额度，包括其他设备上的使用量，Vorssaint 从不读取这些登录信息。不发送任何提示词。无法检查时，使用 Claude App 在这台 Mac 上保存的百分比。",
+        claudeLimitsPrivacy: "Claude Code 使用自己的登录信息检查账户额度，包括其他设备上的使用量，Orbit 从不读取这些登录信息。不发送任何提示词。无法检查时，使用 Claude App 在这台 Mac 上保存的百分比。",
         claudeCodeMissing: "在这台 Mac 上找不到 Claude Code。",
         claudeCodeSignedOut: "请登录 Claude Code，以便它检查账户额度。",
         claudeCodeOutdated: "请更新 Claude Code，以便它检查账户额度。",
@@ -1473,7 +1473,7 @@ extension NotchAgentStrings {
         resetsSignIn: "使用套餐登录 Codex 后即可查看重置",
         resetsUpdate: "请更新 Codex 以在此使用重置",
         resetsCheckFailed: "无法检查重置",
-        resetsHelp: "一次重置会同时恢复 Codex 的会话额度和每周额度。Codex 用自己的登录信息检查你的重置，Vorssaint 从不读取这些信息。")
+        resetsHelp: "一次重置会同时恢复 Codex 的会话额度和每周额度。Codex 用自己的登录信息检查你的重置，Orbit 从不读取这些信息。")
 
     static let zhTW = NotchAgentStrings(
         title: "AI 代理",
@@ -1546,7 +1546,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "Claude App 上次檢查是%@。",
         claudeLimitsMenuBar: "只有當 Claude 的圖像在選單列中時，它才會檢查額度。在 Claude App 的設定中開啟圖像，幾分鐘內額度就會顯示在這裡。",
         claudeLimitsNoApp: "方案額度來自 Claude Code 或 Claude App，但這台 Mac 上沒有安裝 Claude App。在此之前，5 小時工作階段會依 Claude Code 的活動估算。",
-        claudeLimitsPrivacy: "Claude Code 使用自己的登入資訊檢查帳戶額度，包含其他裝置上的使用量，Vorssaint 從不讀取這些登入資訊。不會傳送任何提示詞。無法檢查時，會使用 Claude App 在這台 Mac 上儲存的百分比。",
+        claudeLimitsPrivacy: "Claude Code 使用自己的登入資訊檢查帳戶額度，包含其他裝置上的使用量，Orbit 從不讀取這些登入資訊。不會傳送任何提示詞。無法檢查時，會使用 Claude App 在這台 Mac 上儲存的百分比。",
         claudeCodeMissing: "在這台 Mac 上找不到 Claude Code。",
         claudeCodeSignedOut: "請登入 Claude Code，讓它檢查帳戶額度。",
         claudeCodeOutdated: "請更新 Claude Code，讓它檢查帳戶額度。",
@@ -1572,7 +1572,7 @@ extension NotchAgentStrings {
         resetsSignIn: "使用方案登入 Codex 後即可查看重設",
         resetsUpdate: "請更新 Codex 以在此使用重設",
         resetsCheckFailed: "無法檢查重設",
-        resetsHelp: "一次重設會同時恢復 Codex 的工作階段額度和每週額度。Codex 用自己的登入資訊檢查你的重設，Vorssaint 從不讀取這些資訊。")
+        resetsHelp: "一次重設會同時恢復 Codex 的工作階段額度和每週額度。Codex 用自己的登入資訊檢查你的重設，Orbit 從不讀取這些資訊。")
 
     static let zhHK = NotchAgentStrings(
         title: "AI 代理",
@@ -1645,7 +1645,7 @@ extension NotchAgentStrings {
         claudeLimitsStaleFormat: "Claude App 上次檢查是%@。",
         claudeLimitsMenuBar: "只有當 Claude 的圖示在選單列中時，它才會檢查額度。在 Claude App 的設定中開啟圖示，幾分鐘內額度就會顯示在這裡。",
         claudeLimitsNoApp: "計劃額度來自 Claude Code 或 Claude App，但這部 Mac 上沒有安裝 Claude App。在此之前，5 小時工作階段會按 Claude Code 的活動估算。",
-        claudeLimitsPrivacy: "Claude Code 使用自己的登入資料檢查帳戶額度，包括其他裝置上的用量，Vorssaint 從不讀取這些登入資料。不會傳送任何提示詞。無法檢查時，會使用 Claude App 在這部 Mac 上儲存的百分比。",
+        claudeLimitsPrivacy: "Claude Code 使用自己的登入資料檢查帳戶額度，包括其他裝置上的用量，Orbit 從不讀取這些登入資料。不會傳送任何提示詞。無法檢查時，會使用 Claude App 在這部 Mac 上儲存的百分比。",
         claudeCodeMissing: "在這部 Mac 上找不到 Claude Code。",
         claudeCodeSignedOut: "請登入 Claude Code，讓它檢查帳戶額度。",
         claudeCodeOutdated: "請更新 Claude Code，讓它檢查帳戶額度。",
@@ -1671,5 +1671,5 @@ extension NotchAgentStrings {
         resetsSignIn: "使用計劃登入 Codex 後即可查看重設",
         resetsUpdate: "請更新 Codex 以在此使用重設",
         resetsCheckFailed: "無法檢查重設",
-        resetsHelp: "一次重設會同時恢復 Codex 的工作階段額度和每週額度。Codex 用自己的登入資料檢查你的重設，Vorssaint 從不讀取這些資料。")
+        resetsHelp: "一次重設會同時恢復 Codex 的工作階段額度和每週額度。Codex 用自己的登入資料檢查你的重設，Orbit 從不讀取這些資料。")
 }

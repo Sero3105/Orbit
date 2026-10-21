@@ -220,7 +220,7 @@ final class MusicLaunchBlocker: ObservableObject {
 /// comes from that app's own scripting dictionary, so an app that declares
 /// none is only opened, as before, and the media key is never replayed.
 private enum MusicReplacementPlayback {
-    private static let queue = DispatchQueue(label: "com.vorssaint.music-block.playback",
+    private static let queue = DispatchQueue(label: "com.orbit.music-block.playback",
                                              qos: .userInitiated)
 
     static func start(_ app: NSRunningApplication) {
