@@ -114,7 +114,7 @@ struct DiskView: View {
                 .listRowBackground(T.surface)
             }.scrollContentBackground(.hidden)
         }.padding(22).background(T.bg).navigationTitle(model.t("Disk Analyzer")).onAppear { if model.accessGranted("disk") { vm.load() } }
-        .alert(tr("Move to Trash?"), item:$vm.trashTarget) { e in
+        .alert(tr("Move to Trash?"), isPresented: Binding(get: { vm.trashTarget != nil }, set: { if !$0 { vm.trashTarget = nil } }), presenting: vm.trashTarget) { e in
             Button(tr("Cancel"), role:.cancel) {}; Button(tr("Move to Trash"), role:.destructive) { if isDemo { return }; let r = DiskTrash.run(e, history: model.history); vm.status = "\(trStatus(r)): \(e.name)"; model.reloadHistory(); vm.load() }
         } message: { e in Text("\(e.path)\n\(tr("Separate confirmation for the disk analyzer. The item moves to Trash."))") }
     }
@@ -202,7 +202,7 @@ struct AppsView: View {
                 else if vm.plan?.sharedBundleID == true { Text(tr("Another installed copy uses the same bundle ID, so its data is shared: only this app bundle will be moved to Trash.")).font(.system(size: 11)).foregroundStyle(T.amber) }
                 else if vm.leftovers.isEmpty { Text(tr("No preferences, caches or support files match this bundle ID.")).font(.system(size: 11)).foregroundStyle(T.muted) }
                 ForEach(vm.leftovers,id:\.self){ lf in HStack { Text(lf).font(.system(size: 10.5)).foregroundStyle(T.ink).lineLimit(1); Spacer(); Text(fmtBytes(vm.sizeOf(lf))).font(.system(size: 10.5)).monospacedDigit().foregroundStyle(T.muted) } }
-                Text(tr("Update check: not available — no reliable source integrated, so Orbit does not claim updates.")).font(.system(size: 10.5)).foregroundStyle(T.muted)
+                Text(tr("Update check: use App Updates in Orbit's menu bar panel, which checks the App Store, Homebrew and the developers' own feeds.")).font(.system(size: 10.5)).foregroundStyle(T.muted)
                 Spacer()
                 HStack { Text(vm.msg).font(.system(size: 11)).foregroundStyle(T.muted); Spacer()
                     Button(tr("Uninstall… (app + listed files to Trash)")) { vm.confirm=true }.buttonStyle(DangerButtonStyle()).disabled(vm.plan == nil) }
@@ -290,7 +290,7 @@ struct ProcessesView: View { @EnvironmentObject var model: Model
         List(shown){ p in HStack(spacing: 9){
             Text(p.name).font(.system(size: 12.5)).foregroundStyle(T.ink).lineLimit(1).frame(maxWidth: .infinity, alignment: .leading)
             Text("\(p.pid)").font(.system(size: 11)).monospacedDigit().foregroundStyle(T.muted).frame(width: 64, alignment: .trailing)
-            Text(String(format:"%.1f%%",p.cpu)).font(.system(size: 11.5, weight: p.cpu > 50 ? .semibold : .regular)).monospacedDigit().foregroundStyle(p.cpu > 50 ? T.amber : T.ink).frame(width: 78, alignment: .trailing)
+            Text(String(format: "%.1f%%", locale: .current,p.cpu)).font(.system(size: 11.5, weight: p.cpu > 50 ? .semibold : .regular)).monospacedDigit().foregroundStyle(p.cpu > 50 ? T.amber : T.ink).frame(width: 78, alignment: .trailing)
             MeterBar(value: p.cpu/100, color: p.cpu > 50 ? T.amber : T.accent).frame(width: 60)
             Text(fmtBytes(p.memKB*1024)).font(.system(size: 11.5)).monospacedDigit().foregroundStyle(T.ink).frame(width: 84, alignment: .trailing)
             Text(p.user).font(.system(size: 11)).foregroundStyle(T.muted).lineLimit(1).frame(width: 132, alignment: .leading)
@@ -298,7 +298,7 @@ struct ProcessesView: View { @EnvironmentObject var model: Model
         }.listRowBackground(T.surface) }
             .scrollContentBackground(.hidden)
     }.padding(22).background(T.bg).navigationTitle(model.t("Processes")).onAppear(perform:vm.load)
-    .alert(tr("Terminate process?"), item:$vm.killTarget){ p in Button(tr("Cancel"), role:.cancel){}; Button(tr("Terminate"), role:.destructive){ if isDemo { return }; _=ProcessList.terminate(pid:p.pid); vm.load() } } message:{ p in Text("\(p.name) (PID \(p.pid)) \(tr("will receive SIGTERM. Unsaved work in that process may be lost."))") } } }
+    .alert(tr("Terminate process?"), isPresented: Binding(get: { vm.killTarget != nil }, set: { if !$0 { vm.killTarget = nil } }), presenting: vm.killTarget){ p in Button(tr("Cancel"), role:.cancel){}; Button(tr("Terminate"), role:.destructive){ if isDemo { return }; _=ProcessList.terminate(pid:p.pid); vm.load() } } message:{ p in Text("\(p.name) (PID \(p.pid)) \(tr("will receive SIGTERM. Unsaved work in that process may be lost."))") } } }
 
 struct HistoryView: View { @EnvironmentObject var model: Model
     var body: some View { VStack(alignment:.leading, spacing: 12) {
@@ -323,5 +323,5 @@ struct SettingsView: View { @EnvironmentObject var model: Model
             Button(tr("Reset saved access choices")) { model.resetAccess() }
             Text(tr("Resetting makes Orbit ask again the next time you open those sections. This controls Orbit's own prompt only; macOS privacy grants live in System Settings → Privacy & Security → Files & Folders / Full Disk Access.")).font(.caption)
         }
-        Text(tr("History: ~/Library/Application Support/Orbit/history.json. No telemetry, no network, scans are local and read-only. Temperature/fan/GPU: unavailable without a privileged helper (not installed). App updates: not claimed — no reliable source integrated.")).font(.caption)
+        Text(tr("History: ~/Library/Application Support/Orbit/history.json. This window sends nothing over the network; scans are local and read-only.")).font(.caption)
     }.padding().frame(width:460).preferredColorScheme(.dark) } }

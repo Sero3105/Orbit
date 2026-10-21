@@ -599,6 +599,22 @@ if (( ! DEV )); then
     # changed since, and a fresh checkout has none.
     find build -mindepth 1 -maxdepth 1 ! -name objects -exec rm -rf {} + 2>/dev/null || true
 fi
+# Orbit's maintenance window (Dashboard, Energy, Cleanup, Disk Analyzer, …) is
+# two separate modules, OrbitCore and OrbitMaintenance, so their types never
+# collide with the menu bar app's. Built as static libraries and linked in.
+echo "▸ Compiling Orbit maintenance modules…"
+ORBIT_MODULE_DIR="build/modules"
+mkdir -p "$ORBIT_MODULE_DIR"
+swiftc "${APP_OPTIMIZATION_FLAGS[@]}" -parse-as-library -static -emit-library -emit-module \
+    -module-name OrbitCore -emit-module-path "$ORBIT_MODULE_DIR/OrbitCore.swiftmodule" \
+    -target "$TARGET" -sdk "$SDK" "${SDK_COMPAT_FLAGS[@]}" \
+    Sources/OrbitCore/*.swift -o "build/libOrbitCore.a"
+swiftc "${APP_OPTIMIZATION_FLAGS[@]}" -parse-as-library -static -emit-library -emit-module \
+    -module-name OrbitMaintenance -emit-module-path "$ORBIT_MODULE_DIR/OrbitMaintenance.swiftmodule" \
+    -I "$ORBIT_MODULE_DIR" -target "$TARGET" -sdk "$SDK" "${SDK_COMPAT_FLAGS[@]}" \
+    Sources/OrbitMaintenance/*.swift -o "build/libOrbitMaintenance.a"
+ORBIT_MODULE_FLAGS=(-I "$ORBIT_MODULE_DIR" build/libOrbitMaintenance.a build/libOrbitCore.a)
+
 APP_OBJECT_DIR="build/objects/$EXECUTABLE"
 mkdir -p build "$APP_OBJECT_DIR"
 APP_OUTPUT_FILE_MAP="$APP_OBJECT_DIR/output-file-map.json"
@@ -610,7 +626,7 @@ write_swift_output_file_map "$APP_OUTPUT_FILE_MAP" "$APP_OBJECT_DIR" "${APP_SOUR
 swiftc "${APP_OPTIMIZATION_FLAGS[@]}" -incremental -enable-batch-mode -j "$(sysctl -n hw.logicalcpu)" \
     -output-file-map "$APP_OUTPUT_FILE_MAP" \
     -target "$TARGET" -sdk "$SDK" "${SDK_COMPAT_FLAGS[@]}" "${VM_STATISTICS_COMPAT_FLAGS[@]}" "${HID_EVENT_SYSTEM_FLAGS[@]}" \
-    "${BUILD_VARIANT_FLAGS[@]}" \
+    "${BUILD_VARIANT_FLAGS[@]}" "${ORBIT_MODULE_FLAGS[@]}" \
     "${APP_SOURCES[@]}" -o "build/$EXECUTABLE"
 
 echo "▸ Compiling protected fan helper…"

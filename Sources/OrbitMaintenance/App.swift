@@ -4,22 +4,36 @@ import OrbitCore
 enum Section: String, CaseIterable { case dashboard = "Dashboard", energy = "Energy", cleanup = "Cleanup", disk = "Disk Analyzer", apps = "Applications", maintenance = "Maintenance", processes = "Processes", history = "History"
     var icon: String { switch self { case .dashboard: return "gauge.with.dots.needle.33percent"; case .energy: return "bolt"; case .cleanup: return "sparkles"; case .disk: return "externaldrive"; case .apps: return "square.grid.2x2"; case .maintenance: return "wrench.and.screwdriver"; case .processes: return "list.bullet.rectangle"; case .history: return "clock.arrow.circlepath" } } }
 
-@main struct OrbitApp: App {
-    @ObservedObject var model = Model.shared
-    init() { let m = Model.shared; DispatchQueue.main.async { Snapshots.runIfRequested(model: m) } }
-    var body: some Scene {
-        WindowGroup { ContentView().environmentObject(model).preferredColorScheme(.dark).frame(minWidth: 920, minHeight: 580) }
-        MenuBarExtra("Orbit", systemImage: "circle.hexagongrid") {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(tr("Orbit — Your Mac, in balance.")).font(.headline)
-                Text("CPU \(Int(model.metrics.cpu))% · \(tr("Memory")) \(fmtBytes(model.metrics.memUsed)) / \(fmtBytes(model.metrics.memTotal))")
-                Text("\(tr("Disk free")) \(fmtBytes(model.metrics.diskFree))")
-                if let p = model.power { Text(String(format: "%@ %.1f W", tr("Power"), p.wallW > 0 ? p.wallW : p.systemW)) }
-                Button(tr("Open Orbit")) { NSApp.activate(ignoringOtherApps: true); for w in NSApp.windows { w.makeKeyAndOrderFront(nil) } }
-                Button(tr("Quit")) { NSApp.terminate(nil) }
-            }.padding()
+/// Entry points used by the menu bar app: the maintenance window (Dashboard, Energy, Cleanup, Disk Analyzer,
+/// Applications, Maintenance, Processes, History) is hosted in a plain NSWindow.
+public enum OrbitMaintenance {
+    static var window: NSWindow?
+
+    /// Opens (or brings forward) the maintenance window. `language` is the app-wide language code; the window
+    /// is translated for "it" and falls back to English otherwise.
+    @MainActor public static func showWindow(language: String? = nil) {
+        let model = Model.shared
+        if let language { model.setLang(language.hasPrefix("it") ? "it" : "en") }
+        if window == nil {
+            let w = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1180, height: 760),
+                             styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
+                             backing: .buffered, defer: false)
+            w.title = "Orbit"; w.titlebarAppearsTransparent = true; w.isReleasedWhenClosed = false
+            w.contentMinSize = NSSize(width: 920, height: 580)
+            w.contentView = NSHostingView(rootView: ContentView().environmentObject(model).preferredColorScheme(.dark))
+            w.center(); w.setFrameAutosaveName("OrbitMaintenanceWindow")
+            window = w
         }
-        Settings { SettingsView().environmentObject(model) }
+        NSApp.activate(ignoringOtherApps: true)
+        window?.makeKeyAndOrderFront(nil)
+    }
+
+    /// `--screenshots <dir>` (README media, see Snapshots) renders the window offscreen and exits.
+    /// Returns true when it took over the launch.
+    @MainActor public static func runSnapshotsIfRequested() -> Bool {
+        guard CommandLine.arguments.contains("--screenshots") else { return false }
+        Snapshots.runIfRequested(model: Model.shared)
+        return true
     }
 }
 
@@ -64,12 +78,19 @@ final class Model: ObservableObject {
 
 struct ContentView: View {
     @EnvironmentObject var model: Model
+    @State private var showSettings = false
     var body: some View {
         HStack(spacing: 0) {
             sidebar.frame(width: 212)
             Rectangle().fill(T.surface).frame(width: 1)
             detail.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }.background(T.bg)
+        .sheet(isPresented: $showSettings) {
+            VStack(alignment: .trailing, spacing: 0) {
+                SettingsView().environmentObject(model)
+                Button(tr("Done")) { showSettings = false }.keyboardShortcut(.defaultAction).padding()
+            }
+        }
     }
     var sidebar: some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -89,6 +110,7 @@ struct ContentView: View {
             StatusChip(text: model.t(healthStatus(model.metrics).0), color: healthStatus(model.metrics).1).padding(.horizontal, 14).padding(.top, 14)
             HStack(spacing: 6) {
                 langBtn("EN", "en"); langBtn("IT", "it"); Spacer()
+                Button { showSettings = true } label: { Image(systemName: "gearshape").foregroundStyle(T.muted) }.buttonStyle(.plain).help(tr("Settings"))
             }.padding(.horizontal, 14).padding(.bottom, 14)
         }.background(T.bg)
     }
@@ -161,11 +183,11 @@ struct DashboardView: View {
     var processorPanel: some View { Panel { VStack(alignment: .leading, spacing: 12) {
         Text(model.t("Processor")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
         HStack(spacing: 20) {
-            RingGauge(value: m.cpu/100, label: "CPU", big: String(format: "%.0f%%", m.cpu)).frame(width: 124, height: 124)
+            RingGauge(value: m.cpu/100, label: "CPU", big: String(format: "%.0f%%", locale: .current, m.cpu)).frame(width: 124, height: 124)
             VStack(alignment: .leading, spacing: 6) {
                 Text(model.t("Memory")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
                 Text(fmtBytes(m.memUsed)).font(.system(size: 24, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
-                Text(String(format: tr("of %@ used"), fmtBytes(m.memTotal))).font(.system(size: 11)).foregroundStyle(T.muted)
+                Text(String(format: tr("of %@ used"), locale: .current, fmtBytes(m.memTotal))).font(.system(size: 11)).foregroundStyle(T.muted)
                 MeterBar(value: m.memTotal > 0 ? Double(m.memUsed)/Double(m.memTotal) : 0, color: T.cyan).frame(width: 180)
             }
         }
@@ -175,8 +197,8 @@ struct DashboardView: View {
             VStack(alignment: .leading, spacing: 3) { Text(tr("Memory %")).font(.system(size: 9)).foregroundStyle(T.muted); Sparkline(samples: model.memSamples, color: T.cyan).frame(width: 200, height: 36) }
         }
         HStack(spacing: 26) {
-            stat("Peak CPU (session)", model.cpuSamples.max().map{ String(format:"%.0f%%", $0) } ?? "—")
-            stat("Peak memory (session)", model.memSamples.max().map{ String(format:"%.0f%%", $0) } ?? "—")
+            stat("Peak CPU (session)", model.cpuSamples.max().map{ String(format: "%.0f%%", locale: .current, $0) } ?? "—")
+            stat("Peak memory (session)", model.memSamples.max().map{ String(format: "%.0f%%", locale: .current, $0) } ?? "—")
             stat("Samples", "\(model.cpuSamples.count)")
         }
     } } }
@@ -186,14 +208,14 @@ struct DashboardView: View {
         ForEach(model.procVM.procs.sorted{$0.cpu>$1.cpu}.prefix(5), id: \.pid) { pr in
             HStack { Text(pr.name).font(.system(size: 12)).foregroundStyle(T.ink).lineLimit(1); Spacer()
                 MeterBar(value: pr.cpu/100, color: pr.cpu > 50 ? T.amber : T.accent).frame(width: 70)
-                Text(String(format: "%.1f%%", pr.cpu)).font(.system(size: 11)).monospacedDigit().foregroundStyle(T.muted).frame(width: 48, alignment: .trailing)
+                Text(String(format: "%.1f%%", locale: .current, pr.cpu)).font(.system(size: 11)).monospacedDigit().foregroundStyle(T.muted).frame(width: 48, alignment: .trailing)
                 Text(fmtBytes(pr.memKB*1024)).font(.system(size: 11)).monospacedDigit().foregroundStyle(T.muted).frame(width: 64, alignment: .trailing) } }
     } } }
     var storagePanel: some View { Panel { VStack(alignment: .leading, spacing: 8) {
         Text(model.t("Storage")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
-        Text(String(format: tr("%@ free"), fmtBytes(m.diskFree))).font(.system(size: 24, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
+        Text(String(format: tr("%@ free"), locale: .current, fmtBytes(m.diskFree))).font(.system(size: 24, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
         MeterBar(value: m.diskTotal > 0 ? 1 - Double(m.diskFree)/Double(m.diskTotal) : 0, color: T.cyan)
-        Text(String(format: tr("of %@ total"), fmtBytes(m.diskTotal))).font(.system(size: 11)).foregroundStyle(T.muted)
+        Text(String(format: tr("of %@ total"), locale: .current, fmtBytes(m.diskTotal))).font(.system(size: 11)).foregroundStyle(T.muted)
     } } }
     var uptimePanel: some View { Panel { VStack(alignment: .leading, spacing: 4) { Text(model.t("Uptime")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
         Text("\(Int(m.uptime/3600))h \(Int(m.uptime.truncatingRemainder(dividingBy: 3600)/60))m").font(.system(size: 20, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink) } } }
@@ -216,8 +238,8 @@ struct DashboardView: View {
         Text(model.t("Power & thermal")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
         HStack(spacing: 8) { Image(systemName: m.battery != nil ? "battery.75" : "powerplug").foregroundStyle(T.accent)
             Text(m.battery.map { "\(tr("Battery")) \($0)%" } ?? "\(tr(m.power)) · \(tr("No battery (desktop Mac)"))").font(.system(size: 13.5, weight: .medium)).foregroundStyle(T.ink) }
-        Text(String(format: tr("This %@ draws from mains power, confirmed by the system power source."), m.model.isEmpty ? "Mac" : m.model)).font(.system(size: 10)).foregroundStyle(T.muted)
-        Text(tr("Temperature · Fan · GPU: macOS exposes no public API for these on Apple Silicon, and Orbit installs no privileged helper — so they are not shown rather than estimated.")).font(.system(size: 10)).foregroundStyle(T.muted)
+        Text(String(format: tr("This %@ draws from mains power, confirmed by the system power source."), locale: .current, m.model.isEmpty ? "Mac" : m.model)).font(.system(size: 10)).foregroundStyle(T.muted)
+        Text(tr("Temperature · Fan · GPU: open the System section of Orbit's menu bar panel. It reads the Mac's sensors directly; fan control is opt-in.")).font(.system(size: 10)).foregroundStyle(T.muted)
     } } }
     var recentPanel: some View { Panel { VStack(alignment: .leading, spacing: 8) {
         Text(model.t("Recent activity")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)

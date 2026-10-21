@@ -4,6 +4,7 @@
 import AppKit
 import Combine
 import SwiftUI
+import OrbitMaintenance
 
 extension Notification.Name {
     static let menuPanelWillShow = Notification.Name("OrbitMenuPanelWillShow")
@@ -464,6 +465,13 @@ struct MenuPanelView: View {
                 // panel's lists: the router is sticky, so it is set every time.
                 SettingsRouter.shared.page = PanelInteractionState.shared.hostedSettingsPage ?? .general
                 appDelegate()?.openSettingsWindow()
+            }
+
+            footerButton(MaintenanceWindowStrings.button(l10n.language),
+                         systemImage: "wrench.and.screwdriver",
+                         horizontalPadding: 7) {
+                appDelegate()?.closePopover()
+                OrbitMaintenance.showWindow(language: l10n.language.rawValue)
             }
 
             footerButton(l10n.s.panelQuit,

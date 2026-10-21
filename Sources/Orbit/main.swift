@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Vorssaint
 
 import AppKit
+import OrbitMaintenance
 
 SuperKeyMappingGuard.runIfRequestedAndExit()
 Defaults.register()
@@ -17,6 +18,12 @@ if CommandLine.arguments.contains("--sensors") {
 }
 if CommandLine.arguments.contains("--uninstall") {
     Uninstaller.runAndExit()
+}
+// README media for the maintenance window: renders offscreen, then exits.
+if CommandLine.arguments.contains("--screenshots") {
+    NSApplication.shared.setActivationPolicy(.accessory)
+    _ = MainActor.assumeIsolated { OrbitMaintenance.runSnapshotsIfRequested() }
+    NSApplication.shared.run()
 }
 
 #if ORBIT_DEVELOPMENT

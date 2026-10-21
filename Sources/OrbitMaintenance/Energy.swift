@@ -28,13 +28,13 @@ struct EnergyView: View {
     func nowPanel(_ p: PowerReading) -> some View { Panel { VStack(alignment: .leading, spacing: 8) {
         Text(tr("Power now")).font(.system(size: 11, weight: .semibold)).foregroundStyle(T.muted)
         HStack(alignment: .firstTextBaseline, spacing: 4) {
-            Text(String(format: "%.1f", watts)).font(.system(size: 40, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
+            Text(String(format: "%.1f", locale: .current, watts)).font(.system(size: 40, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
             Text("W").font(.system(size: 16, weight: .medium)).foregroundStyle(T.muted)
         }
         Sparkline(samples: model.wattSamples, color: T.amber).frame(height: 36)
         HStack(spacing: 22) {
-            stat("Mac consumption", String(format: "%.1f W", p.systemW))
-            stat("From the wall", p.onBattery ? tr("On battery") : String(format: "%.1f W", p.wallW))
+            stat("Mac consumption", String(format: "%.1f W", locale: .current, p.systemW))
+            stat("From the wall", p.onBattery ? tr("On battery") : String(format: "%.1f W", locale: .current, p.wallW))
         }
         Text(tr("“From the wall” adds the power adapter's own loss — it is what the electricity meter counts.")).font(.system(size: 10)).foregroundStyle(T.muted)
         if model.powerStale { Text(tr("Sensor paused — showing the last reading. Nothing is counted until it resumes.")).font(.system(size: 10.5, weight: .medium)).foregroundStyle(T.amber) }
@@ -75,7 +75,7 @@ struct EnergyView: View {
         VStack(alignment: .leading, spacing: 3) {
             Text(tr(label)).font(.system(size: 10)).foregroundStyle(T.muted)
             Text(price > 0 ? money(energyCost(wh: wh, pricePerKWh: price), digits: digits) : "—").font(.system(size: 17, weight: .semibold)).monospacedDigit().foregroundStyle(T.ink)
-            Text(wh >= 1000 ? String(format: "%.2f kWh", wh / 1000) : String(format: wh < 1 ? "%.3f Wh" : "%.1f Wh", wh)).font(.system(size: 10.5)).monospacedDigit().foregroundStyle(T.muted)
+            Text(wh >= 1000 ? String(format: "%.2f kWh", locale: .current, wh / 1000) : String(format: wh < 1 ? "%.3f Wh" : "%.1f Wh", locale: .current, wh)).font(.system(size: 10.5)).monospacedDigit().foregroundStyle(T.muted)
         }.frame(maxWidth: .infinity, alignment: .leading).padding(10).background(T.raised, in: RoundedRectangle(cornerRadius: 8))
     }
 
